@@ -58,10 +58,8 @@ namespace Moonvalk.Accessory
 		/// </summary>
 		private static void setDeviceState()
 		{
-			if (CurrentState != DeviceState.None)
-			{
-				return;
-			}
+			if (CurrentState != DeviceState.None) return;
+			
 			string os = OS.GetName();
 			if (os == "Windows" || os == "OSX" || os == "macOS" || os == "Linux" || os == "Server" || os == "UWP")
 			{

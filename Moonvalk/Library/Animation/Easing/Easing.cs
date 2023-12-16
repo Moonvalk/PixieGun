@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 
-namespace Moonvalk.Animation {
+namespace Moonvalk.Animation
+{
 	/// <summary>
 	/// Supplies Easing functions that affect how a value traverses from a start to an end point.
 	/// </summary>
-	public static partial class Easing {
+	public static partial class Easing
+	{
 		/// <summary>
 		/// A look-up able to convert Easing.Types into usable EasingFunctions.
 		/// </summary>
 		/// <value>Gets an EasingFunction that can be passed to animations.</value>
-		public static Dictionary<Types, EasingFunction> Functions { get; private set; } = new Dictionary<Types, EasingFunction> {
+		public static Dictionary<Types, EasingFunction> Functions { get; private set; } = new Dictionary<Types, EasingFunction>
+		{
 			{Types.BackIn,              Back.In},
 			{Types.BackOut,             Back.Out},
 			{Types.BackInOut,           Back.InOut},

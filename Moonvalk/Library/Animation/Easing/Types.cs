@@ -1,13 +1,16 @@
 
-namespace Moonvalk.Animation {
+namespace Moonvalk.Animation
+{
 	/// <summary>
 	/// Supplies Easing functions that affect how a value traverses from a start to an end point.
 	/// </summary>
-	public static partial class Easing {
+	public static partial class Easing
+	{
 		/// <summary>
 		/// All Easing Types available. Types can be parsed into usable EasingFunctions by passing to the <cref="Easing.Functions"/> map.
 		/// </summary>
-		public enum Types {
+		public enum Types
+		{
 			BackIn,
 			BackOut,
 			BackInOut,

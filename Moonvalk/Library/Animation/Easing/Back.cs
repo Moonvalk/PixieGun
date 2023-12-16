@@ -1,14 +1,17 @@
 using System;
 
-namespace Moonvalk.Animation {
+namespace Moonvalk.Animation
+{
 	/// <summary>
 	/// Supplies Easing functions that affect how a value traverses from a start to an end point.
 	/// </summary>
-	public static partial class Easing {
+	public static partial class Easing
+	{
 		/// <summary>
 		/// Static class containing Back interpolation methods.
 		/// </summary>
-		public static class Back {
+		public static class Back
+		{
 			/// <summary>
 			/// Applies Back-In easing to a set of interpolation values.
 			/// </summary>
@@ -16,7 +19,8 @@ namespace Moonvalk.Animation {
 			/// <param name="start_">The starting value.</param>
 			/// <param name="end_">The ending value.</param>
 			/// <returns>Returns a value between start and end with easing applied.</returns>
-			public static float In(float percentage_, float start_, float end_) {
+			public static float In(float percentage_, float start_, float end_)
+			{
 				const float c1 = 1.70158f;
 				const float c3 = (c1 + 1f);
 
@@ -31,7 +35,8 @@ namespace Moonvalk.Animation {
 			/// <param name="start_">The starting value.</param>
 			/// <param name="end_">The ending value.</param>
 			/// <returns>Returns a value between start and end with easing applied.</returns>
-			public static float Out(float percentage_, float start_, float end_) {
+			public static float Out(float percentage_, float start_, float end_)
+			{
 				const float c1 = 1.70158f;
 				const float c3 = (c1 + 1f);
 
@@ -46,7 +51,8 @@ namespace Moonvalk.Animation {
 			/// <param name="start_">The starting value.</param>
 			/// <param name="end_">The ending value.</param>
 			/// <returns>Returns a value between start and end with easing applied.</returns>
-			public static float InOut(float percentage_, float start_, float end_) {
+			public static float InOut(float percentage_, float start_, float end_)
+			{
 				const float c1 = 1.70158f;
 				const float c2 = (c1 * 1.525f);
 

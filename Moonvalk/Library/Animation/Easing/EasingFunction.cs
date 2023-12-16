@@ -1,5 +1,6 @@
 
-namespace Moonvalk.Animation {
+namespace Moonvalk.Animation
+{
 	/// <summary>
 	/// Reference type for an applicable Easing function.
 	/// </summary>
