@@ -1,9 +1,11 @@
 
-namespace Moonvalk.Data {
+namespace Moonvalk.Data
+{
     /// <summary>
     /// Contract for save data to follow.
     /// </summary>
-    public interface IMoonSaveData {
+    public interface IMoonSaveData
+    {
         /// <summary>
         /// Prints this container as a JSON storage string value.
         /// </summary>

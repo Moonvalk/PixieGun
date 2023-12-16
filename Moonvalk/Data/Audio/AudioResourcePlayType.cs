@@ -1,10 +1,12 @@
 
-namespace Moonvalk.Data {
+namespace Moonvalk.Data
+{
 	/// <summary>
 	/// All available types of audio resource group handling when playing.
 	/// </summary>
-	public enum AudioResourcePlayType {
+	public enum AudioResourcePlayType
+	{
 		Random,
-		Ordered,
+		Ordered
 	}
 }

@@ -1,10 +1,13 @@
 using Godot;
 
-namespace Moonvalk.Data {
+namespace Moonvalk.Data
+{
 	/// <summary>
 	/// Container for storing a group of MoonValue items of generic Resource type.
 	/// </summary>
-	public abstract class MoonValueArray<Unit> : Resource, IMoonValue where Unit : IMoonValue {
+	public abstract class MoonValueArray<Unit> : Resource, IMoonValue
+		where Unit : IMoonValue
+	{
 		/// <summary>
 		/// The name of the resource.
 		/// </summary>
@@ -18,6 +21,6 @@ namespace Moonvalk.Data {
 		/// <summary>
 		/// Gets the current item count.
 		/// </summary>
-		public int Length { get => this.Items.Length; }
+		public int Length { get => Items.Length; }
 	}
 }

@@ -39,16 +39,19 @@ namespace Moonvalk.Data
 			BaseMoonSaveData<float> volume = AddSaveData("volume", new BaseMoonSaveData<float>());
 			for (int index = 0; index < MoonAudioManager.Instance?.AudioBuses.Length; index++)
 			{
-				volume.SetValue((MoonAudioManager.Instance?.AudioBuses.Items[index].Name, MoonAudioManager.Instance.AudioBuses.Items[index].Value));
+				if (MoonAudioManager.Instance?.AudioBuses.Items[index] != null)
+					volume.SetValue((MoonAudioManager.Instance.AudioBuses.Items[index].Name, MoonAudioManager.Instance.AudioBuses.Items[index].Value));
 			}
 			
-			AddSaveData("fullscreen", new BaseMoonSaveData<bool>()).SetValue(
-				("Enabled", false)
-			);
-			AddSaveData("graphics", new BaseMoonSaveData<float>()).SetValue(
-				("Screenshake", 0.5f),
-				("Bloom", 0.5f)
-			);
+			AddSaveData("fullscreen", new BaseMoonSaveData<bool>())
+				.SetValue(
+					("Enabled", false)
+				);
+			AddSaveData("graphics", new BaseMoonSaveData<float>())
+				.SetValue(
+					("Screenshake", 0.5f),
+					("Bloom", 0.5f)
+				);
 		}
 
 		/// <summary>
@@ -72,9 +75,8 @@ namespace Moonvalk.Data
 		{
 			// Assign graphics settings.
 			if (DeviceHelpers.IsDeviceHTML5() || DeviceHelpers.IsDeviceMobile())
-			{
 				Set("fullscreen", ("enabled", false));
-			}
+
 			OS.WindowFullscreen = Get<bool>("fullscreen", "enabled");
 			SetBloom();
 		}
