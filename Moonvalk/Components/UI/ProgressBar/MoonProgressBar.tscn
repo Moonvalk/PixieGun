@@ -1,0 +1,99 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Assets/Fonts/CHOCOLATE CAVALCADE.OTF" type="DynamicFontData" id=1]
+[ext_resource path="res://Game/UI/Components/Bars/spr_ui_progress_bar_front2.png" type="Texture" id=2]
+[ext_resource path="res://Game/UI/Components/Bars/spr_ui_progress_bar_shine.png" type="Texture" id=3]
+[ext_resource path="res://Game/UI/Components/Bars/spr_ui_progress_bar_background.png" type="Texture" id=4]
+[ext_resource path="res://Moonvalk/Components/UI/ProgressBar/MoonProgressBar.cs" type="Script" id=5]
+
+[sub_resource type="Shader" id=10]
+code = "shader_type canvas_item;
+
+uniform float offset = 0.0;
+uniform vec3 color;
+uniform float additive = 0.5;
+
+void fragment() {
+	vec2 uv = vec2(UV.x + (sin(UV.y * 5.0 + (TIME + offset) * 5.0) * 0.01), UV.y);
+	vec4 tex = texture(TEXTURE, uv);
+	COLOR = vec4(tex.rgb + (color * additive), tex.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=11]
+shader = SubResource( 10 )
+shader_param/offset = 0.0
+shader_param/color = Vector3( 0.5, -0.2, -0.05 )
+shader_param/additive = 1.0
+
+[sub_resource type="CanvasItemMaterial" id=12]
+blend_mode = 1
+
+[sub_resource type="DynamicFont" id=8]
+size = 32
+outline_size = 2
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 1 )
+
+[node name="MoonProgressBar" type="TextureRect"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -161.5
+margin_top = -60.0
+margin_right = 161.5
+rect_min_size = Vector2( 0, 60 )
+rect_clip_content = true
+size_flags_horizontal = 0
+size_flags_vertical = 3
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6
+script = ExtResource( 5 )
+p_progressFront = NodePath("PercentFront")
+p_progressLabel = NodePath("Percentage")
+Colors = PoolVector3Array( 0.5, -0.2, 0.05, 0.4, 0.05, -0.4, -0.3, 0.3, 0.3 )
+BarOffsetPercentage = 0.55
+
+[node name="PercentFront" type="TextureRect" parent="."]
+material = SubResource( 11 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -27.0
+margin_top = -7.0
+margin_right = -27.0
+margin_bottom = 4.0
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
+
+[node name="Shine" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.623529 )
+material = SubResource( 12 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -71.5
+margin_top = 10.0
+margin_right = 76.5
+margin_bottom = 22.0
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
+
+[node name="Percentage" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -108.5
+margin_top = -48.0
+margin_right = 108.5
+margin_bottom = -12.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 2
+custom_fonts/font = SubResource( 8 )
+text = "70%"
+align = 1

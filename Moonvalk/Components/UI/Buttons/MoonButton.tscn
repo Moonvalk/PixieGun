@@ -1,0 +1,67 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Moonvalk/Components/UI/Buttons/MoonButton.cs" type="Script" id=3]
+[ext_resource path="res://Assets/Fonts/CHOCOLATE CAVALCADE.OTF" type="DynamicFontData" id=4]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 60
+outline_size = 4
+outline_color = Color( 0.0392157, 0.0431373, 0.0588235, 1 )
+use_filter = true
+font_data = ExtResource( 4 )
+
+[node name="MoonButton" type="Button"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 140 )
+size_flags_horizontal = 3
+custom_styles/focus = SubResource( 1 )
+flat = true
+script = ExtResource( 3 )
+p_container = NodePath("Container")
+HoveredScale = 1.1
+
+[node name="Container" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+expand = true
+stretch_mode = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Container"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 43.0
+margin_top = 16.0
+margin_right = -40.0
+margin_bottom = -49.0
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Container/HBoxContainer"]
+margin_top = 343.0
+margin_right = 60.0
+margin_bottom = 403.0
+rect_min_size = Vector2( 60, 60 )
+mouse_filter = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="Label" parent="Container/HBoxContainer"]
+margin_left = 64.0
+margin_top = 341.0
+margin_right = 292.0
+margin_bottom = 405.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+custom_colors/font_color_shadow = Color( 0.0392157, 0.0431373, 0.0588235, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = SubResource( 2 )
+text = "Test"
+align = 1
+uppercase = true

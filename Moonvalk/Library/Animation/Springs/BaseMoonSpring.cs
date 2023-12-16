@@ -1,0 +1,409 @@
+using System;
+using System.Collections.Generic;
+using Moonvalk.Accessory;
+using Moonvalk.Utilities;
+
+namespace Moonvalk.Animation {
+	/// <summary>
+	/// Base class for Spring objects.
+	/// </summary>
+	/// <typeparam name="Unit">The type of value that will be affected by Spring forces</typeparam>
+	public abstract class BaseMoonSpring<Unit> : IMoonSpring<Unit> {
+		#region Data Fields
+		/// <summary>
+		/// A reference to the property value(s) that will be modified.
+		/// </summary>
+		public Ref<float>[] Properties { get; private set; }
+
+		/// <summary>
+		/// The target value that will be reached.
+		/// </summary>
+		public Unit[] TargetProperties { get; private set; }
+
+		/// <summary>
+		/// The tension value applied to this spring.
+		/// </summary>
+		public float Tension { get; private set; } = 50f;
+
+		/// <summary>
+		/// The dampening value applied to this spring.
+		/// </summary>
+		public float Dampening { get; private set; } = 10f;
+
+		/// <summary>
+		/// The current speed applied to this spring.
+		/// </summary>
+		public Unit[] Speed { get; private set; }
+
+		/// <summary>
+		/// The amount of force to be applied each frame.
+		/// </summary>
+		public Unit[] CurrentForce { get; private set; }
+
+		/// <summary>
+		/// The minimum force applied to a Spring before it is no longer updated until settings change.
+		/// </summary>
+		public Unit[] MinimumForce { get; protected set; }
+
+		/// <summary>
+		/// The default percentage of total distance springed that will be assigned as a minimum force.
+		/// </summary>
+		protected const float _defaultMinimumForcePercentage = 0.0001f;
+
+		/// <summary>
+		/// The current state of this Spring object.
+		/// </summary>
+		public MoonSpringState CurrentState { get; private set; } = MoonSpringState.Stopped;
+
+		/// <summary>
+		/// Should this animation begin as soon as a Target value is assigned?
+		/// </summary>
+		public bool StartOnTargetAssigned { get; set; } = false;
+
+		/// <summary>
+		/// A map of Actions that will occur while this Spring is in an active state.
+		/// </summary>
+		public MoonActionMap<MoonSpringState> Events { get; protected set; } = new MoonActionMap<MoonSpringState>();
+
+		/// <summary>
+		/// Stores reference to custom Springs applied to user generated values.
+		/// </summary>
+		public static Dictionary<Ref<float>[], BaseMoonSpring<Unit>> CustomSprings { get; protected set; }
+		#endregion
+
+		#region Constructor(s)
+		/// <summary>
+		/// Default constructor made without setting up references.
+		/// </summary>
+		protected BaseMoonSpring() {
+			// ...
+		}
+
+		/// <summary>
+		/// Constructor for creating a new BaseSpring.
+		/// </summary>
+		/// <param name="referenceValues_">Array of references to values.</param>
+		protected BaseMoonSpring(params Ref<float>[] referenceValues_) {
+			this.SetReferences(referenceValues_);
+		}
+		#endregion
+
+		#region Public Methods
+		/// <summary>
+		/// Sets all reference values that this Spring will manipulate.
+		/// </summary>
+		/// <param name="referenceValues_">Array of references to values.</param>
+		public BaseMoonSpring<Unit> SetReferences(params Ref<float>[] referenceValues_) {
+			// Store reference to properties and build function maps.
+			this.Properties = referenceValues_;
+			
+			// Create new array for storing property targets.
+			this.TargetProperties = new Unit[referenceValues_.Length];
+			this.CurrentForce = new Unit[referenceValues_.Length];
+			this.Speed = new Unit[referenceValues_.Length];
+			return this;
+		}
+
+		/// <summary>
+		/// Updates this Spring.
+		/// </summary>
+		/// <param name="deltaTime_">The duration of time between last and current game tick.</param>
+		/// <returns>Returns true when this Spring is active and false when it is complete.</returns>
+		public bool Update(float deltaTime_) {
+			if (this.CurrentState == MoonSpringState.Complete) {
+				return false;
+			}
+			if (this.CurrentState == MoonSpringState.Stopped) {
+				return true;
+			}
+			this.CurrentState = MoonSpringState.Update;
+			this.Events.Run(this.CurrentState);
+
+			// Update springs each frame until settled.
+			this.calculateForces();
+			this.applyForces(deltaTime_);
+			if (!this.minimumForcesMet()) {
+				this.snapSpringToTarget();
+				this.CurrentState = MoonSpringState.Complete;
+				return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Starts this Spring with the current settings if there is a need to apply forces.
+		/// </summary>
+		/// <returns>Returns reference to this Spring.</returns>
+		public BaseMoonSpring<Unit> Start() {
+			if (this.needToApplyForce())  {
+				this.CurrentState = MoonSpringState.Start;
+				this.Events.Run(this.CurrentState);
+				(Global.GetSystem<MoonSpringSystem>() as MoonSpringSystem).Add(this);
+			}
+			return this;
+		}
+
+		/// <summary>
+		/// Stops this Spring.
+		/// </summary>
+		/// <returns>Returns reference to this Spring.</returns>
+		public BaseMoonSpring<Unit> Stop() {
+			this.CurrentState = MoonSpringState.Stopped;
+			return this;
+		}
+
+		/// <summary>
+		/// Sets the dampening factor applied to this spring.
+		/// </summary>
+		/// <param name="dampening_">New dampening factor.</param>
+		/// <returns>Returns reference to this spring.</returns>
+		public BaseMoonSpring<Unit> SetDampening(float dampening_) {
+			this.Dampening = dampening_;
+			return this;
+		}
+
+		/// <summary>
+		/// Sets the tension factor applied to this spring.
+		/// </summary>
+		/// <param name="tension_">New tension factor.</param>
+		/// <returns>Returns reference to this spring.</returns>
+		public BaseMoonSpring<Unit> SetTension(float tension_) {
+			this.Tension = tension_;
+			return this;
+		}
+
+		/// <summary>
+		/// Called to set all parameters from a reference object.
+		/// </summary>
+		/// <param name="parameters_">All properties that will be assigned.</param>
+		/// <returns>Returns this Spring object.</returns>
+		public BaseMoonSpring<Unit> SetParameters(MoonSpringParams parameters_) {
+			this.SetDampening(parameters_.Dampening).SetTension(parameters_.Tension);
+			return this;
+		}
+
+		/// <summary>
+		/// Applies a new target spring height and begins animating towards reaching that value.
+		/// </summary>
+		/// <param name="targetProperties_">Target spring heights for each property.</param>
+		/// <returns>Returns reference to this spring.</returns>
+		public BaseMoonSpring<Unit> To(params Unit[] targetProperties_) {
+			this.TargetProperties = targetProperties_;
+			this.setMinimumForce();
+			if (this.StartOnTargetAssigned) {
+				this.Start();
+			}
+			return this;
+		}
+
+		/// <summary>
+		/// Snaps each spring property to the provided target values.
+		/// </summary>
+		/// <param name="targetProperties_">Target spring heights for each property.</param>
+		/// <returns>Returns reference to this spring.</returns>
+		public BaseMoonSpring<Unit> Snap(params Unit[] targetProperties_) {
+			this.TargetProperties = targetProperties_;
+			this.snapSpringToTarget();
+			return this;
+		}
+
+		/// <summary>
+		/// Removes this Spring on the following game tick by forcing completion.
+		/// </summary>
+		/// <returns>Returns reference to this Spring.</returns>
+		public BaseMoonSpring<Unit> Delete() {
+			this.Reset();
+			this.CurrentState = MoonSpringState.Complete;
+			return this;
+		}
+
+		/// <summary>
+		/// Defines Actions that will occur when this Spring begins.
+		/// </summary>
+		/// <param name="tasksToAdd_">Array of Actions to add.</param>
+		/// <returns>Returns this Spring object.</returns>
+		public BaseMoonSpring<Unit> OnStart(params Action[] tasksToAdd_) {
+			this.Events.AddAction(MoonSpringState.Start, true, tasksToAdd_);
+			return this;
+		}
+
+		/// <summary>
+		/// Defines Actions that will occur when this Spring updates.
+		/// </summary>
+		/// <param name="tasksToAdd_">Array of Actions to add.</param>
+		/// <returns>Returns this Spring object.</returns>
+		public BaseMoonSpring<Unit> OnUpdate(params Action[] tasksToAdd_) {
+			this.Events.AddAction(MoonSpringState.Update, true, tasksToAdd_);
+			return this;
+		}
+
+		/// <summary>
+		/// Defines Actions that will occur once this Spring has completed.
+		/// </summary>
+		/// <param name="tasksToAdd_">Array of Actions to add.</param>
+		/// <returns>Returns this Spring object.</returns>
+		public BaseMoonSpring<Unit> OnComplete(params Action[] tasksToAdd_) {
+			this.Events.AddAction(MoonSpringState.Complete, true, tasksToAdd_);
+			return this;
+		}
+
+		/// <summary>
+		/// Defines Actions that will occur once this Spring has completed.
+		/// </summary>
+		/// <param name="tasksToAdd_">Array of Actions to add.</param>
+		/// <returns>Returns this Spring object.</returns>
+		public BaseMoonSpring<Unit> Then(params Action[] tasksToAdd_) {
+			return this.OnComplete(tasksToAdd_);
+		}
+
+		/// <summary>
+		/// Clears all Actions that have been assigned to this Spring.
+		/// </summary>
+		/// <returns>Returns this Spring object.</returns>
+		public BaseMoonSpring<Unit> Reset() {
+			this.Events.ClearAll();
+			return this;
+		}
+
+		/// <summary>
+		/// Clears all Actions that have been assigned to this Spring for the given state.
+		/// </summary>
+		/// <param name="state_">The state to reset actions for.</param>
+		/// <returns>Returns this Spring object.</returns>
+		public BaseMoonSpring<Unit> Reset(MoonSpringState state_) {
+			this.Events.Clear(state_);
+			return this;
+		}
+
+		/// <summary>
+		/// Handles all tasks for the current state of this base spring.
+		/// </summary>
+		public void HandleTasks() {
+			this.Events.Run(this.CurrentState);
+		}
+
+		/// <summary>
+		/// Gets the current state of this Spring.
+		/// </summary>
+		/// <returns>Returns the current state.</returns>
+		public MoonSpringState GetCurrentState() {
+			return this.CurrentState;
+		}
+
+		/// <summary>
+		/// Initializes a custom Spring based on a reference value as a property.
+		/// </summary>
+		/// <typeparam name="SpringType">The type of Spring that will be used.</typeparam>
+		/// <param name="referenceValue_">The property to be animated.</param>
+		/// <param name="target_">The target value.</param>
+		/// <param name="parameters_">Properties that adjust how this animation will look.</param>
+		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
+		/// <returns>Returns reference to the new Spring object.</returns>
+		public static BaseMoonSpring<Unit> CustomSpringTo<SpringType>(
+			Ref<float> referenceValue_,
+			Unit target_,
+			MoonSpringParams parameters_ = null,
+			bool start_ = true
+		) where SpringType : BaseMoonSpring<Unit>, new() {
+			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			return BaseMoonSpring<Unit>.CustomSpringTo<SpringType>(refs, target_, parameters_, start_);
+		}
+
+		/// <summary>
+		/// Initializes a custom Spring based on a reference value as a property.
+		/// </summary>
+		/// <typeparam name="SpringType">The type of Spring that will be used.</typeparam>
+		/// <param name="referenceValues_">The property to be animated.</param>
+		/// <param name="target_">The target value.</param>
+		/// <param name="parameters_">Properties that adjust how this animation will look.</param>
+		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
+		/// <returns>Returns reference to the new Spring object.</returns>
+		public static BaseMoonSpring<Unit> CustomSpringTo<SpringType>(
+			Ref<float>[] referenceValues_,
+			Unit target_,
+			MoonSpringParams parameters_ = null,
+			bool start_ = true
+		) where SpringType : BaseMoonSpring<Unit>, new() {
+			BaseMoonSpring<Unit>.CustomSprings = BaseMoonSpring<Unit>.CustomSprings ?? new Dictionary<Ref<float>[], BaseMoonSpring<Unit>>();
+			if (BaseMoonSpring<Unit>.CustomSprings.ContainsKey(referenceValues_)) {
+				BaseMoonSpring<Unit>.CustomSprings[referenceValues_].Delete();
+				BaseMoonSpring<Unit>.CustomSprings.Remove(referenceValues_);
+			}
+			BaseMoonSpring<Unit> spring = new SpringType() { StartOnTargetAssigned = start_ };
+			spring.SetReferences(referenceValues_).SetParameters(parameters_ ?? new MoonSpringParams()).OnComplete(() => {
+				BaseMoonSpring<Unit>.CustomSprings.Remove(referenceValues_);
+			}).To(target_);
+
+			BaseMoonSpring<Unit>.CustomSprings.Add(referenceValues_, spring);
+			return spring;
+		}
+
+		/// <summary>
+		/// Gets a custom Spring object for the provided reference value, if it exists.
+		/// </summary>
+		/// <typeparam name="Unit">The type of used for this reference value.</typeparam>
+		/// <param name="referenceValue_">The reference value a Spring object is applied to.</param>
+		/// <returns>Returns the requested Spring object if it exists or null if it cannot be found.</returns>
+		public static BaseMoonSpring<Unit> GetCustomSpring(Ref<float> referenceValue_) {
+			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			return BaseMoonSpring<Unit>.GetCustomSpring(refs);
+		}
+
+		/// <summary>
+		/// Gets a custom Spring object for the provided reference value, if it exists.
+		/// </summary>
+		/// <typeparam name="Unit">The type of used for this reference value.</typeparam>
+		/// <param name="referenceValues_">The reference value a Spring object is applied to.</param>
+		/// <returns>Returns the requested Spring object if it exists or null if it cannot be found.</returns>
+		public static BaseMoonSpring<Unit> GetCustomSpring(Ref<float>[] referenceValues_) {
+			if (BaseMoonSpring<Unit>.CustomSprings.ContainsKey(referenceValues_)) {
+				return BaseMoonSpring<Unit>.CustomSprings[referenceValues_];
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Returns true when this object is complete.
+		/// </summary>
+		/// <returns>True when state is complete.</returns>
+		public bool IsComplete() {
+			return this.CurrentState == MoonSpringState.Complete;
+		}
+		#endregion
+
+		#region Private Methods
+		/// <summary>
+		/// Calculates the necessary velocities to be applied to all Spring properties each game tick.
+		/// </summary>
+		protected abstract void calculateForces();
+
+		/// <summary>
+		/// Applies force to properties each frame.
+		/// </summary>
+		/// <param name="deltaTime_">The time elapsed between last and current game tick.</param>
+		protected abstract void applyForces(float deltaTime_);
+
+		/// <summary>
+		/// Determines if the minimum forces have been met to continue calculating Spring forces.
+		/// </summary>
+		/// <returns>Returns true if the minimum forces have been met.</returns>
+		protected abstract bool minimumForcesMet();
+
+		/// <summary>
+		/// Determines if there is a need to apply force to this Spring to meet target values.
+		/// </summary>
+		/// <returns>Returns true if forces need to be applied</returns>
+		protected abstract bool needToApplyForce();
+
+		/// <summary>
+		/// Assigns the minimum force required until the Spring is completed based on inputs.
+		/// </summary>
+		protected abstract void setMinimumForce();
+
+		/// <summary>
+		/// Snaps all Spring properties directly to their target values. 
+		/// </summary>
+		protected abstract void snapSpringToTarget();
+		#endregion
+	}
+}

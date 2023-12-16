@@ -1,0 +1,223 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://Assets/Fonts/CHOCOLATE CAVALCADE.OTF" type="DynamicFontData" id=1]
+[ext_resource path="res://Moonvalk/Components/UI/Buttons/MoonButton.cs" type="Script" id=2]
+[ext_resource path="res://Game/UI/Components/Icons/spr_ui_icon_minus.png" type="Texture" id=3]
+[ext_resource path="res://Game/UI/Components/Icons/spr_ui_icon_plus.png" type="Texture" id=4]
+[ext_resource path="res://Game/UI/Components/Bars/spr_ui_progress_bar_front2.png" type="Texture" id=5]
+[ext_resource path="res://Game/UI/Components/Buttons/spr_ui_button_dark_small.png" type="Texture" id=6]
+[ext_resource path="res://Game/UI/Components/Bars/spr_ui_progress_bar_shine.png" type="Texture" id=7]
+[ext_resource path="res://Game/UI/Components/Bars/spr_ui_progress_bar_background.png" type="Texture" id=8]
+[ext_resource path="res://Moonvalk/Components/UI/ProgressBar/MoonProgressBar.cs" type="Script" id=9]
+[ext_resource path="res://Moonvalk/Components/UI/Sliders/MoonSliderController.cs" type="Script" id=10]
+
+[sub_resource type="DynamicFont" id=7]
+size = 22
+outline_size = 2
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="Shader" id=10]
+code = "shader_type canvas_item;
+
+uniform float offset = 0.0;
+uniform vec3 color;
+uniform float additive = 0.5;
+
+void fragment() {
+	vec2 uv = vec2(UV.x + (sin(UV.y * 5.0 + (TIME + offset) * 5.0) * 0.01), UV.y);
+	vec4 tex = texture(TEXTURE, uv);
+	COLOR = vec4(tex.rgb + (color * additive), tex.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=11]
+shader = SubResource( 10 )
+shader_param/offset = 0.0
+shader_param/color = Vector3( 0.4, 0.05, -0.4 )
+shader_param/additive = 1.0
+
+[sub_resource type="CanvasItemMaterial" id=12]
+blend_mode = 1
+
+[sub_resource type="DynamicFont" id=8]
+size = 32
+outline_size = 2
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[node name="Slider" type="Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -185.5
+margin_top = -158.0
+margin_right = 185.5
+margin_bottom = -28.0
+rect_min_size = Vector2( 0, 130 )
+script = ExtResource( 10 )
+p_progressBar = NodePath("PercentBackground")
+p_buttonDown = NodePath("MinusButton")
+p_buttonUp = NodePath("PlusButton")
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -108.5
+margin_top = 29.0
+margin_right = 108.5
+margin_bottom = 65.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 2
+custom_fonts/font = SubResource( 7 )
+text = "Master Volume"
+align = 1
+
+[node name="PercentBackground" type="TextureRect" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -161.5
+margin_top = -60.0
+margin_right = 161.5
+rect_min_size = Vector2( 0, 60 )
+rect_clip_content = true
+size_flags_horizontal = 0
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+expand = true
+stretch_mode = 6
+script = ExtResource( 9 )
+p_progressFront = NodePath("PercentFront")
+p_progressLabel = NodePath("Percentage")
+Colors = PoolVector3Array( 0, 0, 0, 0, 0, 0, 0.4, 0.05, -0.4 )
+BarOffsetPercentage = 0.55
+
+[node name="PercentFront" type="TextureRect" parent="PercentBackground"]
+material = SubResource( 11 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -27.0
+margin_top = -7.0
+margin_right = -27.0
+margin_bottom = 4.0
+texture = ExtResource( 5 )
+expand = true
+stretch_mode = 6
+
+[node name="Shine" type="TextureRect" parent="PercentBackground"]
+modulate = Color( 1, 1, 1, 0.623529 )
+material = SubResource( 12 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -71.5
+margin_top = 10.0
+margin_right = 76.5
+margin_bottom = 22.0
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 6
+
+[node name="Percentage" type="Label" parent="PercentBackground"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -108.5
+margin_top = -48.0
+margin_right = 108.5
+margin_bottom = -12.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 2
+custom_fonts/font = SubResource( 8 )
+text = "70%"
+align = 1
+
+[node name="MinusButton" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -179.5
+margin_top = -68.0
+margin_right = -88.5
+margin_bottom = 17.0
+size_flags_horizontal = 3
+custom_styles/focus = SubResource( 1 )
+flat = true
+script = ExtResource( 2 )
+p_container = NodePath("Container")
+HoveredScale = 1.1
+
+[node name="Container" type="TextureRect" parent="MinusButton"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Icon" type="TextureRect" parent="MinusButton/Container"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.5
+margin_top = -30.0
+margin_right = 19.5
+margin_bottom = 6.0
+mouse_filter = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
+
+[node name="PlusButton" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = 88.5
+margin_top = -68.0
+margin_right = 179.5
+margin_bottom = 17.0
+size_flags_horizontal = 3
+custom_styles/focus = SubResource( 1 )
+flat = true
+script = ExtResource( 2 )
+p_container = NodePath("Container")
+HoveredScale = 1.1
+
+[node name="Container" type="TextureRect" parent="PlusButton"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Icon" type="TextureRect" parent="PlusButton/Container"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.5
+margin_top = -30.0
+margin_right = 19.5
+margin_bottom = 6.0
+mouse_filter = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6

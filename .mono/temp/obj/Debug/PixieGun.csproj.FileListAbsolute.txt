@@ -1,0 +1,9 @@
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\bin\Debug\PixieGun.dll
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\bin\Debug\PixieGun.pdb
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.csproj.AssemblyReference.cache
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.AssemblyInfoInputs.cache
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.AssemblyInfo.cs
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.csproj.CoreCompileInputs.cache
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.dll
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.pdb
