@@ -7,3 +7,4 @@ C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\Pixi
 C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.csproj.CoreCompileInputs.cache
 C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.dll
 C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.pdb
+C:\Users\elecg\Projects\Moonvalk\Games\PixieGun\Source\.mono\temp\obj\Debug\PixieGun.sourcelink.json

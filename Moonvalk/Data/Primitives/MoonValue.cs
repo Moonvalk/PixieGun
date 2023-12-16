@@ -1,10 +1,12 @@
 using Godot;
 
-namespace Moonvalk.Data {
+namespace Moonvalk.Data
+{
 	/// <summary>
 	/// Container used for pairing titles with different data types as a resource.
 	/// </summary>
-	public abstract class MoonValue<Unit> : Resource, IMoonValue {
+	public abstract class MoonValue<Unit> : Resource, IMoonValue
+	{
 		/// <summary>
 		/// The name of the resource.
 		/// </summary>
