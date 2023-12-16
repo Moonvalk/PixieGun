@@ -2,11 +2,13 @@ using Godot;
 using Moonvalk.Animation;
 using Moonvalk.Components;
 
-namespace Moonvalk.Nodes {
+namespace Moonvalk.Nodes
+{
 	/// <summary>
 	/// Handles displaying a custom cursor that follows mouse position with the use of spring animations.
 	/// </summary>
-	public class SpringCursorController : Node {
+	public class SpringCursorController : Node
+	{
 		#region Data Fields
 		/// <summary>
 		/// Parameters used to dictate how the cursor will move.
@@ -39,28 +41,33 @@ namespace Moonvalk.Nodes {
 		/// <summary>
 		/// Called when this object is first initialized.
 		/// </summary>
-		public override void _Ready() {
-			this.Cursor = this.GetComponent<TextureRect>();
+		public override void _Ready()
+		{
+			Cursor = this.GetComponent<TextureRect>();
 
 			Input.MouseMode = Input.MouseModeEnum.Hidden;
-			this.TargetPosition = this._currentPosition = GetTree().Root.GetMousePosition();
-			this.Cursor.RectPosition = this.TargetPosition;
+			TargetPosition = _currentPosition = GetTree().Root.GetMousePosition();
+			Cursor.RectPosition = TargetPosition;
 
-			this.MovementSpring = new MoonSpringVec2(() => ref this._currentPosition.x, () => ref this._currentPosition.y) { StartOnTargetAssigned = true };
-			this.MovementSpring.SetParameters(this.MoveParameters ?? new MoonSpringParams()).OnUpdate(() => {
-				this.Cursor.RectPosition = this._currentPosition - this.Cursor.RectPivotOffset;
-			});
+			MovementSpring = new MoonSpringVec2(() => ref _currentPosition.x, () => ref _currentPosition.y) { StartOnTargetAssigned = true };
+			MovementSpring.SetParameters(MoveParameters ?? new MoonSpringParams())
+				.OnUpdate(() =>
+				{
+					Cursor.RectPosition = _currentPosition - Cursor.RectPivotOffset;
+				});
 		}
 
 		/// <summary>
 		/// Called each game tick.
 		/// </summary>
 		/// <param name="delta_">The time elapsed between last and current frame.</param>
-		public override void _Process(float delta_) {
+		public override void _Process(float delta_)
+		{
 			Vector2 mouse = GetTree().Root.GetMousePosition();
-			if (this.TargetPosition.x != mouse.x || this.TargetPosition.y != mouse.y) {
-				this.TargetPosition = mouse;
-				this.MovementSpring.To(this.TargetPosition);
+			if (TargetPosition.x != mouse.x || TargetPosition.y != mouse.y)
+			{
+				TargetPosition = mouse;
+				MovementSpring.To(TargetPosition);
 			}
 		}
 		#endregion

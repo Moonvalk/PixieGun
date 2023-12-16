@@ -1,5 +1,5 @@
-using Godot;
 using System.Collections.Generic;
+using Godot;
 using Moonvalk.Accessory;
 
 namespace Moonvalk.Audio
@@ -8,7 +8,7 @@ namespace Moonvalk.Audio
 	/// Container representing a sound queue that can be played within Godot.
 	/// </summary>
 	[Tool]
-	public partial class SoundQueue : Node
+	public class SoundQueue : Node
 	{
 		/// <summary>
 		/// Stores reference to the next index to be played.
@@ -39,13 +39,13 @@ namespace Moonvalk.Audio
 			Node child = GetChild(0);
 			if (child is AudioStreamPlayer audioStreamPlayer)
 			{
-				this.AudioStreamPlayers.Add(audioStreamPlayer);
+				AudioStreamPlayers.Add(audioStreamPlayer);
 				
-				for (int index = 0; index < this.Count; index++)
+				for (int index = 0; index < Count; index++)
 				{
 					AudioStreamPlayer duplicate = audioStreamPlayer.Duplicate() as AudioStreamPlayer;
 					AddChild(duplicate);
-					this.AudioStreamPlayers.Add(duplicate);
+					AudioStreamPlayers.Add(duplicate);
 				}
 			}
 		}
@@ -68,10 +68,10 @@ namespace Moonvalk.Audio
 		/// </summary>
 		public void PlaySound()
 		{
-			if (!this.AudioStreamPlayers[this.NextIndex].Playing)
+			if (!AudioStreamPlayers[NextIndex].Playing)
 			{
-				this.AudioStreamPlayers[this.NextIndex++].Play();
-				this.NextIndex %= this.AudioStreamPlayers.Count;
+				AudioStreamPlayers[NextIndex++].Play();
+				NextIndex %= AudioStreamPlayers.Count;
 			}
 		}
 	}

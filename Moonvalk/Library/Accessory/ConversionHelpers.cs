@@ -22,7 +22,7 @@ namespace Moonvalk.Accessory
 		/// </summary>
 		/// <param name="vector_">The input Vector3 to deconstruct.</param>
 		/// <returns>Returns a float array representing the 3 values stored in a Vector3 (xyz).</returns>
-		public static float[] Deconstruct(Godot.Vector3 vector_)
+		public static float[] Deconstruct(Vector3 vector_)
 		{
 			float[] values = new float[3];
 			values[0] = vector_.x;
@@ -36,7 +36,7 @@ namespace Moonvalk.Accessory
 		/// </summary>
 		/// <param name="vector_">The input Vector2 to deconstruct.</param>
 		/// <returns>Returns a float array representing the 2 values stored in a Vector2 (xy).</returns>
-		public static float[] Deconstruct(Godot.Vector2 vector_)
+		public static float[] Deconstruct(Vector2 vector_)
 		{
 			float[] values = new float[2];
 			values[0] = vector_.x;
@@ -49,9 +49,9 @@ namespace Moonvalk.Accessory
 		/// </summary>
 		/// <param name="vector_">An input Vector to convert.</param>
 		/// <returns>Returns the absolute value of the input Vector2.</returns>
-		public static Godot.Vector2 Abs(Godot.Vector2 vector_)
+		public static Vector2 Abs(Vector2 vector_)
 		{
-			return new Godot.Vector2(Mathf.Abs(vector_.x), Mathf.Abs(vector_.y));
+			return new Vector2(Mathf.Abs(vector_.x), Mathf.Abs(vector_.y));
 		}
 
 		/// <summary>
@@ -59,9 +59,9 @@ namespace Moonvalk.Accessory
 		/// </summary>
 		/// <param name="vector_">An input Vector to convert.</param>
 		/// <returns>Returns the absolute value of the input Vector3.</returns>
-		public static Godot.Vector3 Abs(Godot.Vector3 vector_)
+		public static Vector3 Abs(Vector3 vector_)
 		{
-			return new Godot.Vector3(Mathf.Abs(vector_.x), Mathf.Abs(vector_.y), Mathf.Abs(vector_.z));
+			return new Vector3(Mathf.Abs(vector_.x), Mathf.Abs(vector_.y), Mathf.Abs(vector_.z));
 		}
 	}
 }

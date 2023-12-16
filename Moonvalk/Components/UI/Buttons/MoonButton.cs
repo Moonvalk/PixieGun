@@ -7,7 +7,8 @@ namespace Moonvalk.UI
 	/// <summary>
 	/// Base class for an extended button with hover animations.
 	/// </summary>
-	public class MoonButton : Button {
+	public class MoonButton : Button
+	{
 		#region Data Fields
 		/// <summary>
 		/// Stores the path to the container element.
@@ -27,7 +28,7 @@ namespace Moonvalk.UI
 		/// <summary>
 		/// Flag that determines if this button is focused.
 		/// </summary>
-		public bool IsFocused { get; protected set; } = false;
+		public bool IsFocused { get; protected set; }
 
 		/// <summary>
 		/// Signal that is emitted once focus has entered on this element.
@@ -44,15 +45,16 @@ namespace Moonvalk.UI
 		/// <summary>
 		/// Called when this object is first initialized.
 		/// </summary>
-		public override void _Ready() {
-			this.Container = this.GetNode<TextureRect>(p_container);
+		public override void _Ready()
+		{
+			Container = GetNode<TextureRect>(p_container);
 			this.CenterPivot();
-			this.Container.CenterPivot();
+			Container.CenterPivot();
 
-			this.Connect("pressed", this, nameof(this.handlePress));
-			this.Connect("mouse_entered", this, nameof(this.handleChangeFocus), new Array() { true });
-			this.Connect("focus_entered", this, nameof(this.handleChangeFocus), new Array() { true });
-			this.Connect("focus_exited", this, nameof(this.handleChangeFocus), new Array() { false });
+			Connect("pressed", this, nameof(handlePress));
+			Connect("mouse_entered", this, nameof(handleChangeFocus), new Array { true });
+			Connect("focus_entered", this, nameof(handleChangeFocus), new Array { true });
+			Connect("focus_exited", this, nameof(handleChangeFocus), new Array { false });
 		}
 		#endregion
 
@@ -61,32 +63,39 @@ namespace Moonvalk.UI
 		/// Handles updating the focused state of this button when an event occurs.
 		/// </summary>
 		/// <param name="isFocused_">Flag that determines if this button is currently focused or not.</param>
-		protected void handleChangeFocus(bool isFocused_) {
-			if (this.IsFocused == isFocused_) {
-				return;
+		protected void handleChangeFocus(bool isFocused_)
+		{
+			if (IsFocused == isFocused_) return;
+			
+			IsFocused = isFocused_;
+			if (IsFocused)
+			{
+				GrabFocus();
+				Container.ScaleTo(Vector2.One * HoveredScale, new MoonTweenParams { Duration = 0.5f, EasingType = Easing.Types.ElasticOut });
+				Container.ColorTo(new Color(1.1f, 1.1f, 1.1f), new MoonTweenParams { Duration = 0.25f });
 			}
-			this.IsFocused = isFocused_;
-			if (this.IsFocused) {
-				this.GrabFocus();
-				this.Container.ScaleTo(Vector2.One * this.HoveredScale, new MoonTweenParams() { Duration = 0.5f, EasingType = Easing.Types.ElasticOut });
-				this.Container.ColorTo(new Color(1.1f, 1.1f, 1.1f), new MoonTweenParams() { Duration = 0.25f });
-			} else {
-				this.Container.ScaleTo(Vector2.One, new MoonTweenParams() { Duration = 0.25f });
-				this.Container.ColorTo(new Color(0.9f, 0.9f, 0.9f), new MoonTweenParams() { Duration = 0.25f });
+			else
+			{
+				Container.ScaleTo(Vector2.One, new MoonTweenParams { Duration = 0.25f });
+				Container.ColorTo(new Color(0.9f, 0.9f, 0.9f), new MoonTweenParams { Duration = 0.25f });
 			}
-			this.EmitSignal(this.IsFocused ? nameof(OnFocusEnter) : nameof(OnFocusExit));
+			
+			EmitSignal(IsFocused ? nameof(OnFocusEnter) : nameof(OnFocusExit));
 		}
 
 		/// <summary>
 		/// Called to handle press animations when this button is pressed.
 		/// </summary>
-		protected void handlePress() {
-			this.IsFocused = true;
-			this.Container.RectScale = Vector2.One * this.HoveredScale;
-			this.Container.ScaleTo(Vector2.One * 0.9f, new MoonTweenParams() {
+		protected void handlePress()
+		{
+			IsFocused = true;
+			Container.RectScale = Vector2.One * HoveredScale;
+			Container.ScaleTo(Vector2.One * 0.9f, new MoonTweenParams
+			{
 				Duration = 0.5f, EasingFunction = Easing.Elastic.Out,
-			}).Then(() => {
-				this.handleChangeFocus(false);
+			}).Then(() =>
+			{
+				handleChangeFocus(false);
 			});
 		}
 		#endregion

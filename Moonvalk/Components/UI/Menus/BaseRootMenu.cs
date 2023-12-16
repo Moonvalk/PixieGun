@@ -2,19 +2,23 @@ using System;
 using Godot;
 using Moonvalk.Nodes;
 
-namespace Moonvalk.Components.UI {
+namespace Moonvalk.Components.UI
+{
 	/// <summary>
 	/// Base handler for a root menu scene.
 	/// </summary>
-	public class BaseRootMenu : MoonScenePathLoader<BaseMenuPageController> {
+	public class BaseRootMenu : MoonScenePathLoader<BaseMenuPageController>
+	{
 		#region Public Methods
 		/// <summary>
 		/// Called to hide the current menu page.
 		/// </summary>
-		public override void Hide(Action onComplete_) {
+		public override void Hide(Action onComplete_)
+		{
 			// Play an animation and when complete remove the scene.
-			this.CurrentScene.HidePage(() => {
-				this.hideCurrentScene();
+			CurrentScene.HidePage(() =>
+			{
+				hideCurrentScene();
 				onComplete_?.Invoke();
 			});
 		}
@@ -25,48 +29,57 @@ namespace Moonvalk.Components.UI {
 		/// Displays the scene at the given index.
 		/// </summary>
 		/// <param name="sceneIndex_">The scene index to be displayed.</param>
-		protected override void displayScene(int sceneIndex_) {
+		protected override void displayScene(int sceneIndex_)
+		{
 			// Animate away the current page first, if necessary.
-			if (this.CurrentScene.Validate()) {
-				this.CurrentScene.HidePage(() => {
-					this.swapToScene(sceneIndex_);
+			if (CurrentScene.Validate())
+			{
+				CurrentScene.HidePage(() =>
+				{
+					swapToScene(sceneIndex_);
 				});
+				
 				return;
 			}
-			this.swapToScene(sceneIndex_);
+			
+			swapToScene(sceneIndex_);
 		}
 		
 		/// <summary>
 		/// Instantiates a new scene at the requested index.
 		/// </summary>
 		/// <param name="sceneIndex_">The scene index to instance.</param>
-		protected override void instantiateScene(PackedScene packedScene_) {
+		protected override void instantiateScene(PackedScene packedScene_)
+		{
 			base.instantiateScene(packedScene_);
-			this.CurrentScene.Connect(nameof(BaseMenuPageController.OnExitMenu), this, nameof(this.Hide));
-			this.CurrentScene.Connect(nameof(BaseMenuPageController.OnDisplayPage), this, nameof(this.Show));
-			this.CurrentScene.Connect(nameof(BaseMenuPageController.OnButtonFocus), this, nameof(this.handleButtonFocus));
-			this.CurrentScene.Connect(nameof(BaseMenuPageController.OnButtonPress), this, nameof(this.handleButtonPress));
-			this.CurrentScene.Connect(nameof(BaseMenuPageController.OnAnimateElement), this, nameof(this.handleAnimateElement));
+			CurrentScene.Connect(nameof(BaseMenuPageController.OnExitMenu), this, nameof(this.Hide));
+			CurrentScene.Connect(nameof(BaseMenuPageController.OnDisplayPage), this, nameof(Show));
+			CurrentScene.Connect(nameof(BaseMenuPageController.OnButtonFocus), this, nameof(handleButtonFocus));
+			CurrentScene.Connect(nameof(BaseMenuPageController.OnButtonPress), this, nameof(handleButtonPress));
+			CurrentScene.Connect(nameof(BaseMenuPageController.OnAnimateElement), this, nameof(handleAnimateElement));
 		}
 
 		/// <summary>
 		/// Handles a button press event.
 		/// </summary>
-		protected void handleButtonPress() {
+		protected void handleButtonPress()
+		{
 			MoonAudioManager.Instance.PlaySound("press");
 		}
 
 		/// <summary>
 		/// Handles a button focus event.
 		/// </summary>
-		protected void handleButtonFocus() {
+		protected void handleButtonFocus()
+		{
 			MoonAudioManager.Instance.PlaySound("hover");
 		}
 		
 		/// <summary>
 		/// Handles an element animation event.
 		/// </summary>
-		protected void handleAnimateElement() {
+		protected void handleAnimateElement()
+		{
 			MoonAudioManager.Instance.PlaySound("element");
 		}
 		#endregion

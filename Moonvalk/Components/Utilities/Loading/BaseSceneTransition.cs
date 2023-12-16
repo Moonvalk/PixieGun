@@ -4,12 +4,15 @@ using Moonvalk.Animation;
 using Moonvalk.Audio;
 using Moonvalk.Utilities;
 
-namespace Moonvalk.Components {
-	public class BaseSceneTransition : Control {
+namespace Moonvalk.Components
+{
+	public class BaseSceneTransition : Control
+	{
 		/// <summary>
 		/// All states available to a screen transition.
 		/// </summary>
-		public enum TransitionState {
+		public enum TransitionState
+		{
 			Idle,
 			Intro,
 			Covered,
@@ -56,16 +59,12 @@ namespace Moonvalk.Components {
 		/// <summary>
 		/// The current progress of this transition animation.
 		/// </summary>
-		protected float _progress = 0f;
+		protected float _progress;
 
 		/// <summary>
 		/// Gets the current progress of this transition.
 		/// </summary>
-		public float Progress {
-			get {
-				return this._progress;
-			}
-		}
+		public float Progress => _progress;
 		#endregion
 
 		#region Public Methods
@@ -73,15 +72,16 @@ namespace Moonvalk.Components {
 		/// 
 		/// </summary>
 		/// <param name="onComplete_"></param>
-		public void PlayIntro(Action onComplete_) {
-			if (this.CurrentState == TransitionState.Covered) {
-				return;
-			}
-			this.Events.AddAction(TransitionState.Covered, onComplete_);
-			this.AudioEnter.PlaySound();
-			this.setState(TransitionState.Intro);
-			this.animateProgress(1f, () => {
-				this.setState(TransitionState.Covered);
+		public void PlayIntro(Action onComplete_)
+		{
+			if (CurrentState == TransitionState.Covered) return;
+			
+			Events.AddAction(TransitionState.Covered, onComplete_);
+			AudioEnter.PlaySound();
+			setState(TransitionState.Intro);
+			animateProgress(1f, () =>
+			{
+				setState(TransitionState.Covered);
 			});
 		}
 
@@ -89,15 +89,16 @@ namespace Moonvalk.Components {
 		/// 
 		/// </summary>
 		/// <param name="onComplete_"></param>
-		public void PlayOutro(Action onComplete_) {
-			if (this.CurrentState == TransitionState.Complete) {
-				return;
-			}
-			this.Events.AddAction(TransitionState.Complete, onComplete_);
-			this.AudioEnter.PlaySound();
-			this.setState(TransitionState.Outro);
-			this.animateProgress(-1f, () => {
-				this.setState(TransitionState.Complete);
+		public void PlayOutro(Action onComplete_)
+		{
+			if (CurrentState == TransitionState.Complete) return;
+
+			Events.AddAction(TransitionState.Complete, onComplete_);
+			AudioEnter.PlaySound();
+			setState(TransitionState.Outro);
+			animateProgress(-1f, () =>
+			{
+				setState(TransitionState.Complete);
 			});
 		}
 
@@ -105,11 +106,13 @@ namespace Moonvalk.Components {
 		/// Called to snap this transition to the specified state.
 		/// </summary>
 		/// <param name="state_">The state to snap to.</param>
-		public void SnapStateTo(TransitionState state_) {
-			switch (state_) {
+		public void SnapStateTo(TransitionState state_)
+		{
+			switch (state_)
+			{
 				case TransitionState.Covered:
-					this._progress = 0f;
-					this.Material.Set("shader_param/direction", -1f);
+					_progress = 0f;
+					Material.Set("shader_param/direction", -1f);
 					break;
 			}
 		}
@@ -119,32 +122,38 @@ namespace Moonvalk.Components {
 		/// <summary>
 		/// Called to set the progress value on the transition shader.
 		/// </summary>
-		protected void setProgress() {
-			this.Material.Set("shader_param/progress", this._progress);
+		protected void setProgress()
+		{
+			Material.Set("shader_param/progress", _progress);
 		}
 
 		/// <summary>
 		/// Handles playing the animation on progress and updating the shader material.
 		/// </summary>
 		/// <param name="onComplete_">An action that will be invoked on completion.</param>
-		protected void animateProgress(float direction_, Action onComplete_ = null) {
-			this._progress = 0f;
-			MoonTween.CustomTweenTo<MoonTween>(() => ref this._progress, 1f, this.TransitionParams, false)
-				.OnComplete(onComplete_).OnStart(() => {
-					this.Material.Set("shader_param/direction", direction_);
-				}).OnUpdate(this.setProgress).Start();
+		protected void animateProgress(float direction_, Action onComplete_ = null)
+		{
+			_progress = 0f;
+			MoonTween.CustomTweenTo<MoonTween>(() => ref _progress, 1f, TransitionParams, false)
+				.OnComplete(onComplete_)
+				.OnStart(() =>
+				{
+					Material.Set("shader_param/direction", direction_);
+				})
+				.OnUpdate(setProgress)
+				.Start();
 		}
 
 		/// <summary>
 		/// Sets the state of this object and emits it to listeners.
 		/// </summary>
 		/// <param name="state_">The new state to be set.</param>
-		protected void setState(TransitionState state_) {
-			this.CurrentState = state_;
-			this.Events.Run(this.CurrentState, true);
-			if (this.CurrentState == TransitionState.Complete) {
-				this.setState(TransitionState.Idle);
-			}
+		protected void setState(TransitionState state_)
+		{
+			CurrentState = state_;
+			Events.Run(CurrentState, true);
+			
+			if (CurrentState == TransitionState.Complete) setState(TransitionState.Idle);
 		}
 		#endregion
 	}

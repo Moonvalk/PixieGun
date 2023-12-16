@@ -22,7 +22,7 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready()
 		{
-			MoonAudioManager.Instance?.PlayMusic(this.GroupName, this.ResourceName == "" ? null : this.ResourceName);
+			MoonAudioManager.Instance?.PlayMusic(GroupName, ResourceName == "" ? null : ResourceName);
 		}
 	}
 }

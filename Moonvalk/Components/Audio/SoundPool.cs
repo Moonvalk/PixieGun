@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using Godot;
 using Moonvalk.Components;
-using System.Collections.Generic;
 
 namespace Moonvalk.Audio
 {
@@ -31,7 +31,7 @@ namespace Moonvalk.Audio
 		/// </summary>
 		public override void _Ready()
 		{
-			this.Sounds = this.GetAllComponents<SoundQueue>();
+			Sounds = this.GetAllComponents<SoundQueue>();
 		}
 
 		/// <summary>
@@ -62,12 +62,12 @@ namespace Moonvalk.Audio
 			int index;
 			do
 			{
-				index = this.Random.RandiRange(0, this.Sounds.Count - 1);
+				index = Random.RandiRange(0, Sounds.Count - 1);
 			}
-			while (index == this.PreviousIndex);
+			while (index == PreviousIndex);
 			
-			this.PreviousIndex = index;
-			this.Sounds[index].PlaySound();
+			PreviousIndex = index;
+			Sounds[index].PlaySound();
 		}
 	}
 }

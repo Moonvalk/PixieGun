@@ -2,11 +2,13 @@ using System;
 using Godot;
 using Moonvalk.Nodes;
 
-namespace Moonvalk.Components.UI {
+namespace Moonvalk.Components.UI
+{
 	/// <summary>
 	/// Controller for handling transition animations between scene swaps.
 	/// </summary>
-	public class MoonTransitionController : Control {
+	public class MoonTransitionController : Control
+	{
 		#region Data Fields
 		/// <summary>
 		/// A prefab to be instantiated as a transition animation.
@@ -34,11 +36,11 @@ namespace Moonvalk.Components.UI {
 		/// Called when this object is first initialized.
 		/// </summary>
 		public override void _Ready() {
-			this.Transition = this.AddInstance<BaseMoonTransition>(this.prefab_Transition);
-			this.MoveChild(this.Transition, 0);
+			Transition = this.AddInstance<BaseMoonTransition>(prefab_Transition);
+			MoveChild(Transition, 0);
 
-			this.Spinner = this.GetNode<MoonSceneLoadSpinner>(p_spinner);
-			this.Transition.SnapState(MoonTransitionState.Covered);
+			Spinner = GetNode<MoonSceneLoadSpinner>(p_spinner);
+			Transition.SnapState(MoonTransitionState.Covered);
 		}
 		#endregion
 
@@ -48,11 +50,13 @@ namespace Moonvalk.Components.UI {
 		/// </summary>
 		/// <param name="onCovered_">An optional action to be executed on completion.</param>
 		public void PlayTransitionIntro(Action onCovered_ = null) {
-			this.Transition.Events.AddAction(MoonTransitionState.Covered, () => {
-				this.Spinner.Play();
+			Transition.Events.AddAction(MoonTransitionState.Covered, () =>
+			{
+				Spinner.Play();
 				onCovered_?.Invoke();
 			});
-			this.Transition.PlayIntro();
+			
+			Transition.PlayIntro();
 		}
 
 		/// <summary>
@@ -60,9 +64,9 @@ namespace Moonvalk.Components.UI {
 		/// </summary>
 		/// <param name="onComplete_">An optional action to be executed on completion.</param>
 		public void PlayTransitionOutro(Action onComplete_ = null) {
-			this.Transition.Events.AddAction(MoonTransitionState.Complete, onComplete_);
-			this.Spinner.Stop();
-			this.Transition.PlayOutro();
+			Transition.Events.AddAction(MoonTransitionState.Complete, onComplete_);
+			Spinner.Stop();
+			Transition.PlayOutro();
 		}
 		#endregion
 	}

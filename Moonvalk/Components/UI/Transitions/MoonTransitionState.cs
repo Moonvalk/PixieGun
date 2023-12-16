@@ -1,9 +1,11 @@
 
-namespace Moonvalk.Components.UI {
+namespace Moonvalk.Components.UI
+{
 	/// <summary>
 	/// All states available to a screen transition.
 	/// </summary>
-	public enum MoonTransitionState {
+	public enum MoonTransitionState
+	{
 		Idle,
 		Intro,
 		Covered,

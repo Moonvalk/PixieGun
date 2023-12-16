@@ -7,7 +7,7 @@ namespace Moonvalk.Components
 	/// <summary>
 	/// Main game manager behavior.
 	/// </summary>
-	public partial class MoonGameManager : Node
+	public class MoonGameManager : Node
 	{
 		#region Data Fields
 		/// <summary>
@@ -25,7 +25,7 @@ namespace Moonvalk.Components
 		/// A maximum time elapsed allowed to be sent for game ticks. This helps to
 		/// minimize lag spikes applied to systems.
 		/// </summary>
-		public const float MAXIMUM_FRAME_DELTA = 0.033f;
+		public const float MaximumFrameDelta = 0.033f;
 
 		#region Godot Events
 		/// <summary>
@@ -33,8 +33,8 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready()
 		{
-			MoonGameManager.Instance = this.MakeSingleton<MoonGameManager>(MoonGameManager.Instance);
-			new MoonGameSettings("GlobalGameSettings.json");
+			Instance = this.MakeSingleton(Instance);
+			MoonGameSettings.Instance = new MoonGameSettings("GlobalGameSettings.json");
 		}
 		
 		/// <summary>
@@ -43,7 +43,7 @@ namespace Moonvalk.Components
 		/// <param name="delta_">The time elapsed since last frame.</param>
 		public override void _Process(float delta_)
 		{
-			float deltaCapped = Mathf.Min(delta_, MAXIMUM_FRAME_DELTA);
+			float deltaCapped = Mathf.Min(delta_, MaximumFrameDelta);
 			Global.Systems.Update(deltaCapped);
 		}
 		#endregion

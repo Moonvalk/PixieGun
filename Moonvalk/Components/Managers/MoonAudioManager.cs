@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using Godot;
 using Moonvalk.Audio;
 using Moonvalk.Data;
 using Moonvalk.Nodes;
 using Moonvalk.Resources;
-using System.Collections.Generic;
 
 namespace Moonvalk.Components
 {
@@ -60,20 +60,20 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready()
 		{
-			MoonAudioManager.Instance = this.MakeSingleton<MoonAudioManager>(MoonAudioManager.Instance);
-			this.Player = this.GetComponent<AudioStreamPlayer>();
-			this.Player.Connect("finished", this, nameof(this.handleAudioStreamFinished));
+			Instance = this.MakeSingleton(Instance);
+			Player = this.GetComponent<AudioStreamPlayer>();
+			Player.Connect("finished", this, nameof(handleAudioStreamFinished));
 
 			// Build a dictionary of sound pools for global playing.
-			this.GlobalSounds = new Dictionary<string, SoundPool>();
-			for (int index = 0; index < this.GlobalSoundList.Items.Length; index++)
+			GlobalSounds = new Dictionary<string, SoundPool>();
+			for (int index = 0; index < GlobalSoundList.Items.Length; index++)
 			{
-				string name = this.GlobalSoundList.Items[index].Name.ToLower();
-				SoundPool pool = this.AddInstance<SoundPool>(this.GlobalSoundList.Items[index].GetAs<PackedScene>());
+				string name = GlobalSoundList.Items[index].Name.ToLower();
+				SoundPool pool = this.AddInstance<SoundPool>(GlobalSoundList.Items[index].GetAs<PackedScene>());
 				
-				if (this.GlobalSounds.ContainsKey(name)) this.GlobalSounds.Remove(name);
+				if (GlobalSounds.ContainsKey(name)) GlobalSounds.Remove(name);
 				
-				this.GlobalSounds.Add(name, pool);
+				GlobalSounds.Add(name, pool);
 			}
 		}
 		#endregion
@@ -87,17 +87,17 @@ namespace Moonvalk.Components
 		/// a new track will be selected by the group based on setup.</param>
 		public void PlayMusic(string groupName_, string resourceName_ = null)
 		{
-			if (!this.Activated) return;
+			if (!Activated) return;
 
 			string streamPath = null;
 			string formattedName = groupName_.ToLower();
-			for (int index = 0; index < this.MusicList.Items.Length; index++)
+			for (int index = 0; index < MusicList.Items.Length; index++)
 			{
-				AudioResourceGroup group = this.MusicList.GetAs<AudioResourceGroup>(index);
+				AudioResourceGroup group = MusicList.GetAs<AudioResourceGroup>(index);
 				
 				if (group.Name.ToLower() == formattedName)
 				{
-					this.CurrentGroupName = group.Name;
+					CurrentGroupName = group.Name;
 					streamPath = group.GetStreamPath(resourceName_);
 					break;
 				}
@@ -105,8 +105,8 @@ namespace Moonvalk.Components
 			
 			if (streamPath == null) return;
 
-			MoonResourceLoader.Load<AudioStream>(streamPath, (AudioStream stream_) => {
-				this.playStream(stream_);
+			MoonResourceLoader.Load(streamPath, (AudioStream stream_) => {
+				playStream(stream_);
 			});
 		}
 
@@ -117,7 +117,7 @@ namespace Moonvalk.Components
 		public void PlaySound(string soundPoolName_)
 		{
 			string formattedName = soundPoolName_.ToLower();
-			if (this.GlobalSounds.ContainsKey(formattedName)) this.GlobalSounds[formattedName].PlayRandomSound();
+			if (GlobalSounds.ContainsKey(formattedName)) GlobalSounds[formattedName].PlayRandomSound();
 		}
 
 		/// <summary>
@@ -128,10 +128,10 @@ namespace Moonvalk.Components
 		/// <param name="saveSettings_">Should this setting be saved in the global json?</param>
 		public void SetVolume(string audioBus_, float percentage_, bool saveSettings_ = true)
 		{
-			string busName = this.GetAudioBus(audioBus_).Name;
+			string busName = GetAudioBus(audioBus_).Name;
 			float volumeDb = GD.Linear2Db(Mathf.Clamp(percentage_, 0f, 1f));
 			AudioServer.SetBusVolumeDb(AudioServer.GetBusIndex(busName), volumeDb);
-			MoonGameSettings.Instance.Set<float>("volume", (busName, percentage_));
+			MoonGameSettings.Instance.Set("volume", (busName, percentage_));
 
 			if (saveSettings_) MoonGameSettings.Instance.Save();
 		}
@@ -144,12 +144,12 @@ namespace Moonvalk.Components
 		public MoonFloat GetAudioBus(string name_)
 		{
 			string formattedName = name_.ToLower();
-			for (int index = 0; index < this.AudioBuses.Length; index++)
+			for (int index = 0; index < AudioBuses.Length; index++)
 			{
-				if (formattedName == this.AudioBuses.Items[index].Name.ToLower()) return this.AudioBuses.Items[index];
+				if (formattedName == AudioBuses.Items[index].Name.ToLower()) return AudioBuses.Items[index];
 			}
 			
-			return this.AudioBuses.Items[0];
+			return AudioBuses.Items[0];
 		}
 		#endregion
 
@@ -160,8 +160,8 @@ namespace Moonvalk.Components
 		/// <param name="stream_">The new audio stream / file to be played.</param>
 		protected void playStream(AudioStream stream_)
 		{
-			this.Player.Stream = stream_;
-			this.Player.Play();
+			Player.Stream = stream_;
+			Player.Play();
 		}
 
 		/// <summary>
@@ -169,7 +169,7 @@ namespace Moonvalk.Components
 		/// </summary>
 		protected void handleAudioStreamFinished()
 		{
-			this.PlayMusic(this.CurrentGroupName);
+			PlayMusic(CurrentGroupName);
 		}
 		#endregion
 	}

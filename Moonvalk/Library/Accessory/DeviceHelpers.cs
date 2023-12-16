@@ -1,6 +1,7 @@
 using Godot;
 
-namespace Moonvalk.Accessory {
+namespace Moonvalk.Accessory
+{
 	/// <summary>
 	/// Helper functions for detecting devices.
 	/// </summary>
@@ -28,8 +29,8 @@ namespace Moonvalk.Accessory {
 		/// <returns>Returns true if the device is determined mobile.</returns>
 		public static bool IsDeviceMobile()
 		{
-			DeviceHelpers.setDeviceState();
-			return DeviceHelpers.CurrentState == DeviceState.Mobile;
+			setDeviceState();
+			return CurrentState == DeviceState.Mobile;
 		}
 
 		/// <summary>
@@ -38,8 +39,8 @@ namespace Moonvalk.Accessory {
 		/// <returns>Returns true if the device is determined mobile.</returns>
 		public static bool IsDeviceHTML5()
 		{
-			DeviceHelpers.setDeviceState();
-			return DeviceHelpers.CurrentState == DeviceState.HTML5;
+			setDeviceState();
+			return CurrentState == DeviceState.HTML5;
 		}
 
 		/// <summary>
@@ -48,8 +49,8 @@ namespace Moonvalk.Accessory {
 		/// <returns>Returns true if the device is determined mobile.</returns>
 		public static bool IsDeviceDesktop()
 		{
-			DeviceHelpers.setDeviceState();
-			return DeviceHelpers.CurrentState == DeviceState.Desktop;
+			setDeviceState();
+			return CurrentState == DeviceState.Desktop;
 		}
 
 		/// <summary>
@@ -57,22 +58,22 @@ namespace Moonvalk.Accessory {
 		/// </summary>
 		private static void setDeviceState()
 		{
-			if (DeviceHelpers.CurrentState != DeviceState.None)
+			if (CurrentState != DeviceState.None)
 			{
 				return;
 			}
 			string os = OS.GetName();
 			if (os == "Windows" || os == "OSX" || os == "macOS" || os == "Linux" || os == "Server" || os == "UWP")
 			{
-				DeviceHelpers.CurrentState = DeviceState.Desktop;
+				CurrentState = DeviceState.Desktop;
 			}
 			else if (os == "HTML5" || os == "Web")
 			{
-				DeviceHelpers.CurrentState = DeviceState.HTML5;
+				CurrentState = DeviceState.HTML5;
 			}
 			else if (os == "Android" || os == "iOS" || os == "BlackBerry 10")
 			{
-				DeviceHelpers.CurrentState = DeviceState.Mobile;
+				CurrentState = DeviceState.Mobile;
 			}
 		}
 	}

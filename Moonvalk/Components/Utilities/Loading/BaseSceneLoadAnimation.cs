@@ -1,9 +1,10 @@
 using System;
 using Godot;
-using Moonvalk.Nodes;
 
-namespace Moonvalk.Components {
-	public abstract class BaseSceneLoadAnimation : Control {
+namespace Moonvalk.Components
+{
+	public abstract class BaseSceneLoadAnimation : Control
+	{
 		#region Data Fields
 		#endregion
 
@@ -12,7 +13,7 @@ namespace Moonvalk.Components {
 		/// Called when this object is first initialized.
 		/// </summary>
 		public override void _Ready() {
-			this.Visible = false;
+			Visible = false;
 		}
 		#endregion
 

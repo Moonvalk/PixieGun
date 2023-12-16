@@ -6,7 +6,6 @@ using Moonvalk.Components.UI;
 using Moonvalk.Data;
 using Moonvalk.Nodes;
 using Moonvalk.Resources;
-using Moonvalk.Utilities;
 
 namespace Moonvalk.Components
 {
@@ -59,9 +58,9 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready()
 		{
-			MoonSceneLoadManager.Instance = this.MakeSingleton<MoonSceneLoadManager>(MoonSceneLoadManager.Instance);
-			this.TransitionController = this.GetNode<MoonTransitionController>(p_transitionController);
-			this.LoadScene(this.DefaultScene);
+			Instance = this.MakeSingleton(Instance);
+			TransitionController = GetNode<MoonTransitionController>(p_transitionController);
+			LoadScene(DefaultScene);
 		}
 		#endregion
 
@@ -73,18 +72,19 @@ namespace Moonvalk.Components
 		/// <param name="onLoad_">An action that will be called when the scene is loaded.</param>
 		public void LoadScene(string sceneName_, Action onLoad_ = null)
 		{
-			if (this.IsLoading) return;
+			if (IsLoading) return;
 			
-			this.IsLoading = true;
-			if (this.MainScene.Validate())
+			IsLoading = true;
+			if (MainScene.Validate())
 			{
-				this.TransitionController.PlayTransitionIntro(() => {
-					this.startSceneLoad(sceneName_, onLoad_);
+				TransitionController.PlayTransitionIntro(() =>
+				{
+					startSceneLoad(sceneName_, onLoad_);
 				});
 				return;
 			}
 			
-			this.startSceneLoad(sceneName_, onLoad_);
+			startSceneLoad(sceneName_, onLoad_);
 		}
 
 		/// <summary>
@@ -94,16 +94,16 @@ namespace Moonvalk.Components
 		/// <returns>Returns the corresponding file path.</returns>
 		public string GetScenePath(string sceneName_)
 		{
-			for (int index = 0; index < this.SceneList.Length; index++)
+			for (int index = 0; index < SceneList.Length; index++)
 			{
-				if (this.SceneList.Items[index].Name.ToLower() == sceneName_.ToLower())
-					return this.SceneList.Items[index].Value;
+				if (SceneList.Items[index].Name.ToLower() == sceneName_.ToLower())
+					return SceneList.Items[index].Value;
 			}
 		
 			#if (__DEBUG)
 				GD.Print("Could not find file path for scene: " + sceneName_);
 			#endif
-			return this.SceneList.Items[0].Value;
+			return SceneList.Items[0].Value;
 		}
 		#endregion
 
@@ -115,8 +115,9 @@ namespace Moonvalk.Components
 		/// <param name="onLoad_">An action to be run when the scene is finished being loaded.</param>
 		protected void startSceneLoad(string sceneName_, Action onLoad_)
 		{
-			MoonResourceLoader.Load<PackedScene>(this.GetScenePath(sceneName_), (PackedScene scene_) => {
-				this.instanceScene(scene_, onLoad_);
+			MoonResourceLoader.Load(GetScenePath(sceneName_), (PackedScene scene_) =>
+			{
+				instanceScene(scene_, onLoad_);
 			}, initialPollDelay_: 1f);
 		}
 
@@ -131,11 +132,11 @@ namespace Moonvalk.Components
 				GD.Print("Instantiating scene: " + scene_);
 			#endif
 			
-			this.RemoveChildren(this.MainScene);
-			this.MainScene = this.AddInstance<Node>(scene_);
-			this.IsLoading = false;
+			this.RemoveChildren(MainScene);
+			MainScene = this.AddInstance<Node>(scene_);
+			IsLoading = false;
 			onLoad_?.Invoke();
-			this.TransitionController.PlayTransitionOutro();
+			TransitionController.PlayTransitionOutro();
 		}
 		#endregion
 	}

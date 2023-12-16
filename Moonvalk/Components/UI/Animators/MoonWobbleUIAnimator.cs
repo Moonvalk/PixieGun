@@ -43,11 +43,11 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready()
 		{
-			this.Element = this.GetNode<Control>(p_uiElement);
-			this.Element.CenterPivot();
-			this.Element.WobbleMove(this.WobbleMoveDirection, this.WobbleMoveParams).Start();
-			this.Element.WobbleScale(Vector2.One, this.WobbleScaleParams).Start();
-			this.Element.WobbleRotation(1f, this.WobbleRotateParams).Start();
+			Element = GetNode<Control>(p_uiElement);
+			Element.CenterPivot();
+			Element.WobbleMove(WobbleMoveDirection, WobbleMoveParams).Start();
+			Element.WobbleScale(Vector2.One, WobbleScaleParams).Start();
+			Element.WobbleRotation(1f, WobbleRotateParams).Start();
 		}
 	}
 }
