@@ -1,16 +1,20 @@
 using Godot;
 
-namespace Moonvalk.Accessory {
+namespace Moonvalk.Accessory
+{
 	/// <summary>
 	/// Static class containing helper functions for handling SceneTreeTweens in Godot.
 	/// </summary>
-	public static class SceneTreeTweenHelpers {
+	public static class SceneTreeTweenHelpers
+	{
 		/// <summary>
 		/// Called to nullify a SceneTreeTween.
 		/// </summary>
 		/// <param name="tween_">The SceneTreeTween to be stopped and nullified.</param>
-		public static void CancelTween(ref SceneTreeTween tween_) {
-			if (tween_ != null) {
+		public static void CancelTween(ref SceneTreeTween tween_)
+		{
+			if (tween_ != null)
+			{
 				tween_.Stop();
 				tween_ = null;
 			}
@@ -33,6 +37,7 @@ namespace Moonvalk.Accessory {
 		) {
 			CancelTween(ref tween_);
 			tween_ = node_.CreateTween().SetTrans(transition_).SetEase(ease_);
+			
 			return tween_;
 		}
 	}

@@ -1,5 +1,6 @@
 
-namespace Moonvalk.Accessory {
+namespace Moonvalk.Accessory
+{
 	/// <summary>
 	/// Contract for a method that will return a reference to a field similar to that of a pointer.
 	/// </summary>
