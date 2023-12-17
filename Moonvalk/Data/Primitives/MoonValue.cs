@@ -10,13 +10,11 @@ namespace Moonvalk.Data
         /// <summary>
         /// The name of the resource.
         /// </summary>
-        [Export]
-        public string Name { get; protected set; } = "";
+        [Export] public string Name { get; protected set; } = "";
 
         /// <summary>
         /// The value stored here.
         /// </summary>
-        [Export]
-        public Unit Value { get; protected set; }
+        [Export] public Unit Value { get; protected set; }
     }
 }

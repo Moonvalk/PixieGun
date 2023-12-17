@@ -11,21 +11,16 @@ namespace Moonvalk.Data
         /// <summary>
         /// The name of the resource.
         /// </summary>
-        [Export]
-        public string Name { get; protected set; } = "";
+        [Export] public string Name { get; protected set; } = "";
 
         /// <summary>
         /// Array of all items stored here.
         /// </summary>
-        [Export]
-        public Unit[] Items { get; protected set; }
+        [Export] public Unit[] Items { get; protected set; }
 
         /// <summary>
         /// Gets the current item count.
         /// </summary>
-        public int Length
-        {
-            get => Items.Length;
-        }
+        public int Length => Items.Length;
     }
 }

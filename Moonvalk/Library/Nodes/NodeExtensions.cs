@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Moonvalk.Animation;
+using Object = Godot.Object;
 
 namespace Moonvalk.Nodes
 {
@@ -26,7 +27,7 @@ namespace Moonvalk.Nodes
         /// <returns>Returns true when this node is still valid, false when it is deleted or queued for deletion.</returns>
         public static bool Validate(this Node node_)
         {
-            return node_ != null && Node.IsInstanceValid(node_) && !node_.IsQueuedForDeletion();
+            return node_ != null && Object.IsInstanceValid(node_) && !node_.IsQueuedForDeletion();
         }
 
         /// <summary>
@@ -67,15 +68,14 @@ namespace Moonvalk.Nodes
         /// <param name="node_">The node that will be provided a singleton instance.</param>
         /// <param name="instance_">The reference for checking whether a singleton instance exists.</param>
         /// <returns>Returns the singleton instance.</returns>
-        public static NodeType MakeSingleton<NodeType>(this Node node_, NodeType instance_) where NodeType : Node
+        public static NodeType MakeSingleton<NodeType>(this Node node_, NodeType instance_)
+            where NodeType : Node
         {
             if (instance_ != null)
             {
                 node_.QueueFree();
                 if (node_.GetParent().Validate())
-                {
                     node_.GetParent().RemoveChild(node_);
-                }
 
                 return instance_;
             }
@@ -91,10 +91,7 @@ namespace Moonvalk.Nodes
         public static void ApplyActionToChildren(this Node node_, Action<Node> action_)
         {
             var children = node_.GetChildren();
-            for (var index = 0; index < children.Count; index++)
-            {
-                action_.Invoke(children[index] as Node);
-            }
+            for (var index = 0; index < children.Count; index++) action_.Invoke(children[index] as Node);
         }
     }
 }

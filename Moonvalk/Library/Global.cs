@@ -1,5 +1,5 @@
-using Moonvalk.Systems;
 using Moonvalk.Animation;
+using Moonvalk.Systems;
 using Moonvalk.Utilities;
 
 namespace Moonvalk
@@ -7,7 +7,7 @@ namespace Moonvalk
     /// <summary>
     /// Global class for accessing Systems and game engine components.
     /// </summary>
-    public static partial class Global
+    public static class Global
     {
         /// <summary>
         /// Global System manager for MoonSystems.
@@ -21,7 +21,7 @@ namespace Moonvalk
         /// <returns>Returns the MoonSystem matching type searched for, if found.</returns>
         public static IMoonSystem GetSystem<Type>()
         {
-            return Global.Systems.Get<Type>();
+            return Systems.Get<Type>();
         }
 
         /// <summary>

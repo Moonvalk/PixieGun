@@ -11,7 +11,7 @@ namespace Moonvalk.Animation
         /// <summary>
         /// Default constructor made without setting up references.
         /// </summary>
-        public MoonWobbleVec3() : base()
+        public MoonWobbleVec3()
         {
             // ...
         }
@@ -31,18 +31,18 @@ namespace Moonvalk.Animation
         protected override void UpdateProperties()
         {
             // Apply easing and set properties.
-            var wave = Mathf.Sin(this.Time * this.Frequency) * this.Amplitude * this._strength;
-            for (var index = 0; index < this.Properties.Length; index += 3)
+            var wave = Mathf.Sin(Time * Frequency) * Amplitude * _strength;
+            for (var index = 0; index < Properties.Length; index += 3)
             {
-                if (this.Properties[index] == null)
+                if (Properties[index] == null)
                 {
-                    this.Delete();
+                    Delete();
                     break;
                 }
 
-                this.Properties[index]() = this.StartValues[index].x + (wave * this.Percentage.x);
-                this.Properties[index + 1]() = this.StartValues[index].y + (wave * this.Percentage.y);
-                this.Properties[index + 2]() = this.StartValues[index].z + (wave * this.Percentage.z);
+                Properties[index]() = StartValues[index].x + wave * Percentage.x;
+                Properties[index + 1]() = StartValues[index].y + wave * Percentage.y;
+                Properties[index + 2]() = StartValues[index].z + wave * Percentage.z;
             }
         }
 
@@ -51,11 +51,11 @@ namespace Moonvalk.Animation
         /// </summary>
         protected override void UpdateStartValues()
         {
-            for (var index = 0; index < this.Properties.Length; index += 3)
+            for (var index = 0; index < Properties.Length; index += 3)
             {
-                this.StartValues[index].x = this.Properties[index]();
-                this.StartValues[index].y = this.Properties[index + 1]();
-                this.StartValues[index].z = this.Properties[index + 2]();
+                StartValues[index].x = Properties[index]();
+                StartValues[index].y = Properties[index + 1]();
+                StartValues[index].z = Properties[index + 2]();
             }
         }
     }

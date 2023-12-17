@@ -8,8 +8,17 @@ namespace Moonvalk.Systems
     /// <typeparam name="Type">The type of System.</typeparam>
     public abstract class MoonQueueSystem<Type> : MoonSystem<Type>
     {
-        #region Data Fields
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        protected MoonQueueSystem()
+        {
+            RemovalQueue = new List<IQueueItem>();
+            Queue = new List<IQueueItem>();
+            Initialize();
+        }
 
+        #region Data Fields
         /// <summary>
         /// A list of all current queued items.
         /// </summary>
@@ -19,21 +28,9 @@ namespace Moonvalk.Systems
         /// A queue of all items that will be removed on the following frame.
         /// </summary>
         public List<IQueueItem> RemovalQueue { get; protected set; }
-
         #endregion
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        protected MoonQueueSystem()
-        {
-            this.RemovalQueue = new List<IQueueItem>();
-            this.Queue = new List<IQueueItem>();
-            base.Initialize();
-        }
-
         #region Public Methods
-
         /// <summary>
         /// Runs this System during each game tick.
         /// </summary>
@@ -41,32 +38,23 @@ namespace Moonvalk.Systems
         public override void Execute(float delta_)
         {
             // Remove elements from the RemovalQueue.
-            if (this.RemovalQueue.Count > 0)
+            if (RemovalQueue.Count > 0)
             {
-                for (var index = 0; index < this.RemovalQueue.Count; index++)
-                {
-                    this.Queue.Remove(this.RemovalQueue[index]);
-                }
+                for (var index = 0; index < RemovalQueue.Count; index++) Queue.Remove(RemovalQueue[index]);
 
-                this.RemovalQueue.Clear();
+                RemovalQueue.Clear();
             }
 
             // Cancel System execution when no objects exist to act upon.
-            if (this.Queue.Count == 0)
-            {
-                return;
-            }
+            if (Queue.Count == 0) return;
 
-            for (var index = 0; index < this.Queue.Count; index++)
+            for (var index = 0; index < Queue.Count; index++)
             {
-                var item = this.Queue[index];
+                var item = Queue[index];
                 if (!item.Update(delta_))
                 {
                     item.HandleTasks();
-                    if (item.IsComplete())
-                    {
-                        this.RemovalQueue.Add(item);
-                    }
+                    if (item.IsComplete()) RemovalQueue.Add(item);
                 }
             }
         }
@@ -77,7 +65,7 @@ namespace Moonvalk.Systems
         /// <returns>Returns the full list of IQueueItem items.</returns>
         public List<IQueueItem> GetAll()
         {
-            return this.Queue;
+            return Queue;
         }
 
         /// <summary>
@@ -85,7 +73,7 @@ namespace Moonvalk.Systems
         /// </summary>
         public void RemoveAll()
         {
-            this.Queue.Clear();
+            Queue.Clear();
         }
 
         /// <summary>
@@ -93,7 +81,7 @@ namespace Moonvalk.Systems
         /// </summary>
         public override void Clear()
         {
-            this.RemoveAll();
+            RemoveAll();
         }
 
         /// <summary>
@@ -102,12 +90,9 @@ namespace Moonvalk.Systems
         /// <param name="itemToAdd_">The item to add.</param>
         public void Add(IQueueItem itemToAdd_)
         {
-            if (this.Queue.Contains(itemToAdd_))
-            {
-                return;
-            }
+            if (Queue.Contains(itemToAdd_)) return;
 
-            this.Queue.Add(itemToAdd_);
+            Queue.Add(itemToAdd_);
         }
 
         /// <summary>
@@ -116,9 +101,8 @@ namespace Moonvalk.Systems
         /// <param name="itemToRemove_">The item to remove.</param>
         public void Remove(IQueueItem itemToRemove_)
         {
-            this.Queue.Remove(itemToRemove_);
+            Queue.Remove(itemToRemove_);
         }
-
         #endregion
     }
 }

@@ -16,7 +16,8 @@ namespace Moonvalk.Data
         /// <typeparam name="Type">The type to cast resources to.</typeparam>
         /// <param name="index_">The resource index to return.</param>
         /// <returns>Returns the stored resource at the requested index casted to type, if available.</returns>
-        public Type GetAs<Type>(int index_) where Type : Resource
+        public Type GetAs<Type>(int index_)
+            where Type : Resource
         {
             if (index_ > -1 && index_ < Length) return Items[index_] as Type;
 

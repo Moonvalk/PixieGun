@@ -4,6 +4,7 @@ using System;
 using Godot;
 using Moonvalk.Accessory;
 using Moonvalk.Utilities;
+using Thread = System.Threading.Thread;
 
 namespace Moonvalk.Resources
 {
@@ -28,12 +29,8 @@ namespace Moonvalk.Resources
         /// <param name="onLoad_">A callback to be executed once a successful load is complete.</param>
         /// <param name="pollRate_">The rate at which in seconds polling will be done.</param>
         /// <param name="initialPollDelay_">An initial polling delay in seconds.</param>
-        public static void Load<ResourceType>(
-            string path_,
-            Action<ResourceType> onLoad_ = null,
-            float? pollRate_ = null,
-            float? initialPollDelay_ = null
-        ) where ResourceType : Resource
+        public static void Load<ResourceType>(string path_, Action<ResourceType> onLoad_ = null, float? pollRate_ = null, float? initialPollDelay_ = null)
+            where ResourceType : Resource
         {
             Action load = () =>
             {
@@ -42,15 +39,16 @@ namespace Moonvalk.Resources
 					GD.Print("Started loading resource at path: " + path_);
 #endif
 
-                MoonResourceLoader.PollLoader(loader, onLoad_, pollRate_ ?? DefaultPollRate, initialPollDelay_ ?? 0f);
+                PollLoader(loader, onLoad_, pollRate_ ?? DefaultPollRate, initialPollDelay_ ?? 0f);
             };
+
             if (DeviceHelpers.IsDeviceHtml5())
             {
                 load();
                 return;
             }
 
-            var thread = new System.Threading.Thread(() => { load(); });
+            var thread = new Thread(() => { load(); });
             thread.Start();
         }
 
@@ -63,12 +61,8 @@ namespace Moonvalk.Resources
         /// <param name="onLoad_">A callback to be executed once a successful load is complete.</param>
         /// <param name="pollRate_">The adjusted rate at which in seconds polling will be done following an initial delay.</param>
         /// <param name="pollDelay_">A delay in seconds before the next poll will occur.</param>
-        private static void PollLoader<ResourceType>(
-            ResourceInteractiveLoader loader_,
-            Action<ResourceType> onLoad_,
-            float pollRate_,
-            float pollDelay_
-        ) where ResourceType : Resource
+        private static void PollLoader<ResourceType>(ResourceInteractiveLoader loader_, Action<ResourceType> onLoad_, float pollRate_, float pollDelay_)
+            where ResourceType : Resource
         {
             MoonTimer.Wait(pollDelay_, () =>
             {
@@ -87,7 +81,7 @@ namespace Moonvalk.Resources
                 }
                 else if (error == Error.Ok)
                 {
-                    MoonResourceLoader.PollLoader(loader_, onLoad_, pollRate_, pollRate_);
+                    PollLoader(loader_, onLoad_, pollRate_, pollRate_);
                 }
                 else
                 {

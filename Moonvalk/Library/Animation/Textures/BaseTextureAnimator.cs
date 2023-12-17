@@ -3,121 +3,131 @@ using Godot;
 using Moonvalk.Nodes;
 using Moonvalk.Utilities;
 
-namespace Moonvalk.Animation {
-	/// <summary>
-	/// Handler for animating textures on a mesh instance.
-	/// </summary>
-	/// <typeparam name="AnimationType">The type of animation expected to be animated.</typeparam>
-	/// <typeparam name="FrameType">The type of frame data expected.</typeparam>
-	public abstract class BaseTextureAnimator<AnimationType, FrameType> : Node where AnimationType : BaseTextureAnimation<FrameType> {
-		#region Data Fields
-		/// <summary>
-		/// Path to the mesh instance that will have its texture adjusted.
-		/// </summary>
-		[Export] protected NodePath PMeshInstance { get; set; }
+namespace Moonvalk.Animation
+{
+    /// <summary>
+    /// Handler for animating textures on a mesh instance.
+    /// </summary>
+    /// <typeparam name="AnimationType">The type of animation expected to be animated.</typeparam>
+    /// <typeparam name="FrameType">The type of frame data expected.</typeparam>
+    public abstract class BaseTextureAnimator<AnimationType, FrameType> : Node
+        where AnimationType : BaseTextureAnimation<FrameType>
+    {
+        #region Godot Events
+        /// <summary>
+        /// Called when this object is first initialized.
+        /// </summary>
+        public override void _Ready()
+        {
+            Mesh = GetNode<MeshInstance>(PMeshInstance);
+            if (Animations.Count > 0)
+            {
+                CurrentAnimation = Animations[0];
+                Play("walk");
+            }
+        }
+        #endregion
 
-		/// <summary>
-		/// Stores references to all available animations.
-		/// </summary>
-		[Export] public List<AnimationType> Animations { get; protected set; }
+        #region Private Methods
+        /// <summary>
+        /// Adjusts the texture on the stored mesh instance.
+        /// </summary>
+        protected abstract void AdjustTexture();
+        #endregion
 
-		/// <summary>
-		/// Stores the current state of this animator.
-		/// </summary>
-		public TextureAnimatorState CurrentState { get; protected set; } = TextureAnimatorState.Stopped;
+        #region Data Fields
+        /// <summary>
+        /// Path to the mesh instance that will have its texture adjusted.
+        /// </summary>
+        [Export] protected NodePath PMeshInstance { get; set; }
 
-		/// <summary>
-		/// Reference to the mesh instance that will have its texture adjusted.
-		/// </summary>
-		public MeshInstance Mesh { get; protected set; }
-		
-		/// <summary>
-		/// Stores the current animation being played.
-		/// </summary>
-		public AnimationType CurrentAnimation { get; protected set; }
+        /// <summary>
+        /// Stores references to all available animations.
+        /// </summary>
+        [Export] public List<AnimationType> Animations { get; protected set; }
 
-		/// <summary>
-		/// Stores the index of the current frame.
-		/// </summary>
-		public int CurrentFrame { get; protected set; } = 0;
+        /// <summary>
+        /// Stores the current state of this animator.
+        /// </summary>
+        public TextureAnimatorState CurrentState { get; protected set; } = TextureAnimatorState.Stopped;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		protected MoonTimer _timer;
-		#endregion
+        /// <summary>
+        /// Reference to the mesh instance that will have its texture adjusted.
+        /// </summary>
+        public MeshInstance Mesh { get; protected set; }
 
-		#region Godot Events
-		/// <summary>
-		/// Called when this object is first initialized.
-		/// </summary>
-		public override void _Ready() {
-			this.Mesh = this.GetNode<MeshInstance>(PMeshInstance);
-			if (this.Animations.Count > 0) {
-				this.CurrentAnimation = this.Animations[0];
-				this.Play("walk");
-			}
-		}
-		#endregion
+        /// <summary>
+        /// Stores the current animation being played.
+        /// </summary>
+        public AnimationType CurrentAnimation { get; protected set; }
 
-		#region Public Methods
-		/// <summary>
-		/// Called to play the current animation.
-		/// </summary>
-		public void Play(string animationName_ = null) {
-			if (animationName_ != null) {
-				var formattedName = animationName_.ToLower();
-				for (var index = 0; index < this.Animations.Count; index++) {
-					if (this.Animations[index].Name.ToLower() == formattedName) {
-						this.CurrentAnimation = this.Animations[index];
-						break;
-					}
-				}
-			}
-			this.CurrentState = TextureAnimatorState.Playing;
-			this.CurrentFrame = this.CurrentAnimation.Frames.Count - 1;
-			this.NextFrame();
-		}
+        /// <summary>
+        /// Stores the index of the current frame.
+        /// </summary>
+        public int CurrentFrame { get; protected set; }
 
-		/// <summary>
-		/// Called to jump to the next available frame.
-		/// </summary>
-		public void NextFrame() {
-			if (this.CurrentState == TextureAnimatorState.Stopped) {
-				return;
-			}
-			this.CurrentFrame++;
-			if (this.CurrentFrame > this.CurrentAnimation.Frames.Count - 1) {
-				this.CurrentFrame = 0;
-			}
-			if (!this.Mesh.Validate()) {
-				this.Stop();
-				return;
-			}
-			this.AdjustTexture();
-			if (this._timer == null) {
-				this._timer = new MoonTimer(this.NextFrame);
-			}
-			this._timer.Start(this.CurrentAnimation.FrameDurations[this.CurrentFrame]);
-		}
+        /// <summary>
+        /// </summary>
+        protected MoonTimer _timer;
+        #endregion
 
-		/// <summary>
-		/// Called to stop the current animation.
-		/// </summary>
-		public void Stop() {
-			if (this._timer != null) {
-				this._timer.Stop();
-				this._timer = null;
-			}
-			this.CurrentState = TextureAnimatorState.Stopped;
-		}
-		#endregion
+        #region Public Methods
+        /// <summary>
+        /// Called to play the current animation.
+        /// </summary>
+        public void Play(string animationName_ = null)
+        {
+            if (animationName_ != null)
+            {
+                var formattedName = animationName_.ToLower();
+                for (var index = 0; index < Animations.Count; index++)
+                    if (Animations[index].Name.ToLower() == formattedName)
+                    {
+                        CurrentAnimation = Animations[index];
+                        break;
+                    }
+            }
 
-		#region Private Methods
-		/// <summary>
-		/// Adjusts the texture on the stored mesh instance.
-		/// </summary>
-		protected abstract void AdjustTexture();
-		#endregion
-	}
+            CurrentState = TextureAnimatorState.Playing;
+            CurrentFrame = CurrentAnimation.Frames.Count - 1;
+            NextFrame();
+        }
+
+        /// <summary>
+        /// Called to jump to the next available frame.
+        /// </summary>
+        public void NextFrame()
+        {
+            if (CurrentState == TextureAnimatorState.Stopped) return;
+
+            CurrentFrame++;
+            if (CurrentFrame > CurrentAnimation.Frames.Count - 1) CurrentFrame = 0;
+
+            if (!Mesh.Validate())
+            {
+                Stop();
+                return;
+            }
+
+            AdjustTexture();
+            if (_timer == null) _timer = new MoonTimer(NextFrame);
+
+            _timer.Start(CurrentAnimation.FrameDurations[CurrentFrame]);
+        }
+
+        /// <summary>
+        /// Called to stop the current animation.
+        /// </summary>
+        public void Stop()
+        {
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer = null;
+            }
+
+            CurrentState = TextureAnimatorState.Stopped;
+        }
+        #endregion
+    }
 }

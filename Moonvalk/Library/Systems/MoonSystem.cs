@@ -7,19 +7,16 @@ namespace Moonvalk.Systems
     public abstract class MoonSystem<Type> : IMoonSystem
     {
         #region Constructors
-
         /// <summary>
         /// Constructs a new MoonSystem with the default identity.
         /// </summary>
         protected MoonSystem()
         {
-            this.Initialize();
+            Initialize();
         }
-
         #endregion
 
         #region Methods
-
         /// <summary>
         /// Initializes this new System.
         /// </summary>
@@ -46,7 +43,6 @@ namespace Moonvalk.Systems
         /// Clears the current queue applied to a system.
         /// </summary>
         public abstract void Clear();
-
         #endregion
     }
 }

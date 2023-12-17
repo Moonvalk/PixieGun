@@ -15,13 +15,10 @@ namespace Moonvalk.Inputs
         {
             foreach (var pair in inputPairs_)
             {
-                if (InputMap.HasAction(pair.Name))
-                {
-                    InputMap.EraseAction(pair.Name);
-                }
+                if (InputMap.HasAction(pair.Name)) InputMap.EraseAction(pair.Name);
 
                 InputMap.AddAction(pair.Name);
-                InputMap.ActionAddEvent(pair.Name, new InputEventKey() { Scancode = (uint)pair.Key });
+                InputMap.ActionAddEvent(pair.Name, new InputEventKey { Scancode = (uint)pair.Key });
             }
         }
 
@@ -31,10 +28,7 @@ namespace Moonvalk.Inputs
         /// <param name="inputNames_">The names to be removed.</param>
         public static void Remove(params string[] inputNames_)
         {
-            foreach (var name in inputNames_)
-            {
-                InputMap.EraseAction(name);
-            }
+            foreach (var name in inputNames_) InputMap.EraseAction(name);
         }
     }
 }

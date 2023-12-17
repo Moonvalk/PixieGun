@@ -3,469 +3,500 @@ using System.Collections.Generic;
 using Moonvalk.Accessory;
 using Moonvalk.Utilities;
 
-namespace Moonvalk.Animation {
-	/// <summary>
-	/// Container representing a singular Wobble instance.
-	/// </summary>
-	/// <typeparam name="Unit">The type of value that will be affected by Spring forces</typeparam>
-	public abstract class BaseMoonWobble<Unit> : IMoonWobble<Unit> {
-		#region Data Fields
-		/// <summary>
-		/// A reference to the property value(s) that will be modified.
-		/// </summary>
-		public Ref<float>[] Properties { get; private set; }
+namespace Moonvalk.Animation
+{
+    /// <summary>
+    /// Container representing a singular Wobble instance.
+    /// </summary>
+    /// <typeparam name="Unit">The type of value that will be affected by Spring forces</typeparam>
+    public abstract class BaseMoonWobble<Unit> : IMoonWobble<Unit>
+    {
+        /// <summary>
+        /// The maximum time allowed before a reset occurs.
+        /// </summary>
+        protected const float MaxTimeValue = 100000.0f;
 
-		/// <summary>
-		/// The starting value.
-		/// </summary>
-		public Unit[] StartValues { get; private set; }
+        #region Data Fields
+        /// <summary>
+        /// A reference to the property value(s) that will be modified.
+        /// </summary>
+        public Ref<float>[] Properties { get; private set; }
 
-		/// <summary>
-		/// The overall strength of wobble applied to Properties. This is adjusted to
-		/// add easing in and out of the animation.
-		/// </summary>
-		protected float _strength = 1f;
+        /// <summary>
+        /// The starting value.
+        /// </summary>
+        public Unit[] StartValues { get; private set; }
 
-		/// <summary>
-		/// The frequency of the sin wave applied to achieve animation.
-		/// </summary>
-		public float Frequency { get; private set; } = 5f;
-		
-		/// <summary>
-		/// The amplitude of the sin wave applied to achieve animation.
-		/// </summary>
-		public float Amplitude { get; private set; } = 10f;
+        /// <summary>
+        /// The overall strength of wobble applied to Properties. This is adjusted to
+        /// add easing in and out of the animation.
+        /// </summary>
+        protected float _strength = 1f;
 
-		/// <summary>
-		/// The current time since the animation began.
-		/// </summary>
-		public float Time { get; private set; } = 0f;
+        /// <summary>
+        /// The frequency of the sin wave applied to achieve animation.
+        /// </summary>
+        public float Frequency { get; private set; } = 5f;
 
-		/// <summary>
-		/// The duration of the wobble animation. Setting this below zero will cause
-		/// the animation to loop infinitely.
-		/// </summary>
-		public float Duration { get; private set; } = -1f;
+        /// <summary>
+        /// The amplitude of the sin wave applied to achieve animation.
+        /// </summary>
+        public float Amplitude { get; private set; } = 10f;
 
-		/// <summary>
-		/// The percentage of the property that will be affected. This is useful for
-		/// multi-axis values that need to be affected differently.
-		/// </summary>
-		public Unit Percentage { get; private set; }
+        /// <summary>
+        /// The current time since the animation began.
+        /// </summary>
+        public float Time { get; private set; }
 
-		/// <summary>
-		/// Reference to an optional tween used for easing into the animation.
-		/// </summary>
-		public MoonTween EaseInTween { get; private set; }
+        /// <summary>
+        /// The duration of the wobble animation. Setting this below zero will cause
+        /// the animation to loop infinitely.
+        /// </summary>
+        public float Duration { get; private set; } = -1f;
 
-		/// <summary>
-		/// Reference to an optional tween used for easing out of the animation.
-		/// </summary>
-		public MoonTween EaseOutTween { get; private set; }
+        /// <summary>
+        /// The percentage of the property that will be affected. This is useful for
+        /// multi-axis values that need to be affected differently.
+        /// </summary>
+        public Unit Percentage { get; private set; }
 
-		/// <summary>
-		/// The current state of this Wobble object.
-		/// </summary>
-		public MoonWobbleState CurrentState { get; private set; } = MoonWobbleState.Idle;
+        /// <summary>
+        /// Reference to an optional tween used for easing into the animation.
+        /// </summary>
+        public MoonTween EaseInTween { get; private set; }
 
-		/// <summary>
-		/// A map of Actions that will occur while this Wobble is in an active state.
-		/// </summary>
-		public MoonActionMap<MoonWobbleState> Events { get; protected set; } = new MoonActionMap<MoonWobbleState>();
+        /// <summary>
+        /// Reference to an optional tween used for easing out of the animation.
+        /// </summary>
+        public MoonTween EaseOutTween { get; private set; }
 
-		/// <summary>
-		/// Stores reference to custom Wobbles applied to user generated values.
-		/// </summary>
-		public static Dictionary<Ref<float>[], BaseMoonWobble<Unit>> CustomWobbles { get; protected set; }
-		#endregion
+        /// <summary>
+        /// The current state of this Wobble object.
+        /// </summary>
+        public MoonWobbleState CurrentState { get; private set; } = MoonWobbleState.Idle;
 
-		/// <summary>
-		/// The maximum time allowed before a reset occurs.
-		/// </summary>
-		protected const float MaxTimeValue = 100000.0f;
+        /// <summary>
+        /// A map of Actions that will occur while this Wobble is in an active state.
+        /// </summary>
+        public MoonActionMap<MoonWobbleState> Events { get; protected set; } = new MoonActionMap<MoonWobbleState>();
 
-		#region Constructor(s)
-		/// <summary>
-		/// Default constructor made without setting up references.
-		/// </summary>
-		protected BaseMoonWobble() {
-			// ...
-		}
+        /// <summary>
+        /// Stores reference to custom Wobbles applied to user generated values.
+        /// </summary>
+        public static Dictionary<Ref<float>[], BaseMoonWobble<Unit>> CustomWobbles { get; protected set; }
+        #endregion
 
-		/// <summary>
-		/// Constructor for creating a new BaseWobble.
-		/// </summary>
-		/// <param name="referenceValues_">Array of references to values.</param>
-		protected BaseMoonWobble(params Ref<float>[] referenceValues_) {
-			this.SetReferences(referenceValues_);
-		}
-		#endregion
+        #region Constructor(s)
+        /// <summary>
+        /// Default constructor made without setting up references.
+        /// </summary>
+        protected BaseMoonWobble()
+        {
+            // ...
+        }
 
-		#region Public Methods
-		/// <summary>
-		/// Sets all reference values that this Wobble will manipulate.
-		/// </summary>
-		/// <param name="referenceValues_">Array of references to values.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> SetReferences(params Ref<float>[] referenceValues_) {
-			// Store reference to properties.
-			this.Properties = referenceValues_;
+        /// <summary>
+        /// Constructor for creating a new BaseWobble.
+        /// </summary>
+        /// <param name="referenceValues_">Array of references to values.</param>
+        protected BaseMoonWobble(params Ref<float>[] referenceValues_)
+        {
+            SetReferences(referenceValues_);
+        }
+        #endregion
 
-			// Create new arrays for storing property start, end, and easing functions.
-			this.StartValues = new Unit[referenceValues_.Length];
-			return this;
-		}
+        #region Public Methods
+        /// <summary>
+        /// Sets all reference values that this Wobble will manipulate.
+        /// </summary>
+        /// <param name="referenceValues_">Array of references to values.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> SetReferences(params Ref<float>[] referenceValues_)
+        {
+            // Store reference to properties.
+            Properties = referenceValues_;
 
-		/// <summary>
-		/// Starts this Wobble with the current settings.
-		/// </summary>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> Start() {
-			this.UpdateStartValues();
-			if (this.EaseInTween != null) {
-				this.EaseInTween.Start();
-				this.CurrentState = MoonWobbleState.Idle;
-			} else {
-				this.HandleDuration();
-				this.CurrentState = MoonWobbleState.Start;
-			}
-			this.Events.Run(this.CurrentState);
-			(Global.GetSystem<MoonWobbleSystem>() as MoonWobbleSystem).Add(this);
-			return this;
-		}
+            // Create new arrays for storing property start, end, and easing functions.
+            StartValues = new Unit[referenceValues_.Length];
+            return this;
+        }
 
-		/// <summary>
-		/// Stops this Wobble.
-		/// </summary>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> Stop() {
-			if (this.EaseOutTween != null) {
-				this.EaseOutTween.Start();
-			} else {
-				this.CurrentState = MoonWobbleState.Stopped;
-			}
-			return this;
-		}
+        /// <summary>
+        /// Starts this Wobble with the current settings.
+        /// </summary>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> Start()
+        {
+            UpdateStartValues();
+            if (EaseInTween != null)
+            {
+                EaseInTween.Start();
+                CurrentState = MoonWobbleState.Idle;
+            }
+            else
+            {
+                HandleDuration();
+                CurrentState = MoonWobbleState.Start;
+            }
 
-		/// <summary>
-		/// Updates this Wobble each game tick.
-		/// </summary>
-		/// <param name="deltaTime_">The duration of time between last and current game tick.</param>
-		/// <returns>Returns true when this object is active and false when it is complete.</returns>
-		public bool Update(float deltaTime_) {
-			this.Animate(deltaTime_);
-			if (this.CurrentState == MoonWobbleState.Complete) {
-				return false;
-			}
-			if (this.CurrentState == MoonWobbleState.Stopped || this.CurrentState == MoonWobbleState.Idle) {
-				return true;
-			}
-			this.CurrentState = MoonWobbleState.Update;
-			this.Events.Run(this.CurrentState);
-			return true;
-		}
+            Events.Run(CurrentState);
+            (Global.GetSystem<MoonWobbleSystem>() as MoonWobbleSystem).Add(this);
+            return this;
+        }
 
-		/// <summary>
-		/// Called to add an ease in to the wobble animation.
-		/// </summary>
-		/// <param name="parameters_">Properties that adjust the ease in Tween.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> EaseIn(MoonTweenParams parameters_ = null) {
-			this._strength = 0f;
-			this.EaseInTween?.Delete();
-			this.EaseInTween = null;
-			this.EaseInTween = new MoonTween(() => ref this._strength);
-			this.EaseInTween.SetParameters(parameters_ ?? new MoonTweenParams()).To(1f);
-			this.EaseInTween.OnStart(() => {
-				this.CurrentState = MoonWobbleState.Start;
-				this.Events.Run(this.CurrentState);
-			}).OnComplete(() => {
-				this.HandleDuration();
-			});
-			return this;
-		}
+        /// <summary>
+        /// Stops this Wobble.
+        /// </summary>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> Stop()
+        {
+            if (EaseOutTween != null)
+                EaseOutTween.Start();
+            else
+                CurrentState = MoonWobbleState.Stopped;
 
-		/// <summary>
-		/// Called to add an ease out to the wobble animation.
-		/// </summary>
-		/// <param name="parameters_">Properties that adjust the ease in Tween.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> EaseOut(MoonTweenParams parameters_ = null) {
-			this.EaseOutTween?.Delete();
-			this.EaseOutTween = null;
-			this.EaseOutTween = new MoonTween(() => ref this._strength);
-			this.EaseOutTween.SetParameters(parameters_ ?? new MoonTweenParams()).To(0f);
-			this.EaseOutTween.OnComplete(() => {
-				this.CurrentState = MoonWobbleState.Complete;
-			});
-			return this;
-		}
-		
-		/// <summary>
-		/// Called to add an ease in and out to the wobble animation.
-		/// </summary>
-		/// <param name="parameters_">Properties that adjust the ease in Tween.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> EaseInOut(MoonTweenParams parameters_ = null) {
-			this.EaseIn(parameters_).EaseOut(parameters_);
-			return this;
-		}
+            return this;
+        }
 
-		/// <summary>
-		/// Sets the frequency of the sin wave used for animation.
-		/// </summary>
-		/// <param name="frequency_">The new frequency value.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> SetFrequency(float frequency_) {
-			this.Frequency = frequency_;
-			return this;
-		}
-		
-		/// <summary>
-		/// Sets the amplitude of the sin wave used for animation.
-		/// </summary>
-		/// <param name="amplitude_">The new amplitude value.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> SetAmplitude(float amplitude_) {
-			this.Amplitude = amplitude_;
-			return this;
-		}
+        /// <summary>
+        /// Updates this Wobble each game tick.
+        /// </summary>
+        /// <param name="deltaTime_">The duration of time between last and current game tick.</param>
+        /// <returns>Returns true when this object is active and false when it is complete.</returns>
+        public bool Update(float deltaTime_)
+        {
+            Animate(deltaTime_);
+            if (CurrentState == MoonWobbleState.Complete) return false;
 
-		/// <summary>
-		/// Sets the duration of this animation when expected to run for a finite amount of time.
-		/// </summary>
-		/// <param name="duration_">The duration in seconds.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> SetDuration(float duration_) {
-			this.Duration = duration_;
-			return this;
-		}
+            if (CurrentState == MoonWobbleState.Stopped || CurrentState == MoonWobbleState.Idle) return true;
 
-		/// <summary>
-		/// Sets the percentage of the property that will be affected. This is useful for
-		/// multi-axis values that need to be affected differently.
-		/// </summary>
-		/// <param name="percentage_">The percentage value per axis, when applicable.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> SetPercentage(Unit percentage_) {
-			this.Percentage = percentage_;
-			return this;
-		}
+            CurrentState = MoonWobbleState.Update;
+            Events.Run(CurrentState);
+            return true;
+        }
 
-		/// <summary>
-		/// Called to set all parameters from a reference object.
-		/// </summary>
-		/// <param name="parameters_">All properties that will be assigned.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> SetParameters(MoonWobbleParams parameters_) {
-			this.SetFrequency(parameters_.Frequency).SetAmplitude(parameters_.Amplitude).SetDuration(parameters_.Duration);
-			if (parameters_.EaseIn != null) {
-				this.EaseIn(parameters_.EaseIn);
-			}
-			if (parameters_.EaseOut != null) {
-				this.EaseOut(parameters_.EaseOut);
-			}
-			return this;
-		}
+        /// <summary>
+        /// Called to add an ease in to the wobble animation.
+        /// </summary>
+        /// <param name="parameters_">Properties that adjust the ease in Tween.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> EaseIn(MoonTweenParams parameters_ = null)
+        {
+            _strength = 0f;
+            EaseInTween?.Delete();
+            EaseInTween = null;
+            EaseInTween = new MoonTween(() => ref _strength);
+            EaseInTween.SetParameters(parameters_ ?? new MoonTweenParams()).To(1f);
 
-		/// <summary>
-		/// Removes this Wobble on the following game tick.
-		/// </summary>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> Delete() {
-			this.Reset();
-			this.CurrentState = MoonWobbleState.Complete;
-			return this;
-		}
+            EaseInTween.OnStart(() =>
+                {
+                    CurrentState = MoonWobbleState.Start;
+                    Events.Run(CurrentState);
+                })
+                .OnComplete(() => { HandleDuration(); });
 
-		/// <summary>
-		/// Defines Actions that will occur when this Wobble begins.
-		/// </summary>
-		/// <param name="tasksToAdd_">Array of Actions to add.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> OnStart(params Action[] tasksToAdd_) {
-			this.Events.AddAction(MoonWobbleState.Start, tasksToAdd_);
-			return this;
-		}
+            return this;
+        }
 
-		/// <summary>
-		/// Defines Actions that will occur when this Wobble updates.
-		/// </summary>
-		/// <param name="tasksToAdd_">Array of Actions to add.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> OnUpdate(params Action[] tasksToAdd_) {
-			this.Events.AddAction(MoonWobbleState.Update, tasksToAdd_);
-			return this;
-		}
+        /// <summary>
+        /// Called to add an ease out to the wobble animation.
+        /// </summary>
+        /// <param name="parameters_">Properties that adjust the ease in Tween.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> EaseOut(MoonTweenParams parameters_ = null)
+        {
+            EaseOutTween?.Delete();
+            EaseOutTween = null;
+            EaseOutTween = new MoonTween(() => ref _strength);
+            EaseOutTween.SetParameters(parameters_ ?? new MoonTweenParams()).To(0f);
 
-		/// <summary>
-		/// Defines Actions that will occur once this Wobble has completed.
-		/// </summary>
-		/// <param name="tasksToAdd_">Array of Actions to add.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> OnComplete(params Action[] tasksToAdd_) {
-			this.Events.AddAction(MoonWobbleState.Complete, tasksToAdd_);
-			return this;
-		}
+            EaseOutTween.OnComplete(() => { CurrentState = MoonWobbleState.Complete; });
+            return this;
+        }
 
-		/// <summary>
-		/// Defines Actions that will occur once this Wobble has completed.
-		/// </summary>
-		/// <param name="tasksToAdd_">Array of Actions to add.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> Then(params Action[] tasksToAdd_) {
-			return this.OnComplete(tasksToAdd_);
-		}
+        /// <summary>
+        /// Called to add an ease in and out to the wobble animation.
+        /// </summary>
+        /// <param name="parameters_">Properties that adjust the ease in Tween.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> EaseInOut(MoonTweenParams parameters_ = null)
+        {
+            EaseIn(parameters_).EaseOut(parameters_);
 
-		/// <summary>
-		/// Clears all Actions that have been assigned to this Wobble.
-		/// </summary>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> Reset() {
-			this.Events.ClearAll();
-			return this;
-		}
+            return this;
+        }
 
-		/// <summary>
-		/// Clears all Actions that have been assigned to this Wobble for the given state.
-		/// </summary>
-		/// <param name="state_">The state to reset actions for.</param>
-		/// <returns>Returns this Wobble object.</returns>
-		public BaseMoonWobble<Unit> Reset(MoonWobbleState state_) {
-			this.Events.Clear(state_);
-			return this;
-		}
+        /// <summary>
+        /// Sets the frequency of the sin wave used for animation.
+        /// </summary>
+        /// <param name="frequency_">The new frequency value.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> SetFrequency(float frequency_)
+        {
+            Frequency = frequency_;
+            return this;
+        }
 
-		/// <summary>
-		/// Called to force handle tasks for the current state.
-		/// </summary>
-		public void HandleTasks()  {
-			this.Events.Run(this.CurrentState);
-		}
+        /// <summary>
+        /// Sets the amplitude of the sin wave used for animation.
+        /// </summary>
+        /// <param name="amplitude_">The new amplitude value.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> SetAmplitude(float amplitude_)
+        {
+            Amplitude = amplitude_;
+            return this;
+        }
 
-		/// <summary>
-		/// Gets the current state of this Wobble.
-		/// </summary>
-		/// <returns>Returns the current state.</returns>
-		public MoonWobbleState GetCurrentState() {
-			return this.CurrentState;
-		}
+        /// <summary>
+        /// Sets the duration of this animation when expected to run for a finite amount of time.
+        /// </summary>
+        /// <param name="duration_">The duration in seconds.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> SetDuration(float duration_)
+        {
+            Duration = duration_;
+            return this;
+        }
 
-		/// <summary>
-		/// Initializes a custom Wobble based on a reference value as a property.
-		/// </summary>
-		/// <param name="referenceValue_">The property to be animated.</param>
-		/// <param name="percentage_">the percentage of the property that will be affected. This is useful for
-		/// multi-axis values that need to be affected differently.</param>
-		/// <param name="parameters_">Properties that adjust how this animation will look.</param>
-		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
-		/// <returns>Returns the new Wobble instance.</returns>
-		public static BaseMoonWobble<Unit> CustomWobbleTo<WobbleType>(
-			Ref<float> referenceValue_,
-			Unit percentage_,
-			MoonWobbleParams parameters_ = null,
-			bool start_ = true
-		) where WobbleType : BaseMoonWobble<Unit>, new() {
-			var refs = new Ref<float>[1] { referenceValue_ };
-			return BaseMoonWobble<Unit>.CustomWobbleTo<WobbleType>(refs, percentage_, parameters_, start_);
-		}
+        /// <summary>
+        /// Sets the percentage of the property that will be affected. This is useful for
+        /// multi-axis values that need to be affected differently.
+        /// </summary>
+        /// <param name="percentage_">The percentage value per axis, when applicable.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> SetPercentage(Unit percentage_)
+        {
+            Percentage = percentage_;
+            return this;
+        }
 
-		/// <summary>
-		/// Initializes a custom Wobble based on a reference value as a property.
-		/// </summary>
-		/// <param name="referenceValues_">The property to be animated.</param>
-		/// <param name="percentage_">the percentage of the property that will be affected. This is useful for
-		/// multi-axis values that need to be affected differently.</param>
-		/// <param name="parameters_">Properties that adjust how this animation will look.</param>
-		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
-		/// <returns>Returns the new Wobble instance.</returns>
-		public static BaseMoonWobble<Unit> CustomWobbleTo<WobbleType>(
-			Ref<float>[] referenceValues_,
-			Unit percentage_,
-			MoonWobbleParams parameters_ = null,
-			bool start_ = true
-		) where WobbleType : BaseMoonWobble<Unit>, new() {
-			BaseMoonWobble<Unit>.CustomWobbles = BaseMoonWobble<Unit>.CustomWobbles ?? new Dictionary<Ref<float>[], BaseMoonWobble<Unit>>();
-			if (BaseMoonWobble<Unit>.CustomWobbles.ContainsKey(referenceValues_)) {
-				BaseMoonWobble<Unit>.CustomWobbles[referenceValues_].Delete();
-				BaseMoonWobble<Unit>.CustomWobbles.Remove(referenceValues_);
-			}
-			BaseMoonWobble<Unit> wobble = new WobbleType();
-			wobble.SetReferences(referenceValues_).SetParameters(parameters_ ?? new MoonWobbleParams())
-				.SetPercentage(percentage_).OnComplete(() => {
-					BaseMoonWobble<Unit>.CustomWobbles.Remove(referenceValues_);
-			});
-			if (start_) {
-				wobble.Start();
-			}
+        /// <summary>
+        /// Called to set all parameters from a reference object.
+        /// </summary>
+        /// <param name="parameters_">All properties that will be assigned.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> SetParameters(MoonWobbleParams parameters_)
+        {
+            SetFrequency(parameters_.Frequency).SetAmplitude(parameters_.Amplitude).SetDuration(parameters_.Duration);
 
-			BaseMoonWobble<Unit>.CustomWobbles.Add(referenceValues_, wobble);
-			return wobble;
-		}
+            if (parameters_.EaseIn != null) EaseIn(parameters_.EaseIn);
 
-		/// <summary>
-		/// Gets a custom Wobble object for the provided reference value, if it exists.
-		/// </summary>
-		/// <typeparam name="Unit">The type of used for this reference value.</typeparam>
-		/// <param name="referenceValue_">The reference value a Wobble object is applied to.</param>
-		/// <returns>Returns the requested Wobble object if it exists or null if it cannot be found.</returns>
-		public static BaseMoonWobble<Unit> GetCustomWobble(Ref<float> referenceValue_) {
-			var refs = new Ref<float>[1] { referenceValue_ };
-			return BaseMoonWobble<Unit>.GetCustomWobble(refs);
-		}
+            if (parameters_.EaseOut != null) EaseOut(parameters_.EaseOut);
 
-		/// <summary>
-		/// Gets a custom Wobble object for the provided reference value, if it exists.
-		/// </summary>
-		/// <typeparam name="Unit">The type of used for this reference value.</typeparam>
-		/// <param name="referenceValues_">The reference value a Wobble object is applied to.</param>
-		/// <returns>Returns the requested Wobble object if it exists or null if it cannot be found.</returns>
-		public static BaseMoonWobble<Unit> GetCustomWobble(Ref<float>[] referenceValues_) {
-			if (BaseMoonWobble<Unit>.CustomWobbles.ContainsKey(referenceValues_)) {
-				return BaseMoonWobble<Unit>.CustomWobbles[referenceValues_];
-			}
-			return null;
-		}
+            return this;
+        }
 
-		/// <summary>
-		/// Returns true when this object is complete.
-		/// </summary>
-		/// <returns>True when state is complete.</returns>
-		public bool IsComplete() {
-			return this.CurrentState == MoonWobbleState.Complete;
-		}
-		#endregion
+        /// <summary>
+        /// Removes this Wobble on the following game tick.
+        /// </summary>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> Delete()
+        {
+            Reset();
+            CurrentState = MoonWobbleState.Complete;
+            return this;
+        }
 
-		#region Private Methods
-		/// <summary>
-		/// Method used to update all properties available to this object.
-		/// </summary>
-		protected abstract void UpdateProperties();
+        /// <summary>
+        /// Defines Actions that will occur when this Wobble begins.
+        /// </summary>
+        /// <param name="tasksToAdd_">Array of Actions to add.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> OnStart(params Action[] tasksToAdd_)
+        {
+            Events.AddAction(MoonWobbleState.Start, tasksToAdd_);
+            return this;
+        }
 
-		/// <summary>
-		/// Called to continue animating this wobble object.
-		/// </summary>
-		/// <param name="deltaTime_">Time elapsed between last and current frame.</param>
-		protected void Animate(float deltaTime_) {
-			this.Time = (this.Time + deltaTime_) % BaseMoonWobble<Unit>.MaxTimeValue;
-			this.UpdateProperties();
-		}
+        /// <summary>
+        /// Defines Actions that will occur when this Wobble updates.
+        /// </summary>
+        /// <param name="tasksToAdd_">Array of Actions to add.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> OnUpdate(params Action[] tasksToAdd_)
+        {
+            Events.AddAction(MoonWobbleState.Update, tasksToAdd_);
+            return this;
+        }
 
-		/// <summary>
-		/// Updates all starting values set the reference property values.
-		/// </summary>
-		protected abstract void UpdateStartValues();
+        /// <summary>
+        /// Defines Actions that will occur once this Wobble has completed.
+        /// </summary>
+        /// <param name="tasksToAdd_">Array of Actions to add.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> OnComplete(params Action[] tasksToAdd_)
+        {
+            Events.AddAction(MoonWobbleState.Complete, tasksToAdd_);
+            return this;
+        }
 
-		/// <summary>
-		/// Called to handle adding a timer for stopping this animation when a duration has been defined.
-		/// </summary>
-		protected void HandleDuration() {
-			if (this.Duration > 0f) {
-				MoonTimer.Wait(this.Duration, () => {
-					this.Stop();
-				});
-			}
-		}
-		#endregion
-	}
+        /// <summary>
+        /// Defines Actions that will occur once this Wobble has completed.
+        /// </summary>
+        /// <param name="tasksToAdd_">Array of Actions to add.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> Then(params Action[] tasksToAdd_)
+        {
+            return OnComplete(tasksToAdd_);
+        }
+
+        /// <summary>
+        /// Clears all Actions that have been assigned to this Wobble.
+        /// </summary>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> Reset()
+        {
+            Events.ClearAll();
+            return this;
+        }
+
+        /// <summary>
+        /// Clears all Actions that have been assigned to this Wobble for the given state.
+        /// </summary>
+        /// <param name="state_">The state to reset actions for.</param>
+        /// <returns>Returns this Wobble object.</returns>
+        public BaseMoonWobble<Unit> Reset(MoonWobbleState state_)
+        {
+            Events.Clear(state_);
+            return this;
+        }
+
+        /// <summary>
+        /// Called to force handle tasks for the current state.
+        /// </summary>
+        public void HandleTasks()
+        {
+            Events.Run(CurrentState);
+        }
+
+        /// <summary>
+        /// Gets the current state of this Wobble.
+        /// </summary>
+        /// <returns>Returns the current state.</returns>
+        public MoonWobbleState GetCurrentState()
+        {
+            return CurrentState;
+        }
+
+        /// <summary>
+        /// Initializes a custom Wobble based on a reference value as a property.
+        /// </summary>
+        /// <param name="referenceValue_">The property to be animated.</param>
+        /// <param name="percentage_">
+        /// the percentage of the property that will be affected. This is useful for
+        /// multi-axis values that need to be affected differently.
+        /// </param>
+        /// <param name="parameters_">Properties that adjust how this animation will look.</param>
+        /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
+        /// <returns>Returns the new Wobble instance.</returns>
+        public static BaseMoonWobble<Unit> CustomWobbleTo<WobbleType>(Ref<float> referenceValue_, Unit percentage_, MoonWobbleParams parameters_ = null,
+            bool start_ = true)
+            where WobbleType : BaseMoonWobble<Unit>, new()
+        {
+            var refs = new Ref<float>[1] { referenceValue_ };
+            return CustomWobbleTo<WobbleType>(refs, percentage_, parameters_, start_);
+        }
+
+        /// <summary>
+        /// Initializes a custom Wobble based on a reference value as a property.
+        /// </summary>
+        /// <param name="referenceValues_">The property to be animated.</param>
+        /// <param name="percentage_">
+        /// the percentage of the property that will be affected. This is useful for
+        /// multi-axis values that need to be affected differently.
+        /// </param>
+        /// <param name="parameters_">Properties that adjust how this animation will look.</param>
+        /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
+        /// <returns>Returns the new Wobble instance.</returns>
+        public static BaseMoonWobble<Unit> CustomWobbleTo<WobbleType>(Ref<float>[] referenceValues_, Unit percentage_, MoonWobbleParams parameters_ = null,
+            bool start_ = true)
+            where WobbleType : BaseMoonWobble<Unit>, new()
+        {
+            CustomWobbles = CustomWobbles ?? new Dictionary<Ref<float>[], BaseMoonWobble<Unit>>();
+
+            if (CustomWobbles.ContainsKey(referenceValues_))
+            {
+                CustomWobbles[referenceValues_].Delete();
+
+                CustomWobbles.Remove(referenceValues_);
+            }
+
+            BaseMoonWobble<Unit> wobble = new WobbleType();
+            wobble.SetReferences(referenceValues_)
+                .SetParameters(parameters_ ?? new MoonWobbleParams())
+                .SetPercentage(percentage_)
+                .OnComplete(() => { CustomWobbles.Remove(referenceValues_); });
+
+            if (start_) wobble.Start();
+
+            CustomWobbles.Add(referenceValues_, wobble);
+            return wobble;
+        }
+
+        /// <summary>
+        /// Gets a custom Wobble object for the provided reference value, if it exists.
+        /// </summary>
+        /// <typeparam name="Unit">The type of used for this reference value.</typeparam>
+        /// <param name="referenceValue_">The reference value a Wobble object is applied to.</param>
+        /// <returns>Returns the requested Wobble object if it exists or null if it cannot be found.</returns>
+        public static BaseMoonWobble<Unit> GetCustomWobble(Ref<float> referenceValue_)
+        {
+            var refs = new Ref<float>[1] { referenceValue_ };
+            return GetCustomWobble(refs);
+        }
+
+        /// <summary>
+        /// Gets a custom Wobble object for the provided reference value, if it exists.
+        /// </summary>
+        /// <typeparam name="Unit">The type of used for this reference value.</typeparam>
+        /// <param name="referenceValues_">The reference value a Wobble object is applied to.</param>
+        /// <returns>Returns the requested Wobble object if it exists or null if it cannot be found.</returns>
+        public static BaseMoonWobble<Unit> GetCustomWobble(Ref<float>[] referenceValues_)
+        {
+            if (CustomWobbles.TryGetValue(referenceValues_, out var wobble)) return wobble;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true when this object is complete.
+        /// </summary>
+        /// <returns>True when state is complete.</returns>
+        public bool IsComplete()
+        {
+            return CurrentState == MoonWobbleState.Complete;
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Method used to update all properties available to this object.
+        /// </summary>
+        protected abstract void UpdateProperties();
+
+        /// <summary>
+        /// Called to continue animating this wobble object.
+        /// </summary>
+        /// <param name="deltaTime_">Time elapsed between last and current frame.</param>
+        protected void Animate(float deltaTime_)
+        {
+            Time = (Time + deltaTime_) % MaxTimeValue;
+            UpdateProperties();
+        }
+
+        /// <summary>
+        /// Updates all starting values set the reference property values.
+        /// </summary>
+        protected abstract void UpdateStartValues();
+
+        /// <summary>
+        /// Called to handle adding a timer for stopping this animation when a duration has been defined.
+        /// </summary>
+        protected void HandleDuration()
+        {
+            if (Duration > 0f) MoonTimer.Wait(Duration, () => { Stop(); });
+        }
+        #endregion
+    }
 }

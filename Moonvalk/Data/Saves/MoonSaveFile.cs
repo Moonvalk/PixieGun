@@ -12,7 +12,6 @@ namespace Moonvalk.Data
     public class MoonSaveFile
     {
         #region Data Fields
-
         /// <summary>
         /// A dictionary of all save data by string name (category) that will be stored within this save file.
         /// </summary>
@@ -32,11 +31,9 @@ namespace Moonvalk.Data
         /// The hardcoded user file location where app data will be stored (ex. %appdata%/Godot/Project/...).
         /// </summary>
         protected const string UserDataLocation = "user://";
-
         #endregion
 
         #region Public Methods
-
         /// <summary>
         /// Default constructor for a new save file object.
         /// </summary>
@@ -59,10 +56,8 @@ namespace Moonvalk.Data
         {
             var formattedKey = category_.ToLower();
             if (SaveItems.ContainsKey(formattedKey))
-            {
                 // Remove existing data if it exists.
                 SaveItems.Remove(formattedKey);
-            }
 
             if (saveData_ == null) saveData_ = new BaseMoonSaveData<Unit>();
 
@@ -79,7 +74,7 @@ namespace Moonvalk.Data
         public BaseMoonSaveData<Unit> GetSaveData<Unit>(string category_)
         {
             var formattedKey = category_.ToLower();
-            if (SaveItems.ContainsKey(formattedKey)) return SaveItems[formattedKey] as BaseMoonSaveData<Unit>;
+            if (SaveItems.TryGetValue(formattedKey, out var item)) return item as BaseMoonSaveData<Unit>;
 
             return null;
         }
@@ -95,16 +90,13 @@ namespace Moonvalk.Data
         {
             var formattedKey = category_.ToLower();
             BaseMoonSaveData<Unit> saveData = null;
-            if (SaveItems.ContainsKey(formattedKey))
-                saveData = SaveItems[formattedKey] as BaseMoonSaveData<Unit>;
+            if (SaveItems.TryGetValue(formattedKey, out var item))
+                saveData = item as BaseMoonSaveData<Unit>;
 
             if (saveData == null)
                 saveData = AddSaveData(formattedKey, new BaseMoonSaveData<Unit>());
 
-            foreach (var setting in settings_)
-            {
-                saveData.SetValue((setting.name_, setting.value_));
-            }
+            foreach (var setting in settings_) saveData.SetValue((setting.name_, setting.value_));
 
             return saveData;
         }
@@ -119,9 +111,9 @@ namespace Moonvalk.Data
         public Unit Get<Unit>(string category_, string setting_)
         {
             var formattedKey = category_.ToLower();
-            if (SaveItems.ContainsKey(formattedKey))
+            if (SaveItems.TryGetValue(formattedKey, out var item))
             {
-                var saveData = SaveItems[formattedKey] as BaseMoonSaveData<Unit>;
+                var saveData = item as BaseMoonSaveData<Unit>;
                 return saveData.GetValue(setting_);
             }
 
@@ -145,9 +137,7 @@ namespace Moonvalk.Data
             var format = new System.Collections.Generic.Dictionary<string, string>();
             var keys = SaveItems.Keys.ToArray();
             for (var index = 0; index < keys.Length; index++)
-            {
                 format.Add(keys[index].ToLower(), SaveItems[keys[index]].GetJson());
-            }
 
             var jsonString = JSON.Print(format);
 
@@ -181,7 +171,9 @@ namespace Moonvalk.Data
             var result = (Dictionary)JSON.Parse(content).Result;
 
             var keys = result.Keys.Cast<string>().ToArray();
+
             var values = result.Values.Cast<string>().ToArray();
+
             for (var index = 0; index < keys.Length; index++)
             {
 #if (__DEBUG)
@@ -191,16 +183,14 @@ namespace Moonvalk.Data
 
                 var categories = SaveItems.Keys.ToArray();
                 for (var item = 0; item < categories.Length; item++)
-                {
                     if (categories[item] == keys[index])
                     {
                         SaveItems[categories[item]].ParseJson(values[index]);
+
                         break;
                     }
-                }
             }
         }
-
         #endregion
     }
 }

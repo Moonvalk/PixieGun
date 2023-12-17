@@ -10,7 +10,6 @@ namespace Moonvalk.Animation
     public interface IMoonWobble<Unit> : IQueueItem
     {
         #region Public Methods
-
         /// <summary>
         /// Sets all reference values that this Wobble will manipulate.
         /// </summary>
@@ -132,7 +131,6 @@ namespace Moonvalk.Animation
         /// </summary>
         /// <returns>Returns the current state.</returns>
         MoonWobbleState GetCurrentState();
-
         #endregion
     }
 }

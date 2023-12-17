@@ -28,12 +28,8 @@ namespace Moonvalk.Accessory
         /// <param name="transition_">Optional transition type.</param>
         /// <param name="ease_">Optional easing type.</param>
         /// <returns>Returns the original Tween reference holding a newly created SceneTreeTween.</returns>
-        public static SceneTreeTween InitTween(
-            this Node node_,
-            ref SceneTreeTween tween_,
-            Tween.TransitionType transition_ = Tween.TransitionType.Cubic,
-            Tween.EaseType ease_ = Tween.EaseType.InOut
-        )
+        public static SceneTreeTween InitTween(this Node node_, ref SceneTreeTween tween_, Tween.TransitionType transition_ = Tween.TransitionType.Cubic,
+            Tween.EaseType ease_ = Tween.EaseType.InOut)
         {
             CancelTween(ref tween_);
             tween_ = node_.CreateTween().SetTrans(transition_).SetEase(ease_);

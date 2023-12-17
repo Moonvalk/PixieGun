@@ -14,7 +14,8 @@ namespace Moonvalk.Data
         /// </summary>
         /// <typeparam name="Type">The type to cast resources to.</typeparam>
         /// <returns>Returns the stored resource casted to type, if available.</returns>
-        public Type GetAs<Type>() where Type : Resource
+        public Type GetAs<Type>()
+            where Type : Resource
         {
             return Value as Type;
         }

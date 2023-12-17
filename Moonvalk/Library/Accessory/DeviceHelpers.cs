@@ -15,7 +15,7 @@ namespace Moonvalk.Accessory
             None,
             Desktop,
             Mobile,
-            Html5,
+            Html5
         }
 
         /// <summary>
@@ -62,17 +62,10 @@ namespace Moonvalk.Accessory
 
             var os = OS.GetName();
             if (os == "Windows" || os == "OSX" || os == "macOS" || os == "Linux" || os == "Server" || os == "UWP")
-            {
                 CurrentState = DeviceState.Desktop;
-            }
             else if (os == "HTML5" || os == "Web")
-            {
                 CurrentState = DeviceState.Html5;
-            }
-            else if (os == "Android" || os == "iOS" || os == "BlackBerry 10")
-            {
-                CurrentState = DeviceState.Mobile;
-            }
+            else if (os == "Android" || os == "iOS" || os == "BlackBerry 10") CurrentState = DeviceState.Mobile;
         }
     }
 }

@@ -7,15 +7,6 @@ namespace Moonvalk.Systems
     /// </summary>
     public class MoonSystemManager
     {
-        #region Data Fields
-
-        /// <summary>
-        /// A map that stores reference to all MoonSystems.
-        /// </summary>
-        public List<IMoonSystem> SystemMap { get; protected set; } = new List<IMoonSystem>();
-
-        #endregion
-
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -25,18 +16,21 @@ namespace Moonvalk.Systems
             Global.RegisterSystems();
         }
 
-        #region Public Methods
+        #region Data Fields
+        /// <summary>
+        /// A map that stores reference to all MoonSystems.
+        /// </summary>
+        public List<IMoonSystem> SystemMap { get; protected set; } = new List<IMoonSystem>();
+        #endregion
 
+        #region Public Methods
         /// <summary>
         /// Update method that runs each MoonSystem in order stored within _systemMap.
         /// </summary>
         /// <param name="delta_">The duration of time between last and current frame.</param>
         public void Update(float delta_)
         {
-            foreach (var system in this.SystemMap)
-            {
-                system.Execute(delta_);
-            }
+            foreach (var system in SystemMap) system.Execute(delta_);
         }
 
         /// <summary>
@@ -45,7 +39,7 @@ namespace Moonvalk.Systems
         /// <param name="system_">The MoonSystem object to be registered.</param>
         public void RegisterSystem(IMoonSystem system_)
         {
-            this.SystemMap.Add(system_);
+            SystemMap.Add(system_);
         }
 
         /// <summary>
@@ -55,13 +49,9 @@ namespace Moonvalk.Systems
         /// <returns>Returns the matching MoonSystem of the type T, if possible.</returns>
         public IMoonSystem Get<Type>()
         {
-            foreach (var system in this.SystemMap)
-            {
+            foreach (var system in SystemMap)
                 if (system.GetType() == typeof(Type))
-                {
                     return system;
-                }
-            }
 
             return null;
         }
@@ -71,12 +61,8 @@ namespace Moonvalk.Systems
         /// </summary>
         public void ClearAllSystems()
         {
-            foreach (var system in this.SystemMap)
-            {
-                system.Clear();
-            }
+            foreach (var system in SystemMap) system.Clear();
         }
-
         #endregion
     }
 }

@@ -24,8 +24,8 @@ namespace Moonvalk.Inputs
         /// <param name="key_">The key to the paired with this name.</param>
         public InputKeyPair(string name_, KeyList key_)
         {
-            this.Name = name_;
-            this.Key = key_;
+            Name = name_;
+            Key = key_;
         }
     }
 }

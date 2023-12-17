@@ -18,6 +18,25 @@ namespace Moonvalk.Animation
         protected float[] _values;
 
         /// <summary>
+        /// Constructor for a new handler.
+        /// </summary>
+        /// <param name="object_">The object that will be animated.</param>
+        /// <param name="property_">The property found on object_ that will be manipulated.</param>
+        /// <param name="target_">The target value to be animated to.</param>
+        /// <param name="parameters_">Properties that determine how the animation will look.</param>
+        /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
+        /// <param name="onComplete_">
+        /// An action to be run when this Spring is complete. This is primarily used
+        /// to remove a Spring reference once finished.
+        /// </param>
+        protected BaseMoonSpringHandler(ref ParentType object_, MoonSpringProperty property_, Unit target_, MoonSpringParams parameters_, bool start_,
+            Action onComplete_)
+        {
+            BindData(ref object_, property_);
+            TrySetupSpring(target_, parameters_, start_, onComplete_);
+        }
+
+        /// <summary>
         /// The property this container will animate upon.
         /// </summary>
         public MoonSpringProperty Property { get; protected set; }
@@ -31,29 +50,6 @@ namespace Moonvalk.Animation
         /// Stores the Spring object being managed.
         /// </summary>
         public SpringType Spring { get; protected set; }
-
-        /// <summary>
-        /// Constructor for a new handler.
-        /// </summary>
-        /// <param name="object_">The object that will be animated.</param>
-        /// <param name="property_">The property found on object_ that will be manipulated.</param>
-        /// <param name="target_">The target value to be animated to.</param>
-        /// <param name="parameters_">Properties that determine how the animation will look.</param>
-        /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
-        /// <param name="onComplete_">An action to be run when this Spring is complete. This is primarily used
-        /// to remove a Spring reference once finished.</param>
-        protected BaseMoonSpringHandler(
-            ref ParentType object_,
-            MoonSpringProperty property_,
-            Unit target_,
-            MoonSpringParams parameters_,
-            bool start_,
-            Action onComplete_
-        )
-        {
-            BindData(ref object_, property_);
-            TrySetupSpring(target_, parameters_, start_, onComplete_);
-        }
 
         /// <summary>
         /// Gets the Spring found within this container casted to the requested type if applicable.
@@ -113,8 +109,7 @@ namespace Moonvalk.Animation
         /// <param name="parameters_">Parameters used to manipulate how the animation will play.</param>
         /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
         /// <param name="onComplete_">Action to be run once the animation is complete.</param>
-        protected abstract void SetupSpring(Unit target_, MoonSpringParams parameters_, bool start_,
-            Action onComplete_);
+        protected abstract void SetupSpring(Unit target_, MoonSpringParams parameters_, bool start_, Action onComplete_);
 
         /// <summary>
         /// Called to assign a new Action called each game tick during animations that will

@@ -10,28 +10,23 @@ namespace Moonvalk.Data
     public class AudioResourceGroup : MoonStringArray
     {
         #region Data Fields
-
         /// <summary>
         /// The play type used when an audio resource has finished playing and will need to be swapped.
         /// </summary>
-        [Export]
-        public AudioResourcePlayType LoopType { get; protected set; } = AudioResourcePlayType.Ordered;
+        [Export] public AudioResourcePlayType LoopType { get; protected set; } = AudioResourcePlayType.Ordered;
 
         /// <summary>
         /// The initial play type used when an audio resource must be selected.
         /// </summary>
-        [Export]
-        public AudioResourcePlayType InitialPlayType { get; protected set; } = AudioResourcePlayType.Random;
+        [Export] public AudioResourcePlayType InitialPlayType { get; protected set; } = AudioResourcePlayType.Random;
 
         /// <summary>
         /// The current index of this group used to manage playlists.
         /// </summary>
         public int CurrentIndex { get; protected set; } = -1;
-
         #endregion
 
         #region Public Methods
-
         /// <summary>
         /// Gets a random stream path matching a resource within this group.
         /// </summary>
@@ -43,10 +38,7 @@ namespace Moonvalk.Data
             var rng = new RandomNumberGenerator();
             var index = rng.RandiRange(0, Items.Length - 1);
 
-            while (index == CurrentIndex)
-            {
-                index = rng.RandiRange(0, Items.Length - 1);
-            }
+            while (index == CurrentIndex) index = rng.RandiRange(0, Items.Length - 1);
 
             return GetStreamPath(index);
         }
@@ -72,7 +64,6 @@ namespace Moonvalk.Data
         public string GetStreamPath(string name_ = null)
         {
             if (name_ == null)
-            {
                 switch (CurrentIndex == -1 ? InitialPlayType : LoopType)
                 {
                     default:
@@ -81,17 +72,14 @@ namespace Moonvalk.Data
                     case AudioResourcePlayType.Ordered:
                         return GetStreamPath(CurrentIndex + 1);
                 }
-            }
 
             var formattedName = name_.ToLower();
             for (var index = 0; index < Items.Length; index++)
-            {
-                if (formattedName == Items[index].Name.ToLower()) return GetStreamPath(index);
-            }
+                if (formattedName == Items[index].Name.ToLower())
+                    return GetStreamPath(index);
 
             return GetStreamPath(0);
         }
-
         #endregion
     }
 }

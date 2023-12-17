@@ -1,8 +1,8 @@
 #if (TOOLS)
-using Godot;
-using Godot.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Godot;
+using Godot.Collections;
 
 namespace Moonvalk.Resources
 {
@@ -17,7 +17,7 @@ namespace Moonvalk.Resources
         public enum ResourceSearchType
         {
             Recursive = 0,
-            Namespace = 1,
+            Namespace = 1
         }
 
         /// <summary>
@@ -34,8 +34,7 @@ namespace Moonvalk.Resources
         /// A collection of all resource directories to search for types within.
         /// </summary>
         public static ReadOnlyCollection<string> ResourceScriptDirectories =>
-            new ReadOnlyCollection<string>(((Array)GetSettings(nameof(ResourceScriptDirectories))).Cast<string>()
-                .ToList());
+            new ReadOnlyCollection<string>(((Array)GetSettings(nameof(ResourceScriptDirectories))).Cast<string>().ToList());
 
         /// <summary>
         /// Called to initialize these settings.
@@ -43,10 +42,9 @@ namespace Moonvalk.Resources
         public static void Init()
         {
             AddSetting(nameof(ClassPrefix), Variant.Type.String, "");
-            AddSetting(nameof(SearchType), Variant.Type.Int, ResourceSearchType.Recursive, PropertyHint.Enum,
-                "Recursive,Namespace");
-            AddSetting(nameof(ResourceScriptDirectories), Variant.Type.StringArray,
-                new Array<string>(new string[] { "res://" }));
+            AddSetting(nameof(SearchType), Variant.Type.Int, ResourceSearchType.Recursive, PropertyHint.Enum, "Recursive,Namespace");
+
+            AddSetting(nameof(ResourceScriptDirectories), Variant.Type.StringArray, new Array<string>("res://"));
         }
 
         /// <summary>
@@ -67,21 +65,17 @@ namespace Moonvalk.Resources
         /// <param name="value_">The value used for the setting.</param>
         /// <param name="hint_">A hint used to display inputs for the setting.</param>
         /// <param name="hintString_">A string used as a hint when hovering the setting.</param>
-        private static void AddSetting(string title_, Variant.Type type_, object value_,
-            PropertyHint hint_ = PropertyHint.None, string hintString_ = "")
+        private static void AddSetting(string title_, Variant.Type type_, object value_, PropertyHint hint_ = PropertyHint.None, string hintString_ = "")
         {
             title_ = SettingPath(title_);
-            if (!ProjectSettings.HasSetting(title_))
-            {
-                ProjectSettings.SetSetting(title_, value_);
-            }
+            if (!ProjectSettings.HasSetting(title_)) ProjectSettings.SetSetting(title_, value_);
 
             var info = new Dictionary
             {
                 ["name"] = title_,
                 ["type"] = type_,
                 ["hint"] = hint_,
-                ["hint_string"] = hintString_,
+                ["hint_string"] = hintString_
             };
 
             ProjectSettings.AddPropertyInfo(info);
@@ -92,7 +86,10 @@ namespace Moonvalk.Resources
         /// </summary>
         /// <param name="title_">The title of the setting to get a path for.</param>
         /// <returns>Returns the full path where this setting is located.</returns>
-        private static string SettingPath(string title_) => $"{nameof(ResourceRegistryPlugin)}/{title_}";
+        private static string SettingPath(string title_)
+        {
+            return $"{nameof(ResourceRegistryPlugin)}/{title_}";
+        }
     }
 }
 #endif

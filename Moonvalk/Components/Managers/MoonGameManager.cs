@@ -9,8 +9,13 @@ namespace Moonvalk.Components
     /// </summary>
     public class MoonGameManager : Node
     {
-        #region Data Fields
+        /// <summary>
+        /// A maximum time elapsed allowed to be sent for game ticks. This helps to
+        /// minimize lag spikes applied to systems.
+        /// </summary>
+        private const float MaximumFrameDelta = 0.033f;
 
+        #region Data Fields
         /// <summary>
         /// Singleton instance of GameManager.
         /// </summary>
@@ -19,19 +24,10 @@ namespace Moonvalk.Components
         /// <summary>
         /// Stores reference to the world environment.
         /// </summary>
-        [Export]
-        public Environment WorldEnvironment { get; protected set; }
-
+        [Export] public Environment WorldEnvironment { get; protected set; }
         #endregion
 
-        /// <summary>
-        /// A maximum time elapsed allowed to be sent for game ticks. This helps to
-        /// minimize lag spikes applied to systems.
-        /// </summary>
-        private const float MaximumFrameDelta = 0.033f;
-
         #region Godot Events
-
         /// <summary>
         /// Occurs once this object is initialized.
         /// </summary>
@@ -50,7 +46,6 @@ namespace Moonvalk.Components
             var deltaCapped = Mathf.Min(delta_, MaximumFrameDelta);
             Global.Systems.Update(deltaCapped);
         }
-
         #endregion
     }
 }
