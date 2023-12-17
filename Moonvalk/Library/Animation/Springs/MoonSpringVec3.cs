@@ -1,111 +1,133 @@
-using Moonvalk.Utilities.Algorithms;
-using Moonvalk.Accessory;
 using Godot;
+using Moonvalk.Accessory;
+using Moonvalk.Utilities.Algorithms;
 
-namespace Moonvalk.Animation {
-	/// <summary>
-	/// Object that handles Spring calculations for a Vector3 value.
-	/// </summary>
-	public class MoonSpringVec3 : BaseMoonSpring<Vector3> {
-		/// <summary>
-		/// Default constructor made without setting up references.
-		/// </summary>
-		public MoonSpringVec3() : base() {
-			// ...
-		}
+namespace Moonvalk.Animation
+{
+    /// <summary>
+    /// Object that handles Spring calculations for a Vector3 value.
+    /// </summary>
+    public class MoonSpringVec3 : BaseMoonSpring<Vector3>
+    {
+        /// <summary>
+        /// Default constructor made without setting up references.
+        /// </summary>
+        public MoonSpringVec3()
+        {
+            // ...
+        }
 
-		/// <summary>
-		/// Constructor for creating a new Spring.
-		/// </summary>
-		/// <param name="referenceValues_">Array of references to Vector3 values.</param>
-		public MoonSpringVec3(params Ref<float>[] referenceValues_) : base(referenceValues_) {
-			// ...
-		}
+        /// <summary>
+        /// Constructor for creating a new Spring.
+        /// </summary>
+        /// <param name="referenceValues_">Array of references to Vector3 values.</param>
+        public MoonSpringVec3(params Ref<float>[] referenceValues_) : base(referenceValues_)
+        {
+            // ...
+        }
 
-		/// <summary>
-		/// Calculates the necessary velocities to be applied to all Spring properties each game tick.
-		/// </summary>
-		protected override void calculateForces() {
-			for (int index = 0; index < this.Properties.Length; index += 3) {
-				if (this.Properties[index] == null) {
-					this.Delete();
-					break;
-				}
-				float displacement = (this.TargetProperties[index].x - this.Properties[index]());
-				this.CurrentForce[index].x = MotionAlgorithms.SimpleHarmonicMotion(this.Tension, displacement, this.Dampening, this.Speed[index].x);
-				displacement = (this.TargetProperties[index].y - this.Properties[index + 1]());
-				this.CurrentForce[index].y = MotionAlgorithms.SimpleHarmonicMotion(this.Tension, displacement, this.Dampening, this.Speed[index].y);
-				displacement = (this.TargetProperties[index].z - this.Properties[index + 2]());
-				this.CurrentForce[index].z = MotionAlgorithms.SimpleHarmonicMotion(this.Tension, displacement, this.Dampening, this.Speed[index].z);
-			}
-		}
+        /// <summary>
+        /// Calculates the necessary velocities to be applied to all Spring properties each game tick.
+        /// </summary>
+        protected override void CalculateForces()
+        {
+            for (var index = 0; index < Properties.Length; index += 3)
+            {
+                if (Properties[index] == null)
+                {
+                    Delete();
+                    break;
+                }
 
-		/// <summary>
-		/// Applies force to properties each frame.
-		/// </summary>
-		/// <param name="deltaTime_">The time elapsed between last and current game tick.</param>
-		protected override void applyForces(float deltaTime_) {
-			for (int index = 0; index < this.Properties.Length; index += 3) {
-				this.Speed[index].x += this.CurrentForce[index].x * deltaTime_;
-				this.Speed[index].y += this.CurrentForce[index].y * deltaTime_;
-				this.Speed[index].z += this.CurrentForce[index].z * deltaTime_;
-				this.Properties[index]() += this.Speed[index].x * deltaTime_;
-				this.Properties[index + 1]() += this.Speed[index].y * deltaTime_;
-				this.Properties[index + 2]() += this.Speed[index].z * deltaTime_;
-			}
-		}
+                var displacement = TargetProperties[index].x - Properties[index]();
+                CurrentForce[index].x = MotionAlgorithms.SimpleHarmonicMotion(Tension, displacement, Dampening, Speed[index].x);
 
-		/// <summary>
-		/// Determines if the minimum forces have been met to continue calculating Spring forces.
-		/// </summary>
-		/// <returns>Returns true if the minimum forces have been met.</returns>
-		protected override bool minimumForcesMet() {
-			for (int index = 0; index < CurrentForce.Length; index += 3) {
-				Vector3 current = new Vector3(this.Properties[index](), this.Properties[index + 1](), this.Properties[index + 2]());
-				bool metTarget = (ConversionHelpers.Abs(this.TargetProperties[index] - current) >= this.MinimumForce[index]);
-				bool metMinimumForce = (ConversionHelpers.Abs(this.CurrentForce[index] + this.Speed[index]) >= this.MinimumForce[index]);
-				if (metTarget && metMinimumForce) {
-					return true;
-				}
-			}
-			return false;
-		}
+                displacement = TargetProperties[index].y - Properties[index + 1]();
+                CurrentForce[index].y = MotionAlgorithms.SimpleHarmonicMotion(Tension, displacement, Dampening, Speed[index].y);
 
-		/// <summary>
-		/// Assigns the minimum force required until the Spring is completed based on inputs.
-		/// </summary>
-		protected override void setMinimumForce() {
-			this.MinimumForce = new Vector3[this.Properties.Length];
-			for (int index = 0; index < this.Properties.Length; index += 3) {
-				Vector3 current = new Vector3(this.Properties[index](), this.Properties[index + 1](), this.Properties[index + 2]());
-				this.MinimumForce[index] = MoonSpring._defaultMinimumForcePercentage *
-					ConversionHelpers.Abs(this.TargetProperties[index] - current);
-			}
-		}
+                displacement = TargetProperties[index].z - Properties[index + 2]();
+                CurrentForce[index].z = MotionAlgorithms.SimpleHarmonicMotion(Tension, displacement, Dampening, Speed[index].z);
+            }
+        }
 
-		/// <summary>
-		/// Determines if there is a need to apply force to this Spring to meet target values.
-		/// </summary>
-		/// <returns>Returns true if forces need to be applied</returns>
-		protected override bool needToApplyForce() {
-			for (int index = 0; index < this.Properties.Length; index += 3) {
-				Vector3 current = new Vector3(this.Properties[index](), this.Properties[index + 1](), this.Properties[index + 2]());
-				if (current != this.TargetProperties[index]) {
-					return true;
-				}
-			}
-			return false;
-		}
+        /// <summary>
+        /// Applies force to properties each frame.
+        /// </summary>
+        /// <param name="deltaTime_">The time elapsed between last and current game tick.</param>
+        protected override void ApplyForces(float deltaTime_)
+        {
+            for (var index = 0; index < Properties.Length; index += 3)
+            {
+                Speed[index].x += CurrentForce[index].x * deltaTime_;
+                Speed[index].y += CurrentForce[index].y * deltaTime_;
+                Speed[index].z += CurrentForce[index].z * deltaTime_;
+                Properties[index]() += Speed[index].x * deltaTime_;
+                Properties[index + 1]() += Speed[index].y * deltaTime_;
+                Properties[index + 2]() += Speed[index].z * deltaTime_;
+            }
+        }
 
-		/// <summary>
-		/// Snaps all Spring properties directly to their target values. 
-		/// </summary>
-		protected override void snapSpringToTarget() {
-			for (int index = 0; index < this.Properties.Length; index += 3) {
-				this.Properties[index]() = this.TargetProperties[index].x;
-				this.Properties[index + 1]() = this.TargetProperties[index].y;
-				this.Properties[index + 2]() = this.TargetProperties[index].z;
-			}
-		}
-	}
+        /// <summary>
+        /// Determines if the minimum forces have been met to continue calculating Spring forces.
+        /// </summary>
+        /// <returns>Returns true if the minimum forces have been met.</returns>
+        protected override bool MinimumForcesMet()
+        {
+            for (var index = 0; index < CurrentForce.Length; index += 3)
+            {
+                var current = new Vector3(Properties[index](), Properties[index + 1](), Properties[index + 2]());
+
+                var metTarget = ConversionHelpers.Abs(TargetProperties[index] - current) >= MinimumForce[index];
+
+                var metMinimumForce = ConversionHelpers.Abs(CurrentForce[index] + Speed[index]) >= MinimumForce[index];
+
+                if (metTarget && metMinimumForce) return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Assigns the minimum force required until the Spring is completed based on inputs.
+        /// </summary>
+        protected override void SetMinimumForce()
+        {
+            MinimumForce = new Vector3[Properties.Length];
+            for (var index = 0; index < Properties.Length; index += 3)
+            {
+                var current = new Vector3(Properties[index](), Properties[index + 1](), Properties[index + 2]());
+
+                MinimumForce[index] = MoonSpring.DefaultMinimumForcePercentage * ConversionHelpers.Abs(TargetProperties[index] - current);
+            }
+        }
+
+        /// <summary>
+        /// Determines if there is a need to apply force to this Spring to meet target values.
+        /// </summary>
+        /// <returns>Returns true if forces need to be applied</returns>
+        protected override bool NeedToApplyForce()
+        {
+            for (var index = 0; index < Properties.Length; index += 3)
+            {
+                var current = new Vector3(Properties[index](), Properties[index + 1](), Properties[index + 2]());
+
+                if (current != TargetProperties[index]) return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Snaps all Spring properties directly to their target values.
+        /// </summary>
+        protected override void SnapSpringToTarget()
+        {
+            for (var index = 0; index < Properties.Length; index += 3)
+            {
+                Properties[index]() = TargetProperties[index].x;
+                Properties[index + 1]() = TargetProperties[index].y;
+                Properties[index + 2]() = TargetProperties[index].z;
+            }
+        }
+    }
 }

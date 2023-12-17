@@ -30,7 +30,7 @@ namespace Moonvalk.Data
         /// <summary>
         /// The hardcoded user file location where app data will be stored (ex. %appdata%/Godot/Project/...).
         /// </summary>
-        protected const string _USER_DATA_LOCATION = "user://";
+        protected const string UserDataLocation = "user://";
         #endregion
 
         #region Public Methods
@@ -54,13 +54,11 @@ namespace Moonvalk.Data
         /// <returns>Returns the save data object stored for the specified category.</returns>
         public BaseMoonSaveData<Unit> AddSaveData<Unit>(string category_, BaseMoonSaveData<Unit> saveData_ = null)
         {
-            string formattedKey = category_.ToLower();
+            var formattedKey = category_.ToLower();
             if (SaveItems.ContainsKey(formattedKey))
-            {
                 // Remove existing data if it exists.
                 SaveItems.Remove(formattedKey);
-            }
-            
+
             if (saveData_ == null) saveData_ = new BaseMoonSaveData<Unit>();
 
             SaveItems.Add(formattedKey, saveData_);
@@ -75,13 +73,13 @@ namespace Moonvalk.Data
         /// <returns>Returns the save data object stored for the specified category, if it exists.</returns>
         public BaseMoonSaveData<Unit> GetSaveData<Unit>(string category_)
         {
-            string formattedKey = category_.ToLower();
-            if (SaveItems.ContainsKey(formattedKey)) return SaveItems[formattedKey] as BaseMoonSaveData<Unit>;
-            
+            var formattedKey = category_.ToLower();
+            if (SaveItems.TryGetValue(formattedKey, out var item)) return item as BaseMoonSaveData<Unit>;
+
             return null;
         }
 
-         /// <summary>
+        /// <summary>
         /// Sets individual values stored within this save file by category, data name, and expected value for storage.
         /// </summary>
         /// <typeparam name="Unit">The unit used to store game data in this category.</typeparam>
@@ -89,20 +87,17 @@ namespace Moonvalk.Data
         /// <param name="settings_">Array of settings pairings (data name and value).</param>
         /// <returns>Returns the save data object where these settings were stored.</returns>
         public BaseMoonSaveData<Unit> Set<Unit>(string category_, params (string name_, Unit value_)[] settings_)
-         {
-            string formattedKey = category_.ToLower();
+        {
+            var formattedKey = category_.ToLower();
             BaseMoonSaveData<Unit> saveData = null;
-            if (SaveItems.ContainsKey(formattedKey))
-                saveData = SaveItems[formattedKey] as BaseMoonSaveData<Unit>;
-            
+            if (SaveItems.TryGetValue(formattedKey, out var item))
+                saveData = item as BaseMoonSaveData<Unit>;
+
             if (saveData == null)
                 saveData = AddSaveData(formattedKey, new BaseMoonSaveData<Unit>());
 
-            foreach ((string name_, Unit value_) setting in settings_)
-            {
-                saveData.SetValue((setting.name_, setting.value_));
-            }
-            
+            foreach (var setting in settings_) saveData.SetValue((setting.name_, setting.value_));
+
             return saveData;
         }
 
@@ -115,13 +110,13 @@ namespace Moonvalk.Data
         /// <returns>Returns the matching value if it exists.</returns>
         public Unit Get<Unit>(string category_, string setting_)
         {
-            string formattedKey = category_.ToLower();
-            if (SaveItems.ContainsKey(formattedKey))
+            var formattedKey = category_.ToLower();
+            if (SaveItems.TryGetValue(formattedKey, out var item))
             {
-                BaseMoonSaveData<Unit> saveData = SaveItems[formattedKey] as BaseMoonSaveData<Unit>;
+                var saveData = item as BaseMoonSaveData<Unit>;
                 return saveData.GetValue(setting_);
             }
-            
+
             return default;
         }
 
@@ -130,27 +125,25 @@ namespace Moonvalk.Data
         /// </summary>
         public void Save()
         {
-            Error error = SaveFile.Open(_USER_DATA_LOCATION + FilePath, File.ModeFlags.Write);
+            var error = SaveFile.Open(UserDataLocation + FilePath, File.ModeFlags.Write);
             if (error != Error.Ok)
             {
-                #if (__DEBUG)
+#if (__DEBUG)
                     GD.Print("Error saving. Could not open save file.");
-                #endif
+#endif
                 return;
             }
 
-            System.Collections.Generic.Dictionary<string, string> format = new System.Collections.Generic.Dictionary<string, string>();
-            string[] keys = SaveItems.Keys.ToArray();
-            for (int index = 0; index < keys.Length; index++)
-            {
-                format.Add(keys[index].ToLower(), SaveItems[keys[index]].GetJSON());
-            }
-            
-            string jsonString = JSON.Print(format);
+            var format = new System.Collections.Generic.Dictionary<string, string>();
+            var keys = SaveItems.Keys.ToArray();
+            for (var index = 0; index < keys.Length; index++)
+                format.Add(keys[index].ToLower(), SaveItems[keys[index]].GetJson());
 
-            #if (__DEBUG)
+            var jsonString = JSON.Print(format);
+
+#if (__DEBUG)
                 GD.Print("JSON String is: " + jsonString);
-            #endif
+#endif
             SaveFile.StoreString(jsonString);
             SaveFile.Close();
         }
@@ -160,41 +153,42 @@ namespace Moonvalk.Data
         /// </summary>
         public void Load()
         {
-            Error error = SaveFile.Open(_USER_DATA_LOCATION + FilePath, File.ModeFlags.Read);
+            var error = SaveFile.Open(UserDataLocation + FilePath, File.ModeFlags.Read);
             if (error != Error.Ok)
             {
-                #if (__DEBUG)
+#if (__DEBUG)
                     GD.Print("Error loading. Could not open save file.");
-                #endif
+#endif
                 return;
             }
-            
-            string content = SaveFile.GetAsText();
+
+            var content = SaveFile.GetAsText();
             SaveFile.Close();
 
-            #if (__DEBUG)
+#if (__DEBUG)
                 GD.Print("Content is: " + content);
-            #endif
-            Dictionary result = (Dictionary)JSON.Parse(content).Result;
-            
-            string[] keys = result.Keys.Cast<string>().ToArray();
-            string[] values = result.Values.Cast<string>().ToArray();
-            for (int index = 0; index < keys.Length; index++)
+#endif
+            var result = (Dictionary)JSON.Parse(content).Result;
+
+            var keys = result.Keys.Cast<string>().ToArray();
+
+            var values = result.Values.Cast<string>().ToArray();
+
+            for (var index = 0; index < keys.Length; index++)
             {
-                #if (__DEBUG)
+#if (__DEBUG)
                     GD.Print("Found key " + keys[index]);
                     GD.Print("Found value " + values[index]);
-                #endif
-                
-                string[] categories = SaveItems.Keys.ToArray();
-                for (int item = 0; item < categories.Length; item++)
-                {
+#endif
+
+                var categories = SaveItems.Keys.ToArray();
+                for (var item = 0; item < categories.Length; item++)
                     if (categories[item] == keys[index])
                     {
-                        SaveItems[categories[item]].ParseJSON(values[index]);
+                        SaveItems[categories[item]].ParseJson(values[index]);
+
                         break;
                     }
-                }
             }
         }
         #endregion

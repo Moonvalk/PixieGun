@@ -1,10 +1,11 @@
-
-namespace Moonvalk.Animation {
-	/// <summary>
-	/// All available states for a TextureAnimator.
-	/// </summary>
-	public enum TextureAnimatorState {
-		Playing,
-		Stopped,
-	}
+namespace Moonvalk.Animation
+{
+    /// <summary>
+    /// All available states for a TextureAnimator.
+    /// </summary>
+    public enum TextureAnimatorState
+    {
+        Playing,
+        Stopped
+    }
 }

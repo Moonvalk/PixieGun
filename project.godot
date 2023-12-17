@@ -8,6 +8,12 @@
 
 config_version=4
 
+[ResourceRegistryPlugin]
+
+ClassPrefix=""
+SearchType=0
+ResourceScriptDirectories=[ "res://" ]
+
 [application]
 
 config/name="PixieGun"
@@ -15,7 +21,7 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray(  )
+enabled=PoolStringArray( "res://addons/CSharpRegistry/plugin.cfg" )
 
 [gui]
 

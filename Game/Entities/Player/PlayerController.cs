@@ -4,6 +4,5 @@ namespace Game.Entities
 {
     public class PlayerController : Spatial
     {
-    
     }
 }
