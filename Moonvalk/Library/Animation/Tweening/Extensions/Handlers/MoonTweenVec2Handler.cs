@@ -78,9 +78,9 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonTweenProperty.Position:
-                            return new float[2] { control.RectPosition.x, control.RectPosition.y };
+                            return new[] { control.RectPosition.x, control.RectPosition.y };
                         case MoonTweenProperty.Scale:
-                            return new float[2] { control.RectScale.x, control.RectScale.y };
+                            return new[] { control.RectScale.x, control.RectScale.y };
                     }
 
                     break;
@@ -88,9 +88,9 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonTweenProperty.Position:
-                            return new float[2] { node.Position.x, node.Position.y };
+                            return new[] { node.Position.x, node.Position.y };
                         case MoonTweenProperty.Scale:
-                            return new float[2] { node.Scale.x, node.Scale.y };
+                            return new[] { node.Scale.x, node.Scale.y };
                     }
 
                     break;

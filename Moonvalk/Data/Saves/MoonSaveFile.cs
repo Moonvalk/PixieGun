@@ -38,7 +38,7 @@ namespace Moonvalk.Data
         /// Default constructor for a new save file object.
         /// </summary>
         /// <param name="filePath_">The name and location of this save file.</param>
-        public MoonSaveFile(string filePath_ = "Save.json")
+        protected MoonSaveFile(string filePath_ = "Save.json")
         {
             FilePath = filePath_;
             SaveItems = new System.Collections.Generic.Dictionary<string, IMoonSaveData>();
@@ -111,13 +111,11 @@ namespace Moonvalk.Data
         public Unit Get<Unit>(string category_, string setting_)
         {
             var formattedKey = category_.ToLower();
-            if (SaveItems.TryGetValue(formattedKey, out var item))
-            {
-                var saveData = item as BaseMoonSaveData<Unit>;
-                return saveData.GetValue(setting_);
-            }
+            if (!SaveItems.TryGetValue(formattedKey, out var item)) return default;
 
-            return default;
+            var saveData = item as BaseMoonSaveData<Unit>;
+            return saveData.GetValue(setting_);
+
         }
 
         /// <summary>
@@ -133,12 +131,9 @@ namespace Moonvalk.Data
 #endif
                 return;
             }
-
-            var format = new System.Collections.Generic.Dictionary<string, string>();
-            var keys = SaveItems.Keys.ToArray();
-            for (var index = 0; index < keys.Length; index++)
-                format.Add(keys[index].ToLower(), SaveItems[keys[index]].GetJson());
-
+            
+            var format = SaveItems.Keys.ToArray()
+                .ToDictionary(key => key.ToLower(), key => SaveItems[key].GetJson());
             var jsonString = JSON.Print(format);
 
 #if (__DEBUG)
@@ -169,9 +164,7 @@ namespace Moonvalk.Data
                 GD.Print("Content is: " + content);
 #endif
             var result = (Dictionary)JSON.Parse(content).Result;
-
             var keys = result.Keys.Cast<string>().ToArray();
-
             var values = result.Values.Cast<string>().ToArray();
 
             for (var index = 0; index < keys.Length; index++)
@@ -180,15 +173,10 @@ namespace Moonvalk.Data
                     GD.Print("Found key " + keys[index]);
                     GD.Print("Found value " + values[index]);
 #endif
-
-                var categories = SaveItems.Keys.ToArray();
-                for (var item = 0; item < categories.Length; item++)
-                    if (categories[item] == keys[index])
-                    {
-                        SaveItems[categories[item]].ParseJson(values[index]);
-
-                        break;
-                    }
+                
+                var matchingCategory = SaveItems.Keys.ToArray()
+                    .FirstOrDefault(category => category == keys[index]);
+                if (matchingCategory != null) SaveItems[matchingCategory].ParseJson(values[index]);
             }
         }
         #endregion

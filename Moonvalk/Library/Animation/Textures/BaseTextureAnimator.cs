@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Moonvalk.Nodes;
 using Moonvalk.Utilities;
@@ -13,28 +14,6 @@ namespace Moonvalk.Animation
     public abstract class BaseTextureAnimator<AnimationType, FrameType> : Node
         where AnimationType : BaseTextureAnimation<FrameType>
     {
-        #region Godot Events
-        /// <summary>
-        /// Called when this object is first initialized.
-        /// </summary>
-        public override void _Ready()
-        {
-            Mesh = GetNode<MeshInstance>(PMeshInstance);
-            if (Animations.Count > 0)
-            {
-                CurrentAnimation = Animations[0];
-                Play("walk");
-            }
-        }
-        #endregion
-
-        #region Private Methods
-        /// <summary>
-        /// Adjusts the texture on the stored mesh instance.
-        /// </summary>
-        protected abstract void AdjustTexture();
-        #endregion
-
         #region Data Fields
         /// <summary>
         /// Path to the mesh instance that will have its texture adjusted.
@@ -70,6 +49,27 @@ namespace Moonvalk.Animation
         /// </summary>
         protected MoonTimer _timer;
         #endregion
+        
+        #region Godot Events
+        /// <summary>
+        /// Called when this object is first initialized.
+        /// </summary>
+        public override void _Ready()
+        {
+            Mesh = GetNode<MeshInstance>(PMeshInstance);
+            if (Animations.Count == 0) return;
+
+            CurrentAnimation = Animations[0];
+            Play("walk");
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Adjusts the texture on the stored mesh instance.
+        /// </summary>
+        protected abstract void AdjustTexture();
+        #endregion
 
         #region Public Methods
         /// <summary>
@@ -80,12 +80,7 @@ namespace Moonvalk.Animation
             if (animationName_ != null)
             {
                 var formattedName = animationName_.ToLower();
-                for (var index = 0; index < Animations.Count; index++)
-                    if (Animations[index].Name.ToLower() == formattedName)
-                    {
-                        CurrentAnimation = Animations[index];
-                        break;
-                    }
+                CurrentAnimation = Animations.FirstOrDefault(animation => animation.Name.ToLower() == formattedName) ?? CurrentAnimation;
             }
 
             CurrentState = TextureAnimatorState.Playing;

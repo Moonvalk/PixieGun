@@ -45,7 +45,7 @@ namespace Moonvalk.Components.UI
         /// <summary>
         /// Instantiates a new scene at the requested index.
         /// </summary>
-        /// <param name="sceneIndex_">The scene index to instance.</param>
+        /// <param name="packedScene_">The scene element to instance.</param>
         protected override void InstantiateScene(PackedScene packedScene_)
         {
             base.InstantiateScene(packedScene_);

@@ -77,7 +77,7 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonWobbleProperty.Rotation:
-                            return new float[1] { control.RectRotation };
+                            return new[] { control.RectRotation };
                     }
 
                     break;
@@ -85,7 +85,7 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonWobbleProperty.Rotation:
-                            return new float[1] { node.RotationDegrees };
+                            return new[] { node.RotationDegrees };
                     }
 
                     break;

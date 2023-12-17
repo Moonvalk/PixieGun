@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Moonvalk.Accessory;
 using Moonvalk.Animation;
@@ -32,7 +33,8 @@ namespace Moonvalk.Components.UI
         public void SetProgress(float percentage_, bool snap_ = false)
         {
             percentage_ = Mathf.Clamp(percentage_, 0f, 1f);
-            if (Progress == percentage_) return;
+            var tolerance = 0.01f;
+            if (Math.Abs(Progress - percentage_) < tolerance) return;
 
             Progress = percentage_;
             EmitSignal(nameof(OnProgressChange), Progress);
@@ -130,7 +132,7 @@ namespace Moonvalk.Components.UI
                 })
                 .OnUpdate(UpdateProgressLabel);
 
-            var refs = new Ref<float>[3] { () => ref _barColor.x, () => ref _barColor.y, () => ref _barColor.z };
+            var refs = new Ref<float>[] { () => ref _barColor.x, () => ref _barColor.y, () => ref _barColor.z };
             MoonTweenVec3.CustomTweenTo<MoonTweenVec3>(refs, GetTargetColor(), new MoonTweenParams
                 {
                     Duration = 0.5f, EasingFunction = Easing.Cubic.InOut

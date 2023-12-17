@@ -36,7 +36,7 @@ namespace Moonvalk.Animation
             Action onComplete_)
         {
             BindData(ref object_, property_);
-            SetupWobble(parameters_, percentage_, start_, onComplete_);
+            TrySetupWobble(parameters_, percentage_, start_, onComplete_);
         }
 
         /// <summary>
@@ -57,11 +57,11 @@ namespace Moonvalk.Animation
         /// <summary>
         /// Gets the Wobble found within this container casted to the requested type if applicable.
         /// </summary>
-        /// <typeparam name="Type">The type of value being animated.</typeparam>
+        /// <typeparam name="WobbleValue">The type of value being animated.</typeparam>
         /// <returns>Returns the Wobble casted to the requested type if available.</returns>
-        public IMoonWobble<Type> GetWobble<Type>()
+        public IMoonWobble<WobbleValue> GetWobble<WobbleValue>()
         {
-            return (IMoonWobble<Type>)Wobble;
+            return (IMoonWobble<WobbleValue>)Wobble;
         }
 
         /// <summary>
@@ -91,6 +91,24 @@ namespace Moonvalk.Animation
         {
             _values = GetInitialPropertyValues(ref object_, property_);
             OnUpdate = AssignUpdateAction(ref object_, property_);
+        }
+
+        /// <summary>
+        /// Tries to set up new Wobble objects managed by this container.
+        /// </summary>
+        /// <param name="parameters_">Parameters used to manipulate how the animation will play.</param>
+        /// <param name="percentage_">
+        /// The percentage of the property that will be affected. This is useful for
+        /// multi-axis values that need to be affected differently.
+        /// </param>
+        /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
+        /// <param name="onComplete_">
+        /// An action to be run when this Wobble is complete. This is primarily used
+        /// to remove a Wobble reference once finished.
+        /// </param>
+        private void TrySetupWobble(MoonWobbleParams parameters_, Unit percentage_, bool start_, Action onComplete_)
+        {
+            SetupWobble(parameters_, percentage_, start_, onComplete_);
         }
 
         /// <summary>

@@ -79,11 +79,10 @@ namespace Moonvalk.Data
         {
             if (value_ >= 0f) Set("graphics", ("bloom", value_));
 
-            if (MoonGameManager.Instance != null && MoonGameManager.Instance.WorldEnvironment != null)
-            {
-                var bloomMultiplier = 2f;
-                MoonGameManager.Instance.WorldEnvironment.GlowIntensity = Get<float>("graphics", "bloom") * bloomMultiplier;
-            }
+            if (MoonGameManager.Instance == null || MoonGameManager.Instance.WorldEnvironment == null) return;
+
+            const float bloomMultiplier = 2f;
+            MoonGameManager.Instance.WorldEnvironment.GlowIntensity = Get<float>("graphics", "bloom") * bloomMultiplier;
         }
     }
 }

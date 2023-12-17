@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Moonvalk.Systems
 {
@@ -49,11 +50,7 @@ namespace Moonvalk.Systems
         /// <returns>Returns the matching MoonSystem of the type T, if possible.</returns>
         public IMoonSystem Get<Type>()
         {
-            foreach (var system in SystemMap)
-                if (system.GetType() == typeof(Type))
-                    return system;
-
-            return null;
+            return SystemMap.FirstOrDefault(system => system.GetType() == typeof(Type));
         }
 
         /// <summary>
@@ -61,7 +58,7 @@ namespace Moonvalk.Systems
         /// </summary>
         public void ClearAllSystems()
         {
-            foreach (var system in SystemMap) system.Clear();
+            SystemMap.ForEach(system => system.Clear());
         }
         #endregion
     }
