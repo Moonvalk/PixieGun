@@ -209,7 +209,7 @@ namespace Moonvalk.Utilities {
 
 			this.CurrentState = BaseMoonTimerState.Update;
 			this.Events.Run(this.CurrentState);
-			bool complete = this.runTimer(deltaTime_);
+			var complete = this.RunTimer(deltaTime_);
 			if (complete) {
 				this.CurrentState = BaseMoonTimerState.Complete;
 				return false;
@@ -258,7 +258,7 @@ namespace Moonvalk.Utilities {
 		/// </summary>
 		/// <param name="deltaTime_">Duration of time between last and current game tick.</param>
 		/// <returns>Returns true when complete or false when actively running.</returns>
-		protected bool runTimer(float deltaTime_) {
+		protected bool RunTimer(float deltaTime_) {
 			this.TimeRemaining -= (deltaTime_ * this.TimeScale);
 			if (this.TimeRemaining <= 0f) {
 				return true;

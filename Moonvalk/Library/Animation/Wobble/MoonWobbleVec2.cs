@@ -24,10 +24,10 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Method used to update all properties available to this object.
 		/// </summary>
-		protected override void updateProperties() {
+		protected override void UpdateProperties() {
 			// Apply easing and set properties.
-			float wave = Mathf.Sin(this.Time * this.Frequency) * this.Amplitude * this._strength;
-			for (int index = 0; index < this.Properties.Length; index += 2) {
+			var wave = Mathf.Sin(this.Time * this.Frequency) * this.Amplitude * this._strength;
+			for (var index = 0; index < this.Properties.Length; index += 2) {
 				if (this.Properties[index] == null) {
 					this.Delete();
 					break;
@@ -40,8 +40,8 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Updates all starting values set the reference property values.
 		/// </summary>
-		protected override void updateStartValues() {
-			for (int index = 0; index < this.Properties.Length; index += 2) {
+		protected override void UpdateStartValues() {
+			for (var index = 0; index < this.Properties.Length; index += 2) {
 				this.StartValues[index].x = this.Properties[index]();
 				this.StartValues[index].y = this.Properties[index + 1]();
 			}

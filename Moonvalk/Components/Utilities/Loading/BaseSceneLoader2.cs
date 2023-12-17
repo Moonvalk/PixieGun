@@ -77,12 +77,12 @@ namespace Moonvalk.Components {
 		/// <param name="sceneIndex_">The scene index to load.</param>
 		/// <returns>Returns true if the scene request is unique, false if the request was already made.</returns>
 		public bool Display(int sceneIndex_ = -1) {
-			int index = sceneIndex_ == -1 ? this.DefaultSceneIndex : sceneIndex_;
+			var index = sceneIndex_ == -1 ? this.DefaultSceneIndex : sceneIndex_;
 			if (this.LoadedIndex == index) {
 				return false;
 			}
 			this.LoadedIndex = index;
-			this.displayScene(index);
+			this.DisplayScene(index);
 			return true;
 		}
 
@@ -92,8 +92,8 @@ namespace Moonvalk.Components {
 		/// <param name="sceneName_">The name of the scene to load.</param>
 		/// <returns>Returns true if the scene is able to be swapped to, false if the scene is already loaded or not found.</returns>
 		public bool Display(string sceneName_) {
-			string formattedName = sceneName_.ToLower();
-			for (int index = 0; index < this.Scenes.Length; index++) {
+			var formattedName = sceneName_.ToLower();
+			for (var index = 0; index < this.Scenes.Length; index++) {
 				if (formattedName == this.Scenes.Items[index].Name.ToLower()) {
 					return this.Display(index);
 				}
@@ -115,12 +115,12 @@ namespace Moonvalk.Components {
 		public virtual void Hide(Action onComplete_) {
 			if (this.TransitionAnimator != null) {
 				this.TransitionAnimator.PlayIntro(() => {
-					this.hideCurrentScene();
+					this.HideCurrentScene();
 					onComplete_?.Invoke();
 				});
 				return;
 			}
-			this.hideCurrentScene();
+			this.HideCurrentScene();
 			onComplete_?.Invoke();
 		}
 		#endregion
@@ -129,7 +129,7 @@ namespace Moonvalk.Components {
 		/// <summary>
 		/// Internal execution to remove the current scene and inform subscribers.
 		/// </summary>
-		protected void hideCurrentScene() {
+		protected void HideCurrentScene() {
 			this.RemoveChildren(this.CurrentScene);
 			this.EmitSignal(nameof(OnHide));
 		}
@@ -138,8 +138,8 @@ namespace Moonvalk.Components {
 		/// Called to display the scene at the specified index.
 		/// </summary>
 		/// <param name="sceneIndex_">The scene index to swap to.</param>
-		protected virtual void displayScene(int sceneIndex_) {
-			this.swapToScene(sceneIndex_);
+		protected virtual void DisplayScene(int sceneIndex_) {
+			this.SwapToScene(sceneIndex_);
 		}
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace Moonvalk.Components {
 		/// event will be invoked to inform subscribers.
 		/// </summary>
 		/// <param name="sceneIndex_">The scene index to swap to.</param>
-		protected abstract void swapToScene(int sceneIndex_);
+		protected abstract void SwapToScene(int sceneIndex_);
 		#endregion
 	}
 }

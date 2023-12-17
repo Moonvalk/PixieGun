@@ -97,7 +97,7 @@ namespace Moonvalk.Animation {
 			this.StartValues = new Unit[referenceValues_.Length];
 			this.TargetValues = new Unit[referenceValues_.Length];
 			this.EasingFunctions = new EasingFunction[referenceValues_.Length];
-			for (int i = 0; i < this.EasingFunctions.Length; i++) {
+			for (var i = 0; i < this.EasingFunctions.Length; i++) {
 				this.EasingFunctions[i] = Easing.Linear.None;
 			}
 			return this;
@@ -108,7 +108,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <returns>Returns this Tween object.</returns>
 		public BaseMoonTween<Unit> Start() {
-			this.updateStartValues();
+			this.UpdateStartValues();
 			this.Percentage = 0f;
 			if (DelayTimer != null) {
 				this.DelayTimer.Start();
@@ -151,7 +151,7 @@ namespace Moonvalk.Animation {
 				}
 			}
 			
-			bool targetReached = this.animate(deltaTime_);
+			var targetReached = this.Animate(deltaTime_);
 			this.CurrentState = MoonTweenState.Update;
 			this.Events.Run(this.CurrentState);
 			if (targetReached) {
@@ -190,7 +190,7 @@ namespace Moonvalk.Animation {
 		/// <param name="targetValues_">An array of target values for each property.</param>
 		/// <returns>Returns this Tween object.</returns>
 		public BaseMoonTween<Unit> To(params Unit[] targetValues_) {
-			for (int i = 0; i < targetValues_.Length; i++) {
+			for (var i = 0; i < targetValues_.Length; i++) {
 				this.TargetValues[i] = targetValues_[i];
 			}
 			if (this.StartOnTargetAssigned) {
@@ -205,8 +205,8 @@ namespace Moonvalk.Animation {
 		/// <param name="functions_">An array of Easing Functions per property.</param>
 		/// <returns>Returns this Tween object.</returns>
 		public BaseMoonTween<Unit> SetEase(params EasingFunction[] functions_) {
-			for (int i = 0; i < EasingFunctions.Length; i++) {
-				EasingFunction nextFunc = (functions_.Length > i) ? functions_[i] : functions_[0];
+			for (var i = 0; i < EasingFunctions.Length; i++) {
+				var nextFunc = (functions_.Length > i) ? functions_[i] : functions_[0];
 				this.EasingFunctions[i] = nextFunc;
 			}
 			return this;
@@ -341,7 +341,7 @@ namespace Moonvalk.Animation {
 			MoonTweenParams parameters_ = null,
 			bool start_ = true
 		) where TweenType : BaseMoonTween<Unit>, new() {
-			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			var refs = new Ref<float>[1] { referenceValue_ };
 			return BaseMoonTween<Unit>.CustomTweenTo<TweenType>(refs, target_, parameters_, start_);
 		}
 
@@ -381,7 +381,7 @@ namespace Moonvalk.Animation {
 		/// <param name="referenceValue_">The reference value a Tween object is applied to.</param>
 		/// <returns>Returns the requested Tween object if it exists or null if it cannot be found.</returns>
 		public static BaseMoonTween<Unit> GetCustomTween(Ref<float> referenceValue_) {
-			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			var refs = new Ref<float>[1] { referenceValue_ };
 			return BaseMoonTween<Unit>.GetCustomTween(refs);
 		}
 
@@ -411,15 +411,15 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Method used to update all properties available to this object.
 		/// </summary>
-		protected abstract void updateProperties();
+		protected abstract void UpdateProperties();
 
 		/// <summary>
 		/// Animates this Tween from start to target.
 		/// </summary>
 		/// <param name="deltaTime_">The delta between last and current game tick.</param>
 		/// <returns>Returns true when complete or false when actively animating.</returns>
-		protected bool animate(float deltaTime_) {
-			bool isComplete = false;
+		protected bool Animate(float deltaTime_) {
+			var isComplete = false;
 
 			// Complete delay before animating.
 			if (this.DelayTimer != null && !this.DelayTimer.IsComplete()) {
@@ -427,21 +427,21 @@ namespace Moonvalk.Animation {
 			}
 
 			// Begin animating by progressing percentage.
-			float newPercentage = (this.Percentage + (deltaTime_ / this.Duration));
+			var newPercentage = (this.Percentage + (deltaTime_ / this.Duration));
 			if (newPercentage >= 1f) {
 				this.Percentage = 1f;
 				isComplete = true;
 			} else {
 				this.Percentage = newPercentage;
 			}
-			this.updateProperties();
+			this.UpdateProperties();
 			return isComplete;
 		}
 
 		/// <summary>
 		/// Updates all starting values set the reference property values.
 		/// </summary>
-		protected abstract void updateStartValues();
+		protected abstract void UpdateStartValues();
 		#endregion
 	}
 }

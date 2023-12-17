@@ -12,12 +12,12 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Path to the button element for decrementing.
 		/// </summary>
-		[Export] protected NodePath p_buttonDown { get; set; }
+		[Export] protected NodePath PButtonDown { get; set; }
 
 		/// <summary>
 		/// Path to the button element for incrementing.
 		/// </summary>
-		[Export] protected NodePath p_buttonUp { get; set; }
+		[Export] protected NodePath PButtonUp { get; set; }
 
 		/// <summary>
 		/// Stores reference to the progress bar element.
@@ -49,12 +49,12 @@ namespace Moonvalk.Components.UI
 		public override void _Ready()
 		{
 			ProgressBar = this.GetComponent<MoonProgressBar>();
-			ButtonDown = GetNode<MoonButton>(p_buttonDown);
-			ButtonUp = GetNode<MoonButton>(p_buttonUp);
+			ButtonDown = GetNode<MoonButton>(PButtonDown);
+			ButtonUp = GetNode<MoonButton>(PButtonUp);
 
-			ButtonDown.Connect("pressed", this, nameof(handleButtonDownPress));
-			ButtonUp.Connect("pressed", this, nameof(handleButtonUpPress));
-			ProgressBar.Connect(nameof(MoonProgressBar.OnProgressChange), this, nameof(handleProgressBarValueChange));
+			ButtonDown.Connect("pressed", this, nameof(HandleButtonDownPress));
+			ButtonUp.Connect("pressed", this, nameof(HandleButtonUpPress));
+			ProgressBar.Connect(nameof(MoonProgressBar.OnProgressChange), this, nameof(HandleProgressBarValueChange));
 		}
 		#endregion
 
@@ -62,24 +62,24 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Handles a press on the down button.
 		/// </summary>
-		protected void handleButtonDownPress()
+		protected void HandleButtonDownPress()
 		{
-			updateProgressBar(ProgressBar.Progress - 0.1f);
+			UpdateProgressBar(ProgressBar.Progress - 0.1f);
 		}
 
 		/// <summary>
 		/// Handles a press on the up button.
 		/// </summary>
-		protected void handleButtonUpPress()
+		protected void HandleButtonUpPress()
 		{
-			updateProgressBar(ProgressBar.Progress + 0.1f);
+			UpdateProgressBar(ProgressBar.Progress + 0.1f);
 		}
 
 		/// <summary>
 		/// Called to update the progress bar with animation.
 		/// </summary>
 		/// <param name="percentage_">The new percentage to animate to.</param>
-		protected void updateProgressBar(float percentage_)
+		protected void UpdateProgressBar(float percentage_)
 		{
 			ProgressBar.SetProgress(percentage_);
 		}
@@ -88,7 +88,7 @@ namespace Moonvalk.Components.UI
 		/// Handles emitting an event when the progress bar value has changed.
 		/// </summary>
 		/// <param name="value_">The value to share.</param>
-		protected void handleProgressBarValueChange(float value_)
+		protected void HandleProgressBarValueChange(float value_)
 		{
 			EmitSignal(nameof(OnSliderValueChange), this, value_);
 		}

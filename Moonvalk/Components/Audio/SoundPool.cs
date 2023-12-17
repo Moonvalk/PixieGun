@@ -40,7 +40,7 @@ namespace Moonvalk.Audio
 		/// <returns>A string representing a warning with current configuration.</returns>
 		public override string _GetConfigurationWarning()
 		{
-			int numberOfSoundQueues = 0;
+			var numberOfSoundQueues = 0;
 			foreach (var child in GetChildren())
 			{
 				if (child is SoundQueue)

@@ -19,7 +19,7 @@ namespace Moonvalk.Animation {
 			/// <returns>Returns a value between start and end with easing applied.</returns>
 			public static float In(float percentage_, float start_, float end_)
 			{
-				float newPercentage = 1f - getOutPercentage(1f - percentage_);
+				var newPercentage = 1f - GetOutPercentage(1f - percentage_);
 				return Linear.None(newPercentage, start_, end_);
 			}
 
@@ -32,7 +32,7 @@ namespace Moonvalk.Animation {
 			/// <returns>Returns a value between start and end with easing applied.</returns>
 			public static float Out(float percentage_, float start_, float end_)
 			{
-				return Linear.None(getOutPercentage(percentage_), start_, end_);
+				return Linear.None(GetOutPercentage(percentage_), start_, end_);
 			}
 
 			/// <summary>
@@ -44,9 +44,9 @@ namespace Moonvalk.Animation {
 			/// <returns>Returns a value between start and end with easing applied.</returns>
 			public static float InOut(float percentage_, float start_, float end_)
 			{
-				float newPercentage = (percentage_ < 0.5f)
-					? (1f - getOutPercentage(1f - 2f * percentage_)) / 2f
-					: (1f + getOutPercentage(2f * percentage_ - 1f)) / 2f;
+				var newPercentage = (percentage_ < 0.5f)
+					? (1f - GetOutPercentage(1f - 2f * percentage_)) / 2f
+					: (1f + GetOutPercentage(2f * percentage_ - 1f)) / 2f;
 				return Linear.None(newPercentage, start_, end_);
 			}
 
@@ -55,7 +55,7 @@ namespace Moonvalk.Animation {
 			/// </summary>
 			/// <param name="percentage_">The current percentage elapsed.</param>
 			/// <returns>Returns an Easing Bounce-Out percentage elapsed.</returns>
-			private static float getOutPercentage(float percentage_)
+			private static float GetOutPercentage(float percentage_)
 			{
 				const float n1 = 7.5625f;
 				const float d1 = 2.75f;

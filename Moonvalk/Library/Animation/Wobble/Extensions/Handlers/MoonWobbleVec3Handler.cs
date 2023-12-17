@@ -37,7 +37,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns a new Action.</returns>
-		protected override Action assignUpdateAction(ref ParentType object_, MoonWobbleProperty property_) {
+		protected override Action AssignUpdateAction(ref ParentType object_, MoonWobbleProperty property_) {
 			switch (object_) {
 				case Spatial spatial:
 					switch (property_) {
@@ -59,7 +59,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns the initial value.</returns>
-		protected override float[] getInitialPropertyValues(ref ParentType object_, MoonWobbleProperty property_) {
+		protected override float[] GetInitialPropertyValues(ref ParentType object_, MoonWobbleProperty property_) {
 			switch (object_) {
 				case Spatial spatial:
 					switch (property_) {
@@ -84,7 +84,7 @@ namespace Moonvalk.Animation {
 		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
 		/// <param name="onComplete_">An action to be run when this Wobble is complete. This is primarily used
 		/// to remove a Wobble reference once finished.</param>
-		protected override void setupWobble(MoonWobbleParams parameters_, Vector3 percentage_, bool start_, Action onComplete_) {
+		protected override void SetupWobble(MoonWobbleParams parameters_, Vector3 percentage_, bool start_, Action onComplete_) {
 			this.Wobble = new MoonWobbleVec3();
 			this.Wobble.SetReferences(() => ref this._values[0], () => ref this._values[1], () => ref this._values[2])
 				.SetParameters(parameters_).SetPercentage(percentage_);

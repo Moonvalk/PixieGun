@@ -63,7 +63,7 @@ namespace Moonvalk.Nodes
 		/// <param name="delta_">The time elapsed between last and current frame.</param>
 		public override void _Process(float delta_)
 		{
-			Vector2 mouse = GetTree().Root.GetMousePosition();
+			var mouse = GetTree().Root.GetMousePosition();
 			if (TargetPosition.x != mouse.x || TargetPosition.y != mouse.y)
 			{
 				TargetPosition = mouse;

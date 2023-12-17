@@ -13,12 +13,12 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Path to the texture node for the front progress image.
 		/// </summary>
-		[Export] protected NodePath p_progressFront { get; set; }
+		[Export] protected NodePath PProgressFront { get; set; }
 
 		/// <summary>
 		/// Path to the label node for the progress percentage display.
 		/// </summary>
-		[Export] protected NodePath p_progressLabel { get; set; }
+		[Export] protected NodePath PProgressLabel { get; set; }
 
 		/// <summary>
 		/// An array of colors that will be displayed on the bar in order of escalating percentage.
@@ -38,7 +38,7 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Stores the original position of the progress bar to offset from.
 		/// </summary>
-		protected Vector2 _originalProgressPosition { get; set; }
+		protected Vector2 OriginalProgressPosition { get; set; }
 
 		/// <summary>
 		/// Stores the label used to display percentage.
@@ -73,11 +73,11 @@ namespace Moonvalk.Components.UI
 		/// </summary>
 		public override void _Ready()
 		{
-			ProgressFront = GetNode<TextureRect>(p_progressFront);
-			ProgressLabel = GetNode<Label>(p_progressLabel);
+			ProgressFront = GetNode<TextureRect>(PProgressFront);
+			ProgressLabel = GetNode<Label>(PProgressLabel);
 
 			ProgressFront.Material = ProgressFront.Material.Duplicate() as Material;
-			_originalProgressPosition = ProgressFront.RectPosition;
+			OriginalProgressPosition = ProgressFront.RectPosition;
 		}
 		#endregion
 
@@ -95,20 +95,20 @@ namespace Moonvalk.Components.UI
 			Progress = percentage_;
 			EmitSignal(nameof(OnProgressChange), Progress);
 
-			Vector2 target = _originalProgressPosition + Vector2.Left * ((1f - Progress) *
-				ProgressFront.RectSize * BarOffsetPercentage * ProgressFront.RectScale);
+			var target = OriginalProgressPosition + Vector2.Left * ((1f - Progress) *
+			                                                         ProgressFront.RectSize * BarOffsetPercentage * ProgressFront.RectScale);
 			
 			if (snap_)
 			{
 				ProgressFront.RectPosition = target;
 				_displayedProgress = Progress;
-				updateProgressLabel();
-				_barColor = getTargetColor();
+				UpdateProgressLabel();
+				_barColor = GetTargetColor();
 				ProgressFront.Material.Set("shader_param/color", _barColor);
 				return;
 			}
 			
-			animateProgress(target);
+			AnimateProgress(target);
 		}
 		#endregion
 
@@ -117,7 +117,7 @@ namespace Moonvalk.Components.UI
 		/// Animates the progress bar offset to the target location.
 		/// </summary>
 		/// <param name="target_">The target offset location to animate towards.</param>
-		protected void animateProgress(Vector2 target_)
+		protected void AnimateProgress(Vector2 target_)
 		{
 			ProgressFront.SpringMoveTo(target_, new MoonSpringParams
 			{
@@ -127,10 +127,10 @@ namespace Moonvalk.Components.UI
 			MoonTween.CustomTweenTo<MoonTween>(() => ref _displayedProgress, Progress, new MoonTweenParams
 			{
 				Duration = 0.5f, EasingFunction = Easing.Cubic.Out,
-			}).OnUpdate(updateProgressLabel);
+			}).OnUpdate(UpdateProgressLabel);
 
-			Ref<float>[] refs = new Ref<float>[3] { () => ref _barColor.x, () => ref _barColor.y, () => ref _barColor.z };
-			MoonTweenVec3.CustomTweenTo<MoonTweenVec3>(refs, getTargetColor(), new MoonTweenParams
+			var refs = new Ref<float>[3] { () => ref _barColor.x, () => ref _barColor.y, () => ref _barColor.z };
+			MoonTweenVec3.CustomTweenTo<MoonTweenVec3>(refs, GetTargetColor(), new MoonTweenParams
 			{
 				Duration = 0.5f, EasingFunction = Easing.Cubic.InOut,
 			}).OnUpdate(() =>
@@ -142,7 +142,7 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Updates the label displaying progress.
 		/// </summary>
-		protected void updateProgressLabel()
+		protected void UpdateProgressLabel()
 		{
 			ProgressLabel.Text = Mathf.Round(_displayedProgress * 100f) + "%";
 		}
@@ -151,7 +151,7 @@ namespace Moonvalk.Components.UI
 		/// Gets the target color based on current percentage.
 		/// </summary>
 		/// <returns>Returns a Vector3 representing an RGB color value applied to shaders.</returns>
-		protected Vector3 getTargetColor()
+		protected Vector3 GetTargetColor()
 		{
 			return Colors[(int)Mathf.Clamp(Mathf.Floor(Progress * (Colors.Length - 0.2f)),
 				0f, Colors.Length - 1f)];

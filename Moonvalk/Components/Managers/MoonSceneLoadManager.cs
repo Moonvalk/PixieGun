@@ -28,7 +28,7 @@ namespace Moonvalk.Components
 		/// <summary>
 		/// Path to the transition controller object.
 		/// </summary>
-		[Export] protected NodePath p_transitionController { get; set; }
+		[Export] protected NodePath PTransitionController { get; set; }
 
 		/// <summary>
 		/// Singleton instance of this manager for quick access.
@@ -59,7 +59,7 @@ namespace Moonvalk.Components
 		public override void _Ready()
 		{
 			Instance = this.MakeSingleton(Instance);
-			TransitionController = GetNode<MoonTransitionController>(p_transitionController);
+			TransitionController = GetNode<MoonTransitionController>(PTransitionController);
 			LoadScene(DefaultScene);
 		}
 		#endregion
@@ -79,12 +79,12 @@ namespace Moonvalk.Components
 			{
 				TransitionController.PlayTransitionIntro(() =>
 				{
-					startSceneLoad(sceneName_, onLoad_);
+					StartSceneLoad(sceneName_, onLoad_);
 				});
 				return;
 			}
 			
-			startSceneLoad(sceneName_, onLoad_);
+			StartSceneLoad(sceneName_, onLoad_);
 		}
 
 		/// <summary>
@@ -94,7 +94,7 @@ namespace Moonvalk.Components
 		/// <returns>Returns the corresponding file path.</returns>
 		public string GetScenePath(string sceneName_)
 		{
-			for (int index = 0; index < SceneList.Length; index++)
+			for (var index = 0; index < SceneList.Length; index++)
 			{
 				if (SceneList.Items[index].Name.ToLower() == sceneName_.ToLower())
 					return SceneList.Items[index].Value;
@@ -113,11 +113,11 @@ namespace Moonvalk.Components
 		/// </summary>
 		/// <param name="sceneName_">The scene to be loaded.</param>
 		/// <param name="onLoad_">An action to be run when the scene is finished being loaded.</param>
-		protected void startSceneLoad(string sceneName_, Action onLoad_)
+		protected void StartSceneLoad(string sceneName_, Action onLoad_)
 		{
 			MoonResourceLoader.Load(GetScenePath(sceneName_), (PackedScene scene_) =>
 			{
-				instanceScene(scene_, onLoad_);
+				InstanceScene(scene_, onLoad_);
 			}, initialPollDelay_: 1f);
 		}
 
@@ -126,7 +126,7 @@ namespace Moonvalk.Components
 		/// </summary>
 		/// <param name="scene_">The packed scene to instantiate.</param>
 		/// <param name="onLoad_">An action to be run when the scene swap is complete.</param>
-		protected void instanceScene(PackedScene scene_, Action onLoad_)
+		protected void InstanceScene(PackedScene scene_, Action onLoad_)
 		{
 			#if (__DEBUG)
 				GD.Print("Instantiating scene: " + scene_);

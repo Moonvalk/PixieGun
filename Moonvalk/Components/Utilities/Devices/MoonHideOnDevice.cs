@@ -11,7 +11,7 @@ namespace Moonvalk.Components
 		/// <summary>
 		/// All nodes to show or hide based on device.
 		/// </summary>
-		[Export] protected NodePath[] p_elementsToHideOnMobile { get; set; }
+		[Export] protected NodePath[] PElementsToHideOnMobile { get; set; }
 
 		/// <summary>
 		/// True to hide these elements on mobile.
@@ -21,7 +21,7 @@ namespace Moonvalk.Components
 		/// <summary>
 		/// True to hide these elements on HTML5 web.
 		/// </summary>
-		[Export] public bool HideOnHTML5 { get; protected set; }
+		[Export] public bool HideOnHtml5 { get; protected set; }
 
 		/// <summary>
 		/// True to hide these elements on desktop.
@@ -33,15 +33,15 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready()
 		{
-			bool isPlatform = !(HideOnDesktop && DeviceHelpers.IsDeviceDesktop());
+			var isPlatform = !(HideOnDesktop && DeviceHelpers.IsDeviceDesktop());
 
-			if (HideOnHTML5 && DeviceHelpers.IsDeviceHTML5()) isPlatform = false;
+			if (HideOnHtml5 && DeviceHelpers.IsDeviceHtml5()) isPlatform = false;
 
 			if (HideOnMobile && DeviceHelpers.IsDeviceMobile()) isPlatform = false;
 
-			foreach (NodePath path in p_elementsToHideOnMobile)
+			foreach (var path in PElementsToHideOnMobile)
 			{
-				Control control = GetNode<Control>(path);
+				var control = GetNode<Control>(path);
 				control.Visible = isPlatform;
 				control.SetProcess(isPlatform);
 			}

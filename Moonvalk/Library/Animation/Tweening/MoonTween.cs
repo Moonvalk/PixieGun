@@ -23,9 +23,9 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Method used to update all properties available to this object.
 		/// </summary>
-		protected override void updateProperties() {
+		protected override void UpdateProperties() {
 			// Apply easing and set properties.
-			for (int index = 0; index < this.Properties.Length; index++) {
+			for (var index = 0; index < this.Properties.Length; index++) {
 				if (this.Properties[index] == null) {
 					this.Delete();
 					break;
@@ -37,8 +37,8 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Updates all starting values set the reference property values.
 		/// </summary>
-		protected override void updateStartValues() {
-			for (int index = 0; index < this.Properties.Length; index++) {
+		protected override void UpdateStartValues() {
+			for (var index = 0; index < this.Properties.Length; index++) {
 				this.StartValues[index] = this.Properties[index]();
 			}
 		}

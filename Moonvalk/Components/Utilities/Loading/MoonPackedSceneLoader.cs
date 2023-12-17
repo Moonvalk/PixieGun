@@ -16,10 +16,10 @@ namespace Moonvalk.Components
 		/// event will be invoked to inform subscribers.
 		/// </summary>
 		/// <param name="sceneIndex_">The scene index to swap to.</param>
-		protected override void swapToScene(int sceneIndex_)
+		protected override void SwapToScene(int sceneIndex_)
 		{
 			this.RemoveChildren(CurrentScene);
-			instantiateScene(sceneIndex_);
+			InstantiateScene(sceneIndex_);
 			EmitSignal(nameof(OnDisplay));
 		}
 
@@ -28,9 +28,9 @@ namespace Moonvalk.Components
 		/// wrap to find a usable index instead.
 		/// </summary>
 		/// <param name="sceneIndex_">The scene index to be instantiated.</param>
-		protected virtual void instantiateScene(int sceneIndex_)
+		protected virtual void InstantiateScene(int sceneIndex_)
 		{
-			int index = Mathf.PosMod(sceneIndex_, Scenes.Length);
+			var index = Mathf.PosMod(sceneIndex_, Scenes.Length);
 			CurrentScene = this.AddInstance<SceneType>(Scenes.GetAs<PackedScene>(index));
 		}
 		#endregion

@@ -37,8 +37,8 @@ namespace Moonvalk.Components
 		public static List<NodeType> GetAllComponents<NodeType>(this Node node_, params Type[] ignore_)
 			where NodeType : Node
 		{
-			List<NodeType> nodes = new List<NodeType>();
-			getAllComponentsHelper(node_, ref nodes, ignore_);
+			var nodes = new List<NodeType>();
+			GetAllComponentsHelper(node_, ref nodes, ignore_);
 			
 			return nodes;
 		}
@@ -50,21 +50,21 @@ namespace Moonvalk.Components
 		/// <param name="node_">The parent node to check first.</param>
 		/// <param name="nodeList_">A list actively being built of all components.</param>
 		/// <param name="ignore_">An array of node types to ignore when found.</param>
-		private static void getAllComponentsHelper<NodeType>(Node node_, ref List<NodeType> nodeList_, params Type[] ignore_)
+		private static void GetAllComponentsHelper<NodeType>(Node node_, ref List<NodeType> nodeList_, params Type[] ignore_)
 			where NodeType : Node
 		{
-			Type nodeType = node_.GetType();
-			for (int index = 0; index < ignore_.Length; index++)
+			var nodeType = node_.GetType();
+			for (var index = 0; index < ignore_.Length; index++)
 			{
 				if (nodeType == ignore_[index]) return;
 			}
 			
 			if (nodeType == typeof(NodeType)) nodeList_.Add(node_ as NodeType);
 			
-			Array children = node_.GetChildren();
-			for (int index = 0; index < children.Count; index++)
+			var children = node_.GetChildren();
+			for (var index = 0; index < children.Count; index++)
 			{
-				getAllComponentsHelper(children[index] as Node, ref nodeList_, ignore_);
+				GetAllComponentsHelper(children[index] as Node, ref nodeList_, ignore_);
 			}
 		}
 	}

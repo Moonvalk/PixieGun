@@ -17,7 +17,7 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Paths to all page elements that will be animated on/off the screen.
 		/// </summary>
-		[Export] protected NodePath[] p_elements { get; set; }
+		[Export] protected NodePath[] PElements { get; set; }
 
 		/// <summary>
 		/// Delay between each element as they are introduced.
@@ -78,16 +78,16 @@ namespace Moonvalk.Components.UI
 		public override void _Ready()
 		{
 			Buttons = this.GetAllComponents<MoonButton>(typeof(BaseRootMenu));
-			for (int index = 0; index < Buttons.Count; index++)
+			for (var index = 0; index < Buttons.Count; index++)
 			{
-				Buttons[index].Connect(nameof(MoonButton.OnFocusEnter), this, nameof(handleButtonFocus));
-				Buttons[index].Connect("pressed", this, nameof(handleButtonPress));
+				Buttons[index].Connect(nameof(MoonButton.OnFocusEnter), this, nameof(HandleButtonFocus));
+				Buttons[index].Connect("pressed", this, nameof(HandleButtonPress));
 			}
 
-			Elements = new Control[p_elements.Length];
-			for (int index = 0; index < Elements.Length; index++)
+			Elements = new Control[PElements.Length];
+			for (var index = 0; index < Elements.Length; index++)
 			{
-				Elements[index] = GetNode<Control>(p_elements[index]);
+				Elements[index] = GetNode<Control>(PElements[index]);
 				Elements[index].CenterPivot();
 				Elements[index].Visible = false;
 				Elements[index].RectScale = Vector2.Zero;
@@ -95,7 +95,7 @@ namespace Moonvalk.Components.UI
 			
 			this.Wait(0.1f, () =>
 			{
-				displayElements(true);
+				DisplayElements(true);
 			});
 		}
 		#endregion
@@ -129,7 +129,7 @@ namespace Moonvalk.Components.UI
 		/// <param name="onComplete_">Action to be executed when the animation is complete.</param>
 		public virtual void HidePage(Action onComplete_)
 		{
-			displayElements(false, onComplete_);
+			DisplayElements(false, onComplete_);
 		}
 		#endregion
 
@@ -137,7 +137,7 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Handles emitting a button focus event.
 		/// </summary>
-		protected void handleButtonFocus()
+		protected void HandleButtonFocus()
 		{
 			EmitSignal(nameof(OnButtonFocus));
 		}
@@ -145,7 +145,7 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// Handles emitting a button press event.
 		/// </summary>
-		protected void handleButtonPress()
+		protected void HandleButtonPress()
 		{
 			EmitSignal(nameof(OnButtonPress));
 		}
@@ -155,19 +155,19 @@ namespace Moonvalk.Components.UI
 		/// </summary>
 		/// <param name="flag_">True when elements should be introduced, false to hide.</param>
 		/// <param name="onComplete_">An optional action to be called when the animation is done.</param>
-		protected void displayElements(bool flag_, Action onComplete_ = null)
+		protected void DisplayElements(bool flag_, Action onComplete_ = null)
 		{
-			EasingFunction easing = (flag_ ? (EasingFunction)Easing.Back.Out : Easing.Cubic.InOut);
-			float duration = (flag_ ? 0.75f : 0.25f);
-			Vector2 size = (flag_ ? Vector2.One : Vector2.Zero);
+			var easing = (flag_ ? (EasingFunction)Easing.Back.Out : Easing.Cubic.InOut);
+			var duration = (flag_ ? 0.75f : 0.25f);
+			var size = (flag_ ? Vector2.One : Vector2.Zero);
 			
-			float delay = 0.5f;
-			for (int index = 0; index < Elements.Length; index++)
+			var delay = 0.5f;
+			for (var index = 0; index < Elements.Length; index++)
 			{
-				int currentIndex = index;
+				var currentIndex = index;
 				if (flag_) delay += currentIndex * ElementIntroDelay;
 
-				MoonTweenVec2 animation = Elements[currentIndex].ScaleTo(size, new MoonTweenParams
+				var animation = Elements[currentIndex].ScaleTo(size, new MoonTweenParams
 				{
 					Duration = duration, EasingFunction = easing, Delay = delay,
 				}, false);

@@ -1,9 +1,11 @@
 
-namespace Moonvalk.Animation {
+namespace Moonvalk.Animation
+{
 	/// <summary>
 	/// Contract for a BaseMoonSpringHandler to follow.
 	/// </summary>
-	public interface IMoonSpringHandler {
+	public interface IMoonSpringHandler
+	{
 		/// <summary>
 		/// Gets the Spring found within this container casted to the requested type if applicable.
 		/// </summary>

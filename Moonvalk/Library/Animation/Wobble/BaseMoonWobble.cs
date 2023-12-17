@@ -82,7 +82,7 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// The maximum time allowed before a reset occurs.
 		/// </summary>
-		protected const float MAX_TIME_VALUE = 100000.0f;
+		protected const float MaxTimeValue = 100000.0f;
 
 		#region Constructor(s)
 		/// <summary>
@@ -121,12 +121,12 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <returns>Returns this Wobble object.</returns>
 		public BaseMoonWobble<Unit> Start() {
-			this.updateStartValues();
+			this.UpdateStartValues();
 			if (this.EaseInTween != null) {
 				this.EaseInTween.Start();
 				this.CurrentState = MoonWobbleState.Idle;
 			} else {
-				this.handleDuration();
+				this.HandleDuration();
 				this.CurrentState = MoonWobbleState.Start;
 			}
 			this.Events.Run(this.CurrentState);
@@ -153,7 +153,7 @@ namespace Moonvalk.Animation {
 		/// <param name="deltaTime_">The duration of time between last and current game tick.</param>
 		/// <returns>Returns true when this object is active and false when it is complete.</returns>
 		public bool Update(float deltaTime_) {
-			this.animate(deltaTime_);
+			this.Animate(deltaTime_);
 			if (this.CurrentState == MoonWobbleState.Complete) {
 				return false;
 			}
@@ -180,7 +180,7 @@ namespace Moonvalk.Animation {
 				this.CurrentState = MoonWobbleState.Start;
 				this.Events.Run(this.CurrentState);
 			}).OnComplete(() => {
-				this.handleDuration();
+				this.HandleDuration();
 			});
 			return this;
 		}
@@ -366,7 +366,7 @@ namespace Moonvalk.Animation {
 			MoonWobbleParams parameters_ = null,
 			bool start_ = true
 		) where WobbleType : BaseMoonWobble<Unit>, new() {
-			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			var refs = new Ref<float>[1] { referenceValue_ };
 			return BaseMoonWobble<Unit>.CustomWobbleTo<WobbleType>(refs, percentage_, parameters_, start_);
 		}
 
@@ -410,7 +410,7 @@ namespace Moonvalk.Animation {
 		/// <param name="referenceValue_">The reference value a Wobble object is applied to.</param>
 		/// <returns>Returns the requested Wobble object if it exists or null if it cannot be found.</returns>
 		public static BaseMoonWobble<Unit> GetCustomWobble(Ref<float> referenceValue_) {
-			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			var refs = new Ref<float>[1] { referenceValue_ };
 			return BaseMoonWobble<Unit>.GetCustomWobble(refs);
 		}
 
@@ -440,26 +440,26 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Method used to update all properties available to this object.
 		/// </summary>
-		protected abstract void updateProperties();
+		protected abstract void UpdateProperties();
 
 		/// <summary>
 		/// Called to continue animating this wobble object.
 		/// </summary>
 		/// <param name="deltaTime_">Time elapsed between last and current frame.</param>
-		protected void animate(float deltaTime_) {
-			this.Time = (this.Time + deltaTime_) % BaseMoonWobble<Unit>.MAX_TIME_VALUE;
-			this.updateProperties();
+		protected void Animate(float deltaTime_) {
+			this.Time = (this.Time + deltaTime_) % BaseMoonWobble<Unit>.MaxTimeValue;
+			this.UpdateProperties();
 		}
 
 		/// <summary>
 		/// Updates all starting values set the reference property values.
 		/// </summary>
-		protected abstract void updateStartValues();
+		protected abstract void UpdateStartValues();
 
 		/// <summary>
 		/// Called to handle adding a timer for stopping this animation when a duration has been defined.
 		/// </summary>
-		protected void handleDuration() {
+		protected void HandleDuration() {
 			if (this.Duration > 0f) {
 				MoonTimer.Wait(this.Duration, () => {
 					this.Stop();

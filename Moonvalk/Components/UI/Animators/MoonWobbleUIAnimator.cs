@@ -6,12 +6,12 @@ namespace Moonvalk.Components
 	/// <summary>
 	/// Animates a UI component with wobble animations on load.
 	/// </summary>
-	public class MoonWobbleUIAnimator : Control
+	public class MoonWobbleUiAnimator : Control
 	{
 		/// <summary>
 		/// The path to the UI element inherited from a Control node.
 		/// </summary>
-		[Export] protected NodePath p_uiElement { get; set; }
+		[Export] protected NodePath PUiElement { get; set; }
 
 		/// <summary>
 		/// Properties for the movement wobble animation.
@@ -43,7 +43,7 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready()
 		{
-			Element = GetNode<Control>(p_uiElement);
+			Element = GetNode<Control>(PUiElement);
 			Element.CenterPivot();
 			Element.WobbleMove(WobbleMoveDirection, WobbleMoveParams).Start();
 			Element.WobbleScale(Vector2.One, WobbleScaleParams).Start();

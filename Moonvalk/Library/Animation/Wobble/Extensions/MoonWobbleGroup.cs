@@ -46,7 +46,7 @@ namespace Moonvalk.Animation {
 			bool start_,
 			Action onComplete_
 		) {
-			this.removeProperty<Unit>(property_);
+			this.RemoveProperty<Unit>(property_);
 			IMoonWobbleHandler handler = null;
 			switch (percentage_) {
 				case float value:
@@ -63,7 +63,7 @@ namespace Moonvalk.Animation {
 					break;
 			}
 			if (handler != null) {
-				return this.addProperty<Unit>(property_, handler);
+				return this.AddProperty<Unit>(property_, handler);
 			}
 			return null;
 		}
@@ -86,7 +86,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		public void Clear() {
 			if (this.WobbleHandlers != null) {
-				foreach (IMoonWobbleHandler handler in this.WobbleHandlers.Values) {
+				foreach (var handler in this.WobbleHandlers.Values) {
 					handler?.Delete();
 				}
 				this.WobbleHandlers.Clear();
@@ -97,7 +97,7 @@ namespace Moonvalk.Animation {
 		/// Starts all Wobbles stored in this group.
 		/// </summary>
 		public void StartAll() {
-			foreach (IMoonWobbleHandler handler in this.WobbleHandlers.Values) {
+			foreach (var handler in this.WobbleHandlers.Values) {
 				handler.Start();
 			}
 		}
@@ -109,7 +109,7 @@ namespace Moonvalk.Animation {
 		/// <param name="property_">The property that will be animated.</param>
 		/// <param name="wobbleHandler_">Reference to the new Wobble handler created for the property.</param>
 		/// <returns>Returns the MoonWobble used for animating.</returns>
-		protected BaseMoonWobble<Unit> addProperty<Unit>(MoonWobbleProperty property_, IMoonWobbleHandler wobbleHandler_) {
+		protected BaseMoonWobble<Unit> AddProperty<Unit>(MoonWobbleProperty property_, IMoonWobbleHandler wobbleHandler_) {
 			this.WobbleHandlers.Add(property_, wobbleHandler_);
 			this._previousProperty = property_;
 			return (BaseMoonWobble<Unit>)wobbleHandler_.GetWobble<Unit>();
@@ -121,7 +121,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <typeparam name="Unit">The unit type used for animating.</typeparam>
 		/// <param name="property_">The property that will be animated.</param>
-		protected void removeProperty<Unit>(MoonWobbleProperty property_) {
+		protected void RemoveProperty<Unit>(MoonWobbleProperty property_) {
 			if (this.WobbleHandlers.ContainsKey(property_)) {
 				this.WobbleHandlers[property_].GetWobble<Unit>().Delete();
 				this.WobbleHandlers.Remove(property_);

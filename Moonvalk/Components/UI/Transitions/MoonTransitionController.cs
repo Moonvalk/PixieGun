@@ -13,12 +13,12 @@ namespace Moonvalk.Components.UI
 		/// <summary>
 		/// A prefab to be instantiated as a transition animation.
 		/// </summary>
-		[Export] protected PackedScene prefab_Transition { get; set; }
+		[Export] protected PackedScene PrefabTransition { get; set; }
 
 		/// <summary>
 		/// Path to the spinner node.
 		/// </summary>
-		[Export] protected NodePath p_spinner { get; set; }
+		[Export] protected NodePath PSpinner { get; set; }
 
 		/// <summary>
 		/// Stores reference to the spinner node used to play animations during loading.
@@ -36,10 +36,10 @@ namespace Moonvalk.Components.UI
 		/// Called when this object is first initialized.
 		/// </summary>
 		public override void _Ready() {
-			Transition = this.AddInstance<BaseMoonTransition>(prefab_Transition);
+			Transition = this.AddInstance<BaseMoonTransition>(PrefabTransition);
 			MoveChild(Transition, 0);
 
-			Spinner = GetNode<MoonSceneLoadSpinner>(p_spinner);
+			Spinner = GetNode<MoonSceneLoadSpinner>(PSpinner);
 			Transition.SnapState(MoonTransitionState.Covered);
 		}
 		#endregion

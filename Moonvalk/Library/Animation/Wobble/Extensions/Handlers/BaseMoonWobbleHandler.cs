@@ -49,8 +49,8 @@ namespace Moonvalk.Animation {
 			bool start_,
 			Action onComplete_
 		) {
-			this.bindData(ref object_, property_);
-			this.setupWobble(parameters_, percentage_, start_, onComplete_);
+			this.BindData(ref object_, property_);
+			this.SetupWobble(parameters_, percentage_, start_, onComplete_);
 		}
 
 		/// <summary>
@@ -83,9 +83,9 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property that will be adjusted.</param>
-		protected void bindData(ref ParentType object_, MoonWobbleProperty property_) {
-			this._values = this.getInitialPropertyValues(ref object_, property_);
-			this.OnUpdate = this.assignUpdateAction(ref object_, property_);
+		protected void BindData(ref ParentType object_, MoonWobbleProperty property_) {
+			this._values = this.GetInitialPropertyValues(ref object_, property_);
+			this.OnUpdate = this.AssignUpdateAction(ref object_, property_);
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace Moonvalk.Animation {
 		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
 		/// <param name="onComplete_">An action to be run when this Wobble is complete. This is primarily used
 		/// to remove a Wobble reference once finished.</param>
-		protected abstract void setupWobble(MoonWobbleParams parameters_, Unit percentage_, bool start_, Action onComplete_);
+		protected abstract void SetupWobble(MoonWobbleParams parameters_, Unit percentage_, bool start_, Action onComplete_);
 
 		/// <summary>
 		/// Called to assign a new Action called each game tick during animations that will
@@ -106,7 +106,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns a new Action.</returns>
-		protected abstract Action assignUpdateAction(ref ParentType object_, MoonWobbleProperty property_);
+		protected abstract Action AssignUpdateAction(ref ParentType object_, MoonWobbleProperty property_);
 
 		/// <summary>
 		/// Gets the starting value for the Wobble object to begin at.
@@ -114,6 +114,6 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns the initial value.</returns>
-		protected abstract float[] getInitialPropertyValues(ref ParentType object_, MoonWobbleProperty property_);
+		protected abstract float[] GetInitialPropertyValues(ref ParentType object_, MoonWobbleProperty property_);
 	}
 }

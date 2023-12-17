@@ -18,12 +18,12 @@ namespace Moonvalk.Components
 		/// event will be invoked to inform subscribers.
 		/// </summary>
 		/// <param name="sceneIndex_">The scene index to swap to.</param>
-		protected override void swapToScene(int sceneIndex_)
+		protected override void SwapToScene(int sceneIndex_)
 		{
-			MoonResourceLoader.Load(getScenePath(sceneIndex_), (PackedScene scene_) =>
+			MoonResourceLoader.Load(GetScenePath(sceneIndex_), (PackedScene scene_) =>
 			{
 				this.RemoveChildren(CurrentScene);
-				instantiateScene(scene_);
+				InstantiateScene(scene_);
 				EmitSignal(nameof(OnDisplay));
 			});
 		}
@@ -32,7 +32,7 @@ namespace Moonvalk.Components
 		/// Handles instancing a new scene as a child of this node.
 		/// </summary>
 		/// <param name="packedScene_">The scene to instance.</param>
-		protected virtual void instantiateScene(PackedScene packedScene_)
+		protected virtual void InstantiateScene(PackedScene packedScene_)
 		{
 			CurrentScene = this.AddInstance<SceneType>(packedScene_);
 		}
@@ -42,9 +42,9 @@ namespace Moonvalk.Components
 		/// </summary>
 		/// <param name="sceneIndex_">The index to load.</param>
 		/// <returns>Returns the scene path within the virtual file system.</returns>
-		protected string getScenePath(int sceneIndex_)
+		protected string GetScenePath(int sceneIndex_)
 		{
-			int index = Mathf.Clamp(sceneIndex_, 0, Scenes.Length - 1);
+			var index = Mathf.Clamp(sceneIndex_, 0, Scenes.Length - 1);
 			return Scenes.Items[index].AsPath;
 		}
 		#endregion

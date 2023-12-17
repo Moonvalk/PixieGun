@@ -31,19 +31,19 @@ namespace Moonvalk.Data
         /// <param name="pairs_">All pairs of data to be set within this object.</param>
         public BaseMoonSaveData<Unit> SetValue(params (string name_, Unit value_)[] pairs_)
         {
-            foreach ((string name_, Unit value_) pair in pairs_)
+            foreach (var pair in pairs_)
             {
-                string formattedKey = pair.name_.ToLower();
-                
+                var formattedKey = pair.name_.ToLower();
+
                 if (Data.ContainsKey(formattedKey))
                 {
                     Data[formattedKey] = pair.value_;
                     continue;
                 }
-                
+
                 Data.Add(formattedKey, pair.value_);
             }
-            
+
             return this;
         }
 
@@ -54,7 +54,7 @@ namespace Moonvalk.Data
         /// <returns>Returns the value stored for the requested data name.</returns>
         public Unit GetValue(string name_)
         {
-            string formattedKey = name_.ToLower();
+            var formattedKey = name_.ToLower();
             if (Data.ContainsKey(formattedKey)) return Data[formattedKey];
 
             return default;
@@ -64,9 +64,9 @@ namespace Moonvalk.Data
         /// Prints this container as a JSON storage string value.
         /// </summary>
         /// <returns>Returns a JSON string matching the data found within this container.</returns>
-        public string GetJSON()
+        public string GetJson()
         {
-            string formattedData = JSON.Print(Data);
+            var formattedData = JSON.Print(Data);
             return formattedData;
         }
 
@@ -74,24 +74,24 @@ namespace Moonvalk.Data
         /// Called to parse a JSON string into usable data within this container.
         /// </summary>
         /// <param name="jsonData_">The JSON string to be parsed.</param>
-        public void ParseJSON(string jsonData_)
+        public void ParseJson(string jsonData_)
         {
-            Dictionary result = (Dictionary)JSON.Parse(jsonData_).Result;
-            #if (__DEBUG)
+            var result = (Dictionary)JSON.Parse(jsonData_).Result;
+#if (__DEBUG)
                 GD.Print("ParseJSON got string: " + result.ToString());
-            #endif
+#endif
 
-            string[] keys = result.Keys.Cast<string>().ToArray();
-            Unit[] values = result.Values.Cast<Unit>().ToArray();
-            for (int index = 0; index < keys.Length; index++)
+            var keys = result.Keys.Cast<string>().ToArray();
+            var values = result.Values.Cast<Unit>().ToArray();
+            for (var index = 0; index < keys.Length; index++)
             {
-                #if (__DEBUG)
+#if (__DEBUG)
                     GD.Print("Found key " + keys[index]);
                     GD.Print("Found value " + values[index]);
-                #endif
+#endif
 
-                string[] settings = Data.Keys.ToArray();
-                for (int item = 0; item < settings.Length; item++)
+                var settings = Data.Keys.ToArray();
+                for (var item = 0; item < settings.Length; item++)
                 {
                     if (settings[item] == keys[index])
                     {

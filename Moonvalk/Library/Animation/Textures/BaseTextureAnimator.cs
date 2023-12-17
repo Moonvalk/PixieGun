@@ -14,7 +14,7 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Path to the mesh instance that will have its texture adjusted.
 		/// </summary>
-		[Export] protected NodePath p_meshInstance { get; set; }
+		[Export] protected NodePath PMeshInstance { get; set; }
 
 		/// <summary>
 		/// Stores references to all available animations.
@@ -52,7 +52,7 @@ namespace Moonvalk.Animation {
 		/// Called when this object is first initialized.
 		/// </summary>
 		public override void _Ready() {
-			this.Mesh = this.GetNode<MeshInstance>(p_meshInstance);
+			this.Mesh = this.GetNode<MeshInstance>(PMeshInstance);
 			if (this.Animations.Count > 0) {
 				this.CurrentAnimation = this.Animations[0];
 				this.Play("walk");
@@ -66,8 +66,8 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		public void Play(string animationName_ = null) {
 			if (animationName_ != null) {
-				string formattedName = animationName_.ToLower();
-				for (int index = 0; index < this.Animations.Count; index++) {
+				var formattedName = animationName_.ToLower();
+				for (var index = 0; index < this.Animations.Count; index++) {
 					if (this.Animations[index].Name.ToLower() == formattedName) {
 						this.CurrentAnimation = this.Animations[index];
 						break;
@@ -94,7 +94,7 @@ namespace Moonvalk.Animation {
 				this.Stop();
 				return;
 			}
-			this.adjustTexture();
+			this.AdjustTexture();
 			if (this._timer == null) {
 				this._timer = new MoonTimer(this.NextFrame);
 			}
@@ -117,7 +117,7 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Adjusts the texture on the stored mesh instance.
 		/// </summary>
-		protected abstract void adjustTexture();
+		protected abstract void AdjustTexture();
 		#endregion
 	}
 }

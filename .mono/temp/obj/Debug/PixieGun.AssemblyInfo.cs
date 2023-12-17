@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PixieGun")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+15247c5d4cf248b61e2b0820f0bb7d6eda43c3c8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("PixieGun")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PixieGun")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -25,13 +25,13 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Calculates the necessary velocities to be applied to all Spring properties each game tick.
 		/// </summary>
-		protected override void calculateForces() {
-			for (int i = 0; i < this.Properties.Length; i++) {
+		protected override void CalculateForces() {
+			for (var i = 0; i < this.Properties.Length; i++) {
 				if (this.Properties[i] == null) {
 					this.Delete();
 					break;
 				}
-				float displacement = (this.TargetProperties[i] - this.Properties[i]());
+				var displacement = (this.TargetProperties[i] - this.Properties[i]());
 				this.CurrentForce[i] = MotionAlgorithms.SimpleHarmonicMotion(this.Tension, displacement, this.Dampening, this.Speed[i]);
 			}
 		}
@@ -40,8 +40,8 @@ namespace Moonvalk.Animation {
 		/// Applies force to properties each frame.
 		/// </summary>
 		/// <param name="deltaTime_">The time elapsed between last and current game tick.</param>
-		protected override void applyForces(float deltaTime_) {
-			for (int i = 0; i < this.Properties.Length; i++) {
+		protected override void ApplyForces(float deltaTime_) {
+			for (var i = 0; i < this.Properties.Length; i++) {
 				this.Speed[i] += this.CurrentForce[i] * deltaTime_;
 				this.Properties[i]() += this.Speed[i] * deltaTime_;
 			}
@@ -51,10 +51,10 @@ namespace Moonvalk.Animation {
 		/// Determines if the minimum forces have been met to continue calculating Spring forces.
 		/// </summary>
 		/// <returns>Returns true if the minimum forces have been met.</returns>
-		protected override bool minimumForcesMet() {
-			for (int index = 0; index < CurrentForce.Length; index++) {
-				bool metTarget = (Mathf.Abs(this.TargetProperties[index] - this.Properties[index]()) >= this.MinimumForce[index]);
-				bool metMinimumForce = (Mathf.Abs(this.CurrentForce[index] + this.Speed[index]) >= this.MinimumForce[index]);
+		protected override bool MinimumForcesMet() {
+			for (var index = 0; index < CurrentForce.Length; index++) {
+				var metTarget = (Mathf.Abs(this.TargetProperties[index] - this.Properties[index]()) >= this.MinimumForce[index]);
+				var metMinimumForce = (Mathf.Abs(this.CurrentForce[index] + this.Speed[index]) >= this.MinimumForce[index]);
 				if (metTarget && metMinimumForce) {
 					return true;
 				}
@@ -65,10 +65,10 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Assigns the minimum force required until the Spring is completed based on inputs.
 		/// </summary>
-		protected override void setMinimumForce() {
+		protected override void SetMinimumForce() {
 			this.MinimumForce = new float[this.Properties.Length];
-			for (int index = 0; index < this.Properties.Length; index++) {
-				this.MinimumForce[index] = MoonSpring._defaultMinimumForcePercentage * Mathf.Abs(this.TargetProperties[index] - this.Properties[index]());
+			for (var index = 0; index < this.Properties.Length; index++) {
+				this.MinimumForce[index] = MoonSpring.DefaultMinimumForcePercentage * Mathf.Abs(this.TargetProperties[index] - this.Properties[index]());
 			}
 		}
 
@@ -76,8 +76,8 @@ namespace Moonvalk.Animation {
 		/// Determines if there is a need to apply force to this Spring to meet target values.
 		/// </summary>
 		/// <returns>Returns true if forces need to be applied</returns>
-		protected override bool needToApplyForce() {
-			for (int index = 0; index < this.Properties.Length; index++) {
+		protected override bool NeedToApplyForce() {
+			for (var index = 0; index < this.Properties.Length; index++) {
 				if (this.Properties[index]() != this.TargetProperties[index]) {
 					return true;
 				}
@@ -88,8 +88,8 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Snaps all Spring properties directly to their target values. 
 		/// </summary>
-		protected override void snapSpringToTarget() {
-			for (int index = 0; index < this.Properties.Length; index++) {
+		protected override void SnapSpringToTarget() {
+			for (var index = 0; index < this.Properties.Length; index++) {
 				this.Properties[index]() = this.TargetProperties[index];
 			}
 		}

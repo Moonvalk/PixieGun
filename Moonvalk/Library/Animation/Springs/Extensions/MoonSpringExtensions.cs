@@ -45,7 +45,7 @@ namespace Moonvalk.Animation {
 					return;
 				}
 				if (MoonSpringExtensions.SpringGroups.ContainsKey(object_)) {
-					MoonSpringGroup group = MoonSpringExtensions.SpringGroups[object_];
+					var group = MoonSpringExtensions.SpringGroups[object_];
 					if (group.SpringHandlers.Remove(property_) && group.SpringHandlers.Count == 0) {
 						MoonSpringExtensions.SpringGroups.Remove(object_);
 					}
@@ -58,7 +58,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		public static void ClearAll() {
 			if (MoonSpringExtensions.SpringGroups != null) {
-				foreach (MoonSpringGroup group in MoonSpringExtensions.SpringGroups.Values) {
+				foreach (var group in MoonSpringExtensions.SpringGroups.Values) {
 					group?.Clear();
 				}
 				MoonSpringExtensions.SpringGroups.Clear();

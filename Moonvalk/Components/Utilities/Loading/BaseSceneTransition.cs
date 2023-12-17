@@ -29,12 +29,12 @@ namespace Moonvalk.Components
 		/// <summary>
 		/// Path to the sound queue for the transition intro.
 		/// </summary>
-		[Export] protected NodePath p_audioEnter { get; set; }
+		[Export] protected NodePath PAudioEnter { get; set; }
 
 		/// <summary>
 		/// Path to the sound queue for the transition outro.
 		/// </summary>
-		[Export] protected NodePath p_audioExit { get; set; }
+		[Export] protected NodePath PAudioExit { get; set; }
 
 		/// <summary>
 		/// Sound queue to be played when the transition intro is played.
@@ -78,10 +78,10 @@ namespace Moonvalk.Components
 			
 			Events.AddAction(TransitionState.Covered, onComplete_);
 			AudioEnter.PlaySound();
-			setState(TransitionState.Intro);
-			animateProgress(1f, () =>
+			SetState(TransitionState.Intro);
+			AnimateProgress(1f, () =>
 			{
-				setState(TransitionState.Covered);
+				SetState(TransitionState.Covered);
 			});
 		}
 
@@ -95,10 +95,10 @@ namespace Moonvalk.Components
 
 			Events.AddAction(TransitionState.Complete, onComplete_);
 			AudioEnter.PlaySound();
-			setState(TransitionState.Outro);
-			animateProgress(-1f, () =>
+			SetState(TransitionState.Outro);
+			AnimateProgress(-1f, () =>
 			{
-				setState(TransitionState.Complete);
+				SetState(TransitionState.Complete);
 			});
 		}
 
@@ -122,7 +122,7 @@ namespace Moonvalk.Components
 		/// <summary>
 		/// Called to set the progress value on the transition shader.
 		/// </summary>
-		protected void setProgress()
+		protected void SetProgress()
 		{
 			Material.Set("shader_param/progress", _progress);
 		}
@@ -131,7 +131,7 @@ namespace Moonvalk.Components
 		/// Handles playing the animation on progress and updating the shader material.
 		/// </summary>
 		/// <param name="onComplete_">An action that will be invoked on completion.</param>
-		protected void animateProgress(float direction_, Action onComplete_ = null)
+		protected void AnimateProgress(float direction_, Action onComplete_ = null)
 		{
 			_progress = 0f;
 			MoonTween.CustomTweenTo<MoonTween>(() => ref _progress, 1f, TransitionParams, false)
@@ -140,7 +140,7 @@ namespace Moonvalk.Components
 				{
 					Material.Set("shader_param/direction", direction_);
 				})
-				.OnUpdate(setProgress)
+				.OnUpdate(SetProgress)
 				.Start();
 		}
 
@@ -148,12 +148,12 @@ namespace Moonvalk.Components
 		/// Sets the state of this object and emits it to listeners.
 		/// </summary>
 		/// <param name="state_">The new state to be set.</param>
-		protected void setState(TransitionState state_)
+		protected void SetState(TransitionState state_)
 		{
 			CurrentState = state_;
 			Events.Run(CurrentState, true);
 			
-			if (CurrentState == TransitionState.Complete) setState(TransitionState.Idle);
+			if (CurrentState == TransitionState.Complete) SetState(TransitionState.Idle);
 		}
 		#endregion
 	}

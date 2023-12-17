@@ -36,7 +36,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns a new Action.</returns>
-		protected override Action assignUpdateAction(ref ParentType object_, MoonSpringProperty property_) {
+		protected override Action AssignUpdateAction(ref ParentType object_, MoonSpringProperty property_) {
 			switch (object_) {
 				case Spatial spatial:
 					switch (property_) {
@@ -58,7 +58,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns the initial value.</returns>
-		protected override float[] getInitialPropertyValues(ref ParentType object_, MoonSpringProperty property_) {
+		protected override float[] GetInitialPropertyValues(ref ParentType object_, MoonSpringProperty property_) {
 			switch (object_) {
 				case Spatial spatial:
 					switch (property_) {
@@ -81,7 +81,7 @@ namespace Moonvalk.Animation {
 		/// <param name="parameters_">Parameters used to manipulate how the animation will play.</param>
 		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
 		/// <param name="onComplete_">Action to be run once the animation is complete.</param>
-		protected override void setupSpring(Vector3 target_, MoonSpringParams parameters_, bool start_, Action onComplete_) {
+		protected override void SetupSpring(Vector3 target_, MoonSpringParams parameters_, bool start_, Action onComplete_) {
 			this.Spring = new MoonSpringVec3() { StartOnTargetAssigned = start_ };
 			this.Spring.SetReferences(() => ref this._values[0], () => ref this._values[1], () => ref this._values[2]).SetParameters(parameters_);
 			this.Spring.To(target_).OnUpdate(this.OnUpdate).OnComplete(() => {

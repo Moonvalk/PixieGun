@@ -45,7 +45,7 @@ namespace Moonvalk.Animation {
 			bool start_,
 			Action onComplete_
 		) {
-			this.removeProperty<Unit>(property_);
+			this.RemoveProperty<Unit>(property_);
 			IMoonTweenHandler handler = null;
 			switch (target_) {
 				case float value:
@@ -62,7 +62,7 @@ namespace Moonvalk.Animation {
 					break;
 			}
 			if (handler != null) {
-				return this.addProperty<Unit>(property_, handler);
+				return this.AddProperty<Unit>(property_, handler);
 			}
 			return null;
 		}
@@ -85,7 +85,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		public void Clear() {
 			if (this.TweenHandlers != null) {
-				foreach (IMoonTweenHandler handler in this.TweenHandlers.Values) {
+				foreach (var handler in this.TweenHandlers.Values) {
 					handler.Delete();
 				}
 				this.TweenHandlers.Clear();
@@ -96,7 +96,7 @@ namespace Moonvalk.Animation {
 		/// Starts all Tweens stored in this group.
 		/// </summary>
 		public void StartAll() {
-			foreach (IMoonTweenHandler handler in this.TweenHandlers.Values) {
+			foreach (var handler in this.TweenHandlers.Values) {
 				handler.Start();
 			}
 		}
@@ -108,7 +108,7 @@ namespace Moonvalk.Animation {
 		/// <param name="property_">The property that will be animated.</param>
 		/// <param name="tweenHandler_">Reference to the new Tween handler created for the property.</param>
 		/// <returns>Returns the MoonTween used for animating.</returns>
-		protected BaseMoonTween<Unit> addProperty<Unit>(MoonTweenProperty property_, IMoonTweenHandler tweenHandler_) {
+		protected BaseMoonTween<Unit> AddProperty<Unit>(MoonTweenProperty property_, IMoonTweenHandler tweenHandler_) {
 			this.TweenHandlers.Add(property_, tweenHandler_);
 			this._previousProperty = property_;
 			return (BaseMoonTween<Unit>)tweenHandler_.GetTween<Unit>();
@@ -120,7 +120,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <typeparam name="Unit">The unit type used for animating.</typeparam>
 		/// <param name="property_">The property that will be animated.</param>
-		protected void removeProperty<Unit>(MoonTweenProperty property_) {
+		protected void RemoveProperty<Unit>(MoonTweenProperty property_) {
 			if (this.TweenHandlers.ContainsKey(property_)) {
 				this.TweenHandlers[property_].GetTween<Unit>().Delete();
 				this.TweenHandlers.Remove(property_);

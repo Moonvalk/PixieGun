@@ -45,7 +45,7 @@ namespace Moonvalk.Animation {
 			bool start_,
 			Action onComplete_
 		) {
-			this.removeProperty<Unit>(property_);
+			this.RemoveProperty<Unit>(property_);
 			IMoonSpringHandler handler = null;
 			switch (target_) {
 				case float value:
@@ -59,7 +59,7 @@ namespace Moonvalk.Animation {
 					break;
 			}
 			if (handler != null) {
-				return this.addProperty<Unit>(property_, handler);
+				return this.AddProperty<Unit>(property_, handler);
 			}
 			return null;
 		}
@@ -82,7 +82,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		public void Clear() {
 			if (this.SpringHandlers != null) {
-				foreach (IMoonSpringHandler handler in this.SpringHandlers.Values) {
+				foreach (var handler in this.SpringHandlers.Values) {
 					handler?.Delete();
 				}
 				this.SpringHandlers.Clear();
@@ -93,7 +93,7 @@ namespace Moonvalk.Animation {
 		/// Starts all Springs stored in this group.
 		/// </summary>
 		public void StartAll() {
-			foreach (IMoonSpringHandler handler in this.SpringHandlers.Values) {
+			foreach (var handler in this.SpringHandlers.Values) {
 				handler.Start();
 			}
 		}
@@ -105,7 +105,7 @@ namespace Moonvalk.Animation {
 		/// <param name="property_">The property that will be animated.</param>
 		/// <param name="springHandler_">Reference to the new Spring handler created for the property.</param>
 		/// <returns>Returns the MoonSpring used for animating.</returns>
-		protected BaseMoonSpring<Unit> addProperty<Unit>(MoonSpringProperty property_, IMoonSpringHandler springHandler_) {
+		protected BaseMoonSpring<Unit> AddProperty<Unit>(MoonSpringProperty property_, IMoonSpringHandler springHandler_) {
 			this.SpringHandlers.Add(property_, springHandler_);
 			this._previousProperty = property_;
 			return (BaseMoonSpring<Unit>)springHandler_.GetSpring<Unit>();
@@ -117,7 +117,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <typeparam name="Unit">The unit type used for animating.</typeparam>
 		/// <param name="property_">The property that will be animated.</param>
-		protected void removeProperty<Unit>(MoonSpringProperty property_) {
+		protected void RemoveProperty<Unit>(MoonSpringProperty property_) {
 			if (this.SpringHandlers.ContainsKey(property_)) {
 				this.SpringHandlers[property_].GetSpring<Unit>().Delete();
 				this.SpringHandlers.Remove(property_);

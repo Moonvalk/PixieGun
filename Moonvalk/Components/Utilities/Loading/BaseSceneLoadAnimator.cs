@@ -12,7 +12,7 @@ namespace Moonvalk.Components
 		/// <summary>
 		/// Stores reference to the current animation.
 		/// </summary>
-		[Export] protected MoonString path_Animation { get; set; }
+		[Export] protected MoonString PathAnimation { get; set; }
 
 		/// <summary>
 		/// Stores reference to the current animation.
@@ -31,7 +31,7 @@ namespace Moonvalk.Components
 		/// </summary>
 		public override void _Ready() {
 			Visible = false;
-			MoonResourceLoader.Load(path_Animation.AsPath, (PackedScene scene_) =>
+			MoonResourceLoader.Load(PathAnimation.AsPath, (PackedScene scene_) =>
 			{
 				Animation = this.AddInstance<BaseSceneLoadAnimation>(scene_);
 			});

@@ -23,7 +23,7 @@ namespace Moonvalk.Animation
 			{
 				const float c4 = (float)((2f * Math.PI) / 3f);
 
-				float newPercentage = (percentage_ == 0)
+				var newPercentage = (percentage_ == 0)
 					? 0f : (percentage_ == 1f)
 					? 1f : (float)(-Math.Pow(2f, 10f * percentage_ - 10f) * Math.Sin((percentage_ * 10f - 10.75f) * c4));
 				return Linear.None(newPercentage, start_, end_);
@@ -40,7 +40,7 @@ namespace Moonvalk.Animation
 			{
 				const float c4 = (float)((2f * Math.PI) / 3f);
 
-				float newPercentage = (percentage_ == 0f)
+				var newPercentage = (percentage_ == 0f)
 					? 0f : (percentage_ == 1f)
 					? 1f : (float)(Math.Pow(2f, -10f * percentage_) * Math.Sin((percentage_ * 10f - 0.75f) * c4) + 1f);
 				return Linear.None(newPercentage, start_, end_);
@@ -57,7 +57,7 @@ namespace Moonvalk.Animation
 			{
 				const float c5 = (float)((2f * Math.PI) / 4.5f);
 
-				float newPercentage = (percentage_ == 0f)
+				var newPercentage = (percentage_ == 0f)
 					? 0f : (percentage_ == 1f)
 					? 1f : (percentage_ < 0.5f)
 						? (float)(-(Math.Pow(2f, 20f * percentage_ - 10f) * Math.Sin((20f * percentage_ - 11.125f) * c5)) / 2f)

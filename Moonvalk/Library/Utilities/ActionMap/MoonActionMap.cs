@@ -16,7 +16,7 @@ namespace Moonvalk.Utilities {
 			EnumType event_,
 			bool clearAfterRun_ = false
 		) {
-			for (int index = 0; index < this.Events[event_].Value.Count; index++) {
+			for (var index = 0; index < this.Events[event_].Value.Count; index++) {
 				this.Events[event_].Value[index]?.Invoke();
 			}
 			if (clearAfterRun_) {
@@ -44,7 +44,7 @@ namespace Moonvalk.Utilities {
 			ParamType param_ = default(ParamType),
 			bool clearAfterRun_ = false
 		) {
-			for (int index = 0; index < this.Events[event_].Value.Count; index++) {
+			for (var index = 0; index < this.Events[event_].Value.Count; index++) {
 				this.Events[event_].Value[index]?.Invoke(param_);
 			}
 			if (clearAfterRun_) {
@@ -75,7 +75,7 @@ namespace Moonvalk.Utilities {
 			ParamType2 param2_ = default(ParamType2),
 			bool clearAfterRun_ = false
 		) {
-			for (int index = 0; index < this.Events[event_].Value.Count; index++) {
+			for (var index = 0; index < this.Events[event_].Value.Count; index++) {
 				this.Events[event_].Value[index]?.Invoke(param_, param2_);
 			}
 			if (clearAfterRun_) {

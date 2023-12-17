@@ -45,7 +45,7 @@ namespace Moonvalk.Animation {
 					return;
 				}
 				if (MoonTweenExtensions.TweenGroups.ContainsKey(object_)) {
-					MoonTweenGroup group = MoonTweenExtensions.TweenGroups[object_];
+					var group = MoonTweenExtensions.TweenGroups[object_];
 					if (group.TweenHandlers.Remove(property_) && group.TweenHandlers.Count == 0) {
 						MoonTweenExtensions.TweenGroups.Remove(object_);
 					}
@@ -58,7 +58,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		public static void ClearAll() {
 			if (MoonTweenExtensions.TweenGroups != null) {
-				foreach (MoonTweenGroup group in MoonTweenExtensions.TweenGroups.Values) {
+				foreach (var group in MoonTweenExtensions.TweenGroups.Values) {
 					group?.Clear();
 				}
 				MoonTweenExtensions.TweenGroups.Clear();

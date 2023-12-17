@@ -49,8 +49,8 @@ namespace Moonvalk.Animation {
 			bool start_,
 			Action onComplete_
 		) {
-			this.bindData(object_, property_);
-			this.setupTween(target_, parameters_, start_, onComplete_);
+			this.BindData(object_, property_);
+			this.SetupTween(target_, parameters_, start_, onComplete_);
 		}
 
 		/// <summary>
@@ -83,9 +83,9 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property that will be adjusted.</param>
-		protected void bindData(ParentType object_, MoonTweenProperty property_) {
-			this._values = this.getInitialPropertyValues(object_, property_);
-			this.OnUpdate = this.assignUpdateAction(object_, property_);
+		protected void BindData(ParentType object_, MoonTweenProperty property_) {
+			this._values = this.GetInitialPropertyValues(object_, property_);
+			this.OnUpdate = this.AssignUpdateAction(object_, property_);
 		}
 
 		/// <summary>
@@ -96,7 +96,7 @@ namespace Moonvalk.Animation {
 		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
 		/// <param name="onComplete_">An action to be run when this Tween is complete. This is primarily used
 		/// to remove a Tween reference once finished.</param>
-		protected abstract void setupTween(Unit target_, MoonTweenParams parameters_, bool start_, Action onComplete_);
+		protected abstract void SetupTween(Unit target_, MoonTweenParams parameters_, bool start_, Action onComplete_);
 
 		/// <summary>
 		/// Called to assign a new Action called each game tick during animations that will
@@ -105,7 +105,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns a new Action.</returns>
-		protected abstract Action assignUpdateAction(ParentType object_, MoonTweenProperty property_);
+		protected abstract Action AssignUpdateAction(ParentType object_, MoonTweenProperty property_);
 
 		/// <summary>
 		/// Gets the starting value for the Tween object to begin at.
@@ -113,6 +113,6 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns the initial value.</returns>
-		protected abstract float[] getInitialPropertyValues(ParentType object_, MoonTweenProperty property_);
+		protected abstract float[] GetInitialPropertyValues(ParentType object_, MoonTweenProperty property_);
 	}
 }

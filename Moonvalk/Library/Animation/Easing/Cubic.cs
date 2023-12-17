@@ -21,7 +21,7 @@ namespace Moonvalk.Animation
 			/// <returns>Returns a value between start and end with easing applied.</returns>
 			public static float In(float percentage_, float start_, float end_)
 			{
-				float newPercentage = (percentage_ * percentage_ * percentage_);
+				var newPercentage = (percentage_ * percentage_ * percentage_);
 				return Linear.None(newPercentage, start_, end_);
 			}
 
@@ -34,7 +34,7 @@ namespace Moonvalk.Animation
 			/// <returns>Returns a value between start and end with easing applied.</returns>
 			public static float Out(float percentage_, float start_, float end_)
 			{
-				float newPercentage = (1f - (float)Math.Pow(1 - percentage_, 3));
+				var newPercentage = (1f - (float)Math.Pow(1 - percentage_, 3));
 				return Linear.None(newPercentage, start_, end_);
 			}
 
@@ -47,7 +47,7 @@ namespace Moonvalk.Animation
 			/// <returns>Returns a value between start and end with easing applied.</returns>
 			public static float InOut(float percentage_, float start_, float end_)
 			{
-				float newPercentage = (percentage_ < 0.5f)
+				var newPercentage = (percentage_ < 0.5f)
 					? (4f * percentage_ * percentage_ * percentage_)
 					: (1f - (float)Math.Pow(-2f * percentage_ + 2f, 3f) / 2f);
 				return Linear.None(newPercentage, start_, end_);

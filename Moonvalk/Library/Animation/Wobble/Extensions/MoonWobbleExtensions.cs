@@ -45,7 +45,7 @@ namespace Moonvalk.Animation {
 					return;
 				}
 				if (MoonWobbleExtensions.WobbleGroups.ContainsKey(object_)) {
-					MoonWobbleGroup group = MoonWobbleExtensions.WobbleGroups[object_];
+					var group = MoonWobbleExtensions.WobbleGroups[object_];
 					if (group.WobbleHandlers.Remove(property_) && group.WobbleHandlers.Count == 0) {
 						MoonWobbleExtensions.WobbleGroups.Remove(object_);
 					}
@@ -58,7 +58,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		public static void ClearAll() {
 			if (MoonWobbleExtensions.WobbleGroups != null) {
-				foreach (MoonWobbleGroup group in MoonWobbleExtensions.WobbleGroups.Values) {
+				foreach (var group in MoonWobbleExtensions.WobbleGroups.Values) {
 					group?.Clear();
 				}
 				MoonWobbleExtensions.WobbleGroups.Clear();

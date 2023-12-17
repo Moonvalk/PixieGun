@@ -36,14 +36,14 @@ namespace Moonvalk.Audio
 				return;
 			}
 
-			Node child = GetChild(0);
+			var child = GetChild(0);
 			if (child is AudioStreamPlayer audioStreamPlayer)
 			{
 				AudioStreamPlayers.Add(audioStreamPlayer);
 				
-				for (int index = 0; index < Count; index++)
+				for (var index = 0; index < Count; index++)
 				{
-					AudioStreamPlayer duplicate = audioStreamPlayer.Duplicate() as AudioStreamPlayer;
+					var duplicate = audioStreamPlayer.Duplicate() as AudioStreamPlayer;
 					AddChild(duplicate);
 					AudioStreamPlayers.Add(duplicate);
 				}

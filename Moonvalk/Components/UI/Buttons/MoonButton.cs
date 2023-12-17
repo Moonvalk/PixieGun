@@ -13,7 +13,7 @@ namespace Moonvalk.UI
 		/// <summary>
 		/// Stores the path to the container element.
 		/// </summary>
-		[Export] protected NodePath p_container { get; set; }
+		[Export] protected NodePath PContainer { get; set; }
 
 		/// <summary>
 		/// The scale used when hovering this button element.
@@ -47,14 +47,14 @@ namespace Moonvalk.UI
 		/// </summary>
 		public override void _Ready()
 		{
-			Container = GetNode<TextureRect>(p_container);
+			Container = GetNode<TextureRect>(PContainer);
 			this.CenterPivot();
 			Container.CenterPivot();
 
-			Connect("pressed", this, nameof(handlePress));
-			Connect("mouse_entered", this, nameof(handleChangeFocus), new Array { true });
-			Connect("focus_entered", this, nameof(handleChangeFocus), new Array { true });
-			Connect("focus_exited", this, nameof(handleChangeFocus), new Array { false });
+			Connect("pressed", this, nameof(HandlePress));
+			Connect("mouse_entered", this, nameof(HandleChangeFocus), new Array { true });
+			Connect("focus_entered", this, nameof(HandleChangeFocus), new Array { true });
+			Connect("focus_exited", this, nameof(HandleChangeFocus), new Array { false });
 		}
 		#endregion
 
@@ -63,7 +63,7 @@ namespace Moonvalk.UI
 		/// Handles updating the focused state of this button when an event occurs.
 		/// </summary>
 		/// <param name="isFocused_">Flag that determines if this button is currently focused or not.</param>
-		protected void handleChangeFocus(bool isFocused_)
+		protected void HandleChangeFocus(bool isFocused_)
 		{
 			if (IsFocused == isFocused_) return;
 			
@@ -86,7 +86,7 @@ namespace Moonvalk.UI
 		/// <summary>
 		/// Called to handle press animations when this button is pressed.
 		/// </summary>
-		protected void handlePress()
+		protected void HandlePress()
 		{
 			IsFocused = true;
 			Container.RectScale = Vector2.One * HoveredScale;
@@ -95,7 +95,7 @@ namespace Moonvalk.UI
 				Duration = 0.5f, EasingFunction = Easing.Elastic.Out,
 			}).Then(() =>
 			{
-				handleChangeFocus(false);
+				HandleChangeFocus(false);
 			});
 		}
 		#endregion

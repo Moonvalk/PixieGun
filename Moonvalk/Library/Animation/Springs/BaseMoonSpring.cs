@@ -48,7 +48,7 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// The default percentage of total distance springed that will be assigned as a minimum force.
 		/// </summary>
-		protected const float _defaultMinimumForcePercentage = 0.0001f;
+		protected const float DefaultMinimumForcePercentage = 0.0001f;
 
 		/// <summary>
 		/// The current state of this Spring object.
@@ -120,10 +120,10 @@ namespace Moonvalk.Animation {
 			this.Events.Run(this.CurrentState);
 
 			// Update springs each frame until settled.
-			this.calculateForces();
-			this.applyForces(deltaTime_);
-			if (!this.minimumForcesMet()) {
-				this.snapSpringToTarget();
+			this.CalculateForces();
+			this.ApplyForces(deltaTime_);
+			if (!this.MinimumForcesMet()) {
+				this.SnapSpringToTarget();
 				this.CurrentState = MoonSpringState.Complete;
 				return false;
 			}
@@ -135,7 +135,7 @@ namespace Moonvalk.Animation {
 		/// </summary>
 		/// <returns>Returns reference to this Spring.</returns>
 		public BaseMoonSpring<Unit> Start() {
-			if (this.needToApplyForce())  {
+			if (this.NeedToApplyForce())  {
 				this.CurrentState = MoonSpringState.Start;
 				this.Events.Run(this.CurrentState);
 				(Global.GetSystem<MoonSpringSystem>() as MoonSpringSystem).Add(this);
@@ -189,7 +189,7 @@ namespace Moonvalk.Animation {
 		/// <returns>Returns reference to this spring.</returns>
 		public BaseMoonSpring<Unit> To(params Unit[] targetProperties_) {
 			this.TargetProperties = targetProperties_;
-			this.setMinimumForce();
+			this.SetMinimumForce();
 			if (this.StartOnTargetAssigned) {
 				this.Start();
 			}
@@ -203,7 +203,7 @@ namespace Moonvalk.Animation {
 		/// <returns>Returns reference to this spring.</returns>
 		public BaseMoonSpring<Unit> Snap(params Unit[] targetProperties_) {
 			this.TargetProperties = targetProperties_;
-			this.snapSpringToTarget();
+			this.SnapSpringToTarget();
 			return this;
 		}
 
@@ -305,7 +305,7 @@ namespace Moonvalk.Animation {
 			MoonSpringParams parameters_ = null,
 			bool start_ = true
 		) where SpringType : BaseMoonSpring<Unit>, new() {
-			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			var refs = new Ref<float>[1] { referenceValue_ };
 			return BaseMoonSpring<Unit>.CustomSpringTo<SpringType>(refs, target_, parameters_, start_);
 		}
 
@@ -345,7 +345,7 @@ namespace Moonvalk.Animation {
 		/// <param name="referenceValue_">The reference value a Spring object is applied to.</param>
 		/// <returns>Returns the requested Spring object if it exists or null if it cannot be found.</returns>
 		public static BaseMoonSpring<Unit> GetCustomSpring(Ref<float> referenceValue_) {
-			Ref<float>[] refs = new Ref<float>[1] { referenceValue_ };
+			var refs = new Ref<float>[1] { referenceValue_ };
 			return BaseMoonSpring<Unit>.GetCustomSpring(refs);
 		}
 
@@ -375,35 +375,35 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Calculates the necessary velocities to be applied to all Spring properties each game tick.
 		/// </summary>
-		protected abstract void calculateForces();
+		protected abstract void CalculateForces();
 
 		/// <summary>
 		/// Applies force to properties each frame.
 		/// </summary>
 		/// <param name="deltaTime_">The time elapsed between last and current game tick.</param>
-		protected abstract void applyForces(float deltaTime_);
+		protected abstract void ApplyForces(float deltaTime_);
 
 		/// <summary>
 		/// Determines if the minimum forces have been met to continue calculating Spring forces.
 		/// </summary>
 		/// <returns>Returns true if the minimum forces have been met.</returns>
-		protected abstract bool minimumForcesMet();
+		protected abstract bool MinimumForcesMet();
 
 		/// <summary>
 		/// Determines if there is a need to apply force to this Spring to meet target values.
 		/// </summary>
 		/// <returns>Returns true if forces need to be applied</returns>
-		protected abstract bool needToApplyForce();
+		protected abstract bool NeedToApplyForce();
 
 		/// <summary>
 		/// Assigns the minimum force required until the Spring is completed based on inputs.
 		/// </summary>
-		protected abstract void setMinimumForce();
+		protected abstract void SetMinimumForce();
 
 		/// <summary>
 		/// Snaps all Spring properties directly to their target values. 
 		/// </summary>
-		protected abstract void snapSpringToTarget();
+		protected abstract void SnapSpringToTarget();
 		#endregion
 	}
 }

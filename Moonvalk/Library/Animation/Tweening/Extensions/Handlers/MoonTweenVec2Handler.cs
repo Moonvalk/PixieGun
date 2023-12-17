@@ -36,7 +36,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns a new Action.</returns>
-		protected override Action assignUpdateAction(ParentType object_, MoonTweenProperty property_) {
+		protected override Action AssignUpdateAction(ParentType object_, MoonTweenProperty property_) {
 			switch (object_) {
 				case Control control:
 					switch (property_) {
@@ -64,7 +64,7 @@ namespace Moonvalk.Animation {
 		/// <param name="object_">The object that this handler will manipulate.</param>
 		/// <param name="property_">The property to be adjusted.</param>
 		/// <returns>Returns the initial value.</returns>
-		protected override float[] getInitialPropertyValues(ParentType object_, MoonTweenProperty property_) {
+		protected override float[] GetInitialPropertyValues(ParentType object_, MoonTweenProperty property_) {
 			switch (object_) {
 				case Control control:
 					switch (property_) {
@@ -94,7 +94,7 @@ namespace Moonvalk.Animation {
 		/// <param name="start_">Flag that determines if this animation should begin immediately.</param>
 		/// <param name="onComplete_">An action to be run when this Tween is complete. This is primarily used
 		/// to remove a Tween reference once finished.</param>
-		protected override void setupTween(Vector2 target_, MoonTweenParams parameters_, bool start_, Action onComplete_) {
+		protected override void SetupTween(Vector2 target_, MoonTweenParams parameters_, bool start_, Action onComplete_) {
 			this.Tween = new MoonTweenVec2() { StartOnTargetAssigned = start_ };
 			this.Tween.SetReferences(() => ref this._values[0], () => ref this._values[1]).SetParameters(parameters_);
 			this.Tween.OnUpdate(this.OnUpdate).OnComplete(() => {

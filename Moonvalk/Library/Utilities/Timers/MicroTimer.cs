@@ -45,7 +45,7 @@ namespace Moonvalk.Utilities {
 		/// <param name="onComplete_">Tasks to be run on completion.</param>
 		/// <returns>Returns the new Timer object.</returns>
 		public static MoonTimer Wait(float duration_, params Action[] onComplete_) {
-			MoonTimer newTimer = new MoonTimer(duration_, onComplete_);
+			var newTimer = new MoonTimer(duration_, onComplete_);
 			newTimer.Start();
 			return newTimer;
 		}

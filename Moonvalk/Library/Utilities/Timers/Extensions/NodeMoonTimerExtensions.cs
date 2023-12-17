@@ -16,7 +16,7 @@ namespace Moonvalk.Utilities {
 		/// <returns>Returns the timer object.</returns>
 		public static MoonTimer Validate(this MoonTimer timer_, params Node[] nodes_) {
 			timer_.OnComplete(0, () => {
-				foreach(Node node in nodes_) {
+				foreach(var node in nodes_) {
 					if (!node.Validate()) {
 						timer_.Stop();
 						timer_.Reset();

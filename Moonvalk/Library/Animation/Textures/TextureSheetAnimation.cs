@@ -19,10 +19,10 @@ namespace Moonvalk.Animation {
 		/// <param name="index_"></param>
 		/// <returns></returns>
 		public Rect2 GetFrameData(int index_) {
-			Vector2 frameUVSize = (this.Sheet.FrameSize / this.Sheet.Texture.GetSize());
-			float frameX = frameUVSize.x * (index_ % this.Sheet.ColumnCount);
-			float frameY = frameUVSize.y * Mathf.Floor((float)index_ / this.Sheet.ColumnCount);
-			return new Rect2(frameX, frameY, frameUVSize);
+			var frameUvSize = (this.Sheet.FrameSize / this.Sheet.Texture.GetSize());
+			var frameX = frameUvSize.x * (index_ % this.Sheet.ColumnCount);
+			var frameY = frameUvSize.y * Mathf.Floor((float)index_ / this.Sheet.ColumnCount);
+			return new Rect2(frameX, frameY, frameUvSize);
 		}
 	}
 }

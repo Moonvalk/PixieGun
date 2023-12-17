@@ -31,7 +31,7 @@ namespace Moonvalk.Utilities {
 		/// <param name="event_">The event / enum value to add new actions for.</param>
 		/// <param name="actions_">Actions that will be executed during the event.</param>
 		public BaseMoonActionMap<EnumType, ActionType> AddAction(EnumType event_, params ActionType[] actions_) {
-			foreach (ActionType action in actions_) {
+			foreach (var action in actions_) {
 				if (action == null) {
 					continue;
 				}
@@ -65,7 +65,7 @@ namespace Moonvalk.Utilities {
 		/// <param name="index_">The position in the list where to add these tasks.</param>
 		/// <param name="actions_">Actions that will be executed during the event.</param>
 		public BaseMoonActionMap<EnumType, ActionType> AddAction(EnumType event_, int index_ = -1, params ActionType[] actions_) {
-			foreach (ActionType action in actions_) {
+			foreach (var action in actions_) {
 				this.Events[event_].Value.Insert(index_ > -1 ? index_ : this.Events[event_].Value.Count, action);
 			}
 			return this;
@@ -75,7 +75,7 @@ namespace Moonvalk.Utilities {
 		/// Clears all actions stored for all event / enum values.
 		/// </summary>
 		public BaseMoonActionMap<EnumType, ActionType> ClearAll() {
-			foreach (EnumType key in this.Events.Keys.ToArray<EnumType>()) {
+			foreach (var key in this.Events.Keys.ToArray<EnumType>()) {
 				this.Events[key].Value.Clear();
 			}
 			return this;

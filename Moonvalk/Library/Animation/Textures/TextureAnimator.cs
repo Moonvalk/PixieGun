@@ -9,8 +9,8 @@ namespace Moonvalk.Animation {
 		/// <summary>
 		/// Adjusts the texture on the stored mesh instance.
 		/// </summary>
-		protected override void adjustTexture() {
-			SpatialMaterial material = (this.Mesh.GetActiveMaterial(0) as SpatialMaterial);
+		protected override void AdjustTexture() {
+			var material = (this.Mesh.GetActiveMaterial(0) as SpatialMaterial);
 			material.AlbedoTexture = this.CurrentAnimation.Frames[this.CurrentFrame];
 		}
 		#endregion
