@@ -33,7 +33,7 @@ namespace Moonvalk.Animation
             Action onComplete_)
         {
             BindData(object_, property_);
-            SetupTween(target_, parameters_, start_, onComplete_);
+            TrySetupTween(target_, parameters_, start_, onComplete_);
         }
 
         /// <summary>
@@ -54,11 +54,11 @@ namespace Moonvalk.Animation
         /// <summary>
         /// Gets the Tween found within this container casted to the requested type if applicable.
         /// </summary>
-        /// <typeparam name="Type">The type of value being animated.</typeparam>
+        /// <typeparam name="TweenValue">The type of value being animated.</typeparam>
         /// <returns>Returns the Tween casted to the requested type if available.</returns>
-        public IMoonTween<Type> GetTween<Type>()
+        public IMoonTween<TweenValue> GetTween<TweenValue>()
         {
-            return (IMoonTween<Type>)Tween;
+            return (IMoonTween<TweenValue>)Tween;
         }
 
         /// <summary>
@@ -84,10 +84,25 @@ namespace Moonvalk.Animation
         /// </summary>
         /// <param name="object_">The object that this handler will manipulate.</param>
         /// <param name="property_">The property that will be adjusted.</param>
-        protected void BindData(ParentType object_, MoonTweenProperty property_)
+        private void BindData(ParentType object_, MoonTweenProperty property_)
         {
             _values = GetInitialPropertyValues(object_, property_);
             OnUpdate = AssignUpdateAction(object_, property_);
+        }
+
+        /// <summary>
+        /// Tries to set up new Tween objects managed by this container.
+        /// </summary>
+        /// <param name="target_">The target value to be animated to.</param>
+        /// <param name="parameters_">Parameters used to manipulate how the animation will play.</param>
+        /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
+        /// <param name="onComplete_">
+        /// An action to be run when this Tween is complete. This is primarily used
+        /// to remove a Tween reference once finished.
+        /// </param>
+        private void TrySetupTween(Unit target_, MoonTweenParams parameters_, bool start_, Action onComplete_)
+        {
+            SetupTween(target_, parameters_, start_, onComplete_);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Godot;
 using Moonvalk.Nodes;
 
@@ -20,13 +21,10 @@ namespace Moonvalk.Utilities
         {
             timer_.OnComplete(0, () =>
             {
-                foreach (var node in nodes_)
-                    if (!node.Validate())
-                    {
-                        timer_.Stop();
-                        timer_.Reset();
-                        break;
-                    }
+                if (nodes_.All(node => node.Validate())) return;
+
+                timer_.Stop();
+                timer_.Reset();
             });
 
             return timer_;

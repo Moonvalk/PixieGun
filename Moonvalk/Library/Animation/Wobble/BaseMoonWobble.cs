@@ -140,7 +140,7 @@ namespace Moonvalk.Animation
             }
 
             Events.Run(CurrentState);
-            (Global.GetSystem<MoonWobbleSystem>() as MoonWobbleSystem).Add(this);
+            (Global.GetSystem<MoonWobbleSystem>() as MoonWobbleSystem)?.Add(this);
             return this;
         }
 
@@ -394,7 +394,7 @@ namespace Moonvalk.Animation
             bool start_ = true)
             where WobbleType : BaseMoonWobble<Unit>, new()
         {
-            var refs = new Ref<float>[1] { referenceValue_ };
+            var refs = new[] { referenceValue_ };
             return CustomWobbleTo<WobbleType>(refs, percentage_, parameters_, start_);
         }
 
@@ -442,7 +442,7 @@ namespace Moonvalk.Animation
         /// <returns>Returns the requested Wobble object if it exists or null if it cannot be found.</returns>
         public static BaseMoonWobble<Unit> GetCustomWobble(Ref<float> referenceValue_)
         {
-            var refs = new Ref<float>[1] { referenceValue_ };
+            var refs = new[] { referenceValue_ };
             return GetCustomWobble(refs);
         }
 

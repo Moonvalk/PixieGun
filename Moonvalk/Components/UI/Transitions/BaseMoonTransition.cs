@@ -118,6 +118,7 @@ namespace Moonvalk.Components.UI
         /// <summary>
         /// Handles playing the animation on progress and updating the shader material.
         /// </summary>
+        /// <param name="direction_">The direction the transition will occur in.</param>
         /// <param name="onComplete_">An action that will be invoked on completion.</param>
         protected void AnimateProgress(float direction_, Action onComplete_ = null)
         {

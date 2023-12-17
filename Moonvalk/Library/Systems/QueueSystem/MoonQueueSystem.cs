@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Moonvalk.Systems
 {
@@ -40,7 +41,8 @@ namespace Moonvalk.Systems
             // Remove elements from the RemovalQueue.
             if (RemovalQueue.Count > 0)
             {
-                for (var index = 0; index < RemovalQueue.Count; index++) Queue.Remove(RemovalQueue[index]);
+                foreach (var item in RemovalQueue)
+                    Queue.Remove(item);
 
                 RemovalQueue.Clear();
             }
@@ -48,14 +50,10 @@ namespace Moonvalk.Systems
             // Cancel System execution when no objects exist to act upon.
             if (Queue.Count == 0) return;
 
-            for (var index = 0; index < Queue.Count; index++)
+            foreach (var item in Queue.Where(item => !item.Update(delta_)))
             {
-                var item = Queue[index];
-                if (!item.Update(delta_))
-                {
-                    item.HandleTasks();
-                    if (item.IsComplete()) RemovalQueue.Add(item);
-                }
+                item.HandleTasks();
+                if (item.IsComplete()) RemovalQueue.Add(item);
             }
         }
 

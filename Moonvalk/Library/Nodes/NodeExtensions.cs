@@ -52,12 +52,11 @@ namespace Moonvalk.Nodes
         /// <param name="item_">The child to be removed, when applicable.</param>
         public static void RemoveChildren(this Node node_, Node item_)
         {
-            if (item_.Validate())
-            {
-                item_.ClearAnimationsForAll();
-                item_.QueueFreeAll();
-                node_.RemoveChild(item_);
-            }
+            if (!item_.Validate()) return;
+
+            item_.ClearAnimationsForAll();
+            item_.QueueFreeAll();
+            node_.RemoveChild(item_);
         }
 
         /// <summary>
@@ -71,16 +70,14 @@ namespace Moonvalk.Nodes
         public static NodeType MakeSingleton<NodeType>(this Node node_, NodeType instance_)
             where NodeType : Node
         {
-            if (instance_ != null)
-            {
-                node_.QueueFree();
-                if (node_.GetParent().Validate())
-                    node_.GetParent().RemoveChild(node_);
+            if (instance_ == null) return node_ as NodeType;
 
-                return instance_;
-            }
+            node_.QueueFree();
+            if (node_.GetParent().Validate())
+                node_.GetParent().RemoveChild(node_);
 
-            return node_ as NodeType;
+            return instance_;
+
         }
 
         /// <summary>
@@ -91,7 +88,8 @@ namespace Moonvalk.Nodes
         public static void ApplyActionToChildren(this Node node_, Action<Node> action_)
         {
             var children = node_.GetChildren();
-            for (var index = 0; index < children.Count; index++) action_.Invoke(children[index] as Node);
+            foreach (var child in children)
+                action_.Invoke(child as Node);
         }
     }
 }

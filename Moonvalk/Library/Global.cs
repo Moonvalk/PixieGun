@@ -1,6 +1,7 @@
 using Moonvalk.Animation;
 using Moonvalk.Systems;
 using Moonvalk.Utilities;
+// ReSharper disable ObjectCreationAsStatement
 
 namespace Moonvalk
 {

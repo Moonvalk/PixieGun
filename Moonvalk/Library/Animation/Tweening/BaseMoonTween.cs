@@ -126,7 +126,7 @@ namespace Moonvalk.Animation
             }
 
             Events.Run(CurrentState);
-            (Global.GetSystem<MoonTweenSystem>() as MoonTweenSystem).Add(this);
+            (Global.GetSystem<MoonTweenSystem>() as MoonTweenSystem)?.Add(this);
             return this;
         }
 
@@ -167,13 +167,11 @@ namespace Moonvalk.Animation
             var targetReached = Animate(deltaTime_);
             CurrentState = MoonTweenState.Update;
             Events.Run(CurrentState);
-            if (targetReached)
-            {
-                CurrentState = MoonTweenState.Complete;
-                return false;
-            }
+            if (!targetReached) return true;
 
-            return true;
+            CurrentState = MoonTweenState.Complete;
+            return false;
+
         }
 
         /// <summary>
@@ -323,7 +321,7 @@ namespace Moonvalk.Animation
         /// Adds a Tween that will begin following the original Tween's completion.
         /// </summary>
         /// <param name="triggeringTween_">The original Tween.</param>
-        /// <param name="tweenToFollow_">
+        /// <param name="tweenToFollow_">The callback Tween played once the initial tween is complete.</param>
         /// The Tween to start on completion./param>
         /// <returns>Returns this Tween object.</returns>
         public static BaseMoonTween<Unit> operator +(BaseMoonTween<Unit> triggeringTween_, BaseMoonTween<Unit> tweenToFollow_)
@@ -372,7 +370,7 @@ namespace Moonvalk.Animation
             bool start_ = true)
             where TweenType : BaseMoonTween<Unit>, new()
         {
-            var refs = new Ref<float>[1] { referenceValue_ };
+            var refs = new[] { referenceValue_ };
             return CustomTweenTo<TweenType>(refs, target_, parameters_, start_);
         }
 
@@ -380,7 +378,7 @@ namespace Moonvalk.Animation
         /// Initializes a custom tween based on a reference value as a property.
         /// </summary>
         /// <typeparam name="TweenType">The type of Tween that will be used.</typeparam>
-        /// <param name="referenceValue_">The property to be animated.</param>
+        /// <param name="referenceValues_">The properties to be animated.</param>
         /// <param name="target_">The target value.</param>
         /// <param name="parameters_">Properties that adjust how this animation will look.</param>
         /// <param name="start_">Flag that determines if this animation should begin immediately.</param>
@@ -416,7 +414,7 @@ namespace Moonvalk.Animation
         /// <returns>Returns the requested Tween object if it exists or null if it cannot be found.</returns>
         public static BaseMoonTween<Unit> GetCustomTween(Ref<float> referenceValue_)
         {
-            var refs = new Ref<float>[1] { referenceValue_ };
+            var refs = new[] { referenceValue_ };
             return GetCustomTween(refs);
         }
 
@@ -424,7 +422,7 @@ namespace Moonvalk.Animation
         /// Gets a custom Tween object for the provided reference value, if it exists.
         /// </summary>
         /// <typeparam name="Unit">The type of used for this reference value.</typeparam>
-        /// <param name="referenceValue_">The reference value a Tween object is applied to.</param>
+        /// <param name="referenceValues_">The reference values a Tween object is applied to.</param>
         /// <returns>Returns the requested Tween object if it exists or null if it cannot be found.</returns>
         public static BaseMoonTween<Unit> GetCustomTween(Ref<float>[] referenceValues_)
         {
@@ -459,7 +457,7 @@ namespace Moonvalk.Animation
             var isComplete = false;
 
             // Complete delay before animating.
-            if (DelayTimer != null && !DelayTimer.IsComplete()) return isComplete;
+            if (DelayTimer != null && !DelayTimer.IsComplete()) return false;
 
             // Begin animating by progressing percentage.
             var newPercentage = Percentage + deltaTime_ / Duration;

@@ -73,11 +73,11 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonWobbleProperty.Position:
-                            return new float[3] { spatial.Translation.x, spatial.Translation.y, spatial.Translation.z };
+                            return new[] { spatial.Translation.x, spatial.Translation.y, spatial.Translation.z };
                         case MoonWobbleProperty.Scale:
-                            return new float[3] { spatial.Scale.x, spatial.Scale.y, spatial.Scale.z };
+                            return new[] { spatial.Scale.x, spatial.Scale.y, spatial.Scale.z };
                         case MoonWobbleProperty.Rotation:
-                            return new float[3] { spatial.RotationDegrees.x, spatial.RotationDegrees.y, spatial.RotationDegrees.z };
+                            return new[] { spatial.RotationDegrees.x, spatial.RotationDegrees.y, spatial.RotationDegrees.z };
                     }
 
                     break;

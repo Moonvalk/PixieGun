@@ -71,6 +71,11 @@ namespace Moonvalk.Animation
         /// Stores reference to custom Springs applied to user generated values.
         /// </summary>
         public static Dictionary<Ref<float>[], BaseMoonSpring<Unit>> CustomSprings { get; protected set; }
+
+        /// <summary>
+        /// A tolerance that must be met for a property to be considered at its target.
+        /// </summary>
+        protected const float TargetPropertyMetTolerance = 0.001f;
         #endregion
 
         #region Constructor(s)
@@ -126,14 +131,12 @@ namespace Moonvalk.Animation
             // Update springs each frame until settled.
             CalculateForces();
             ApplyForces(deltaTime_);
-            if (!MinimumForcesMet())
-            {
-                SnapSpringToTarget();
-                CurrentState = MoonSpringState.Complete;
-                return false;
-            }
+            if (MinimumForcesMet()) return true;
 
-            return true;
+            SnapSpringToTarget();
+            CurrentState = MoonSpringState.Complete;
+            return false;
+
         }
 
         /// <summary>
@@ -146,7 +149,7 @@ namespace Moonvalk.Animation
             {
                 CurrentState = MoonSpringState.Start;
                 Events.Run(CurrentState);
-                (Global.GetSystem<MoonSpringSystem>() as MoonSpringSystem).Add(this);
+                (Global.GetSystem<MoonSpringSystem>() as MoonSpringSystem)?.Add(this);
             }
 
             return this;
@@ -327,7 +330,7 @@ namespace Moonvalk.Animation
             bool start_ = true)
             where SpringType : BaseMoonSpring<Unit>, new()
         {
-            var refs = new Ref<float>[1] { referenceValue_ };
+            var refs = new[] { referenceValue_ };
             return CustomSpringTo<SpringType>(refs, target_, parameters_, start_);
         }
 
@@ -371,7 +374,7 @@ namespace Moonvalk.Animation
         /// <returns>Returns the requested Spring object if it exists or null if it cannot be found.</returns>
         public static BaseMoonSpring<Unit> GetCustomSpring(Ref<float> referenceValue_)
         {
-            var refs = new Ref<float>[1] { referenceValue_ };
+            var refs = new[] { referenceValue_ };
             return GetCustomSpring(refs);
         }
 
@@ -383,9 +386,7 @@ namespace Moonvalk.Animation
         /// <returns>Returns the requested Spring object if it exists or null if it cannot be found.</returns>
         public static BaseMoonSpring<Unit> GetCustomSpring(Ref<float>[] referenceValues_)
         {
-            if (CustomSprings.TryGetValue(referenceValues_, out var spring)) return spring;
-
-            return null;
+            return CustomSprings.TryGetValue(referenceValues_, out var spring) ? spring : null;
         }
 
         /// <summary>

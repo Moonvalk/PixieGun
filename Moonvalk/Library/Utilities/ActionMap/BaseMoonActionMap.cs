@@ -19,7 +19,7 @@ namespace Moonvalk.Utilities
         {
             Events = new Dictionary<EnumType, InitValue<List<ActionType>>>();
             foreach (EnumType item in Enum.GetValues(typeof(EnumType)))
-                Events.Add(item, new InitValue<List<ActionType>>(() => { return new List<ActionType>(); }));
+                Events.Add(item, new InitValue<List<ActionType>>(() => new List<ActionType>()));
         }
 
         /// <summary>

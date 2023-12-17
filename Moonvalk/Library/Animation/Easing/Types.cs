@@ -7,7 +7,7 @@ namespace Moonvalk.Animation
     {
         /// <summary>
         /// All Easing Types available. Types can be parsed into usable EasingFunctions by passing to the
-        /// <cref="Easing.Functions" /> map.
+        /// <cref href="Easing.Functions" /> map.
         /// </summary>
         public enum Types
         {

@@ -70,11 +70,11 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonTweenProperty.Position:
-                            return new float[3] { spatial.Translation.x, spatial.Translation.y, spatial.Translation.z };
+                            return new[] { spatial.Translation.x, spatial.Translation.y, spatial.Translation.z };
                         case MoonTweenProperty.Scale:
-                            return new float[3] { spatial.Scale.x, spatial.Scale.y, spatial.Scale.z };
+                            return new[] { spatial.Scale.x, spatial.Scale.y, spatial.Scale.z };
                         case MoonTweenProperty.Rotation:
-                            return new float[3] { spatial.RotationDegrees.x, spatial.RotationDegrees.y, spatial.RotationDegrees.z };
+                            return new[] { spatial.RotationDegrees.x, spatial.RotationDegrees.y, spatial.RotationDegrees.z };
                     }
 
                     break;

@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Moonvalk.Animation;
 using Moonvalk.Components;
@@ -35,6 +36,11 @@ namespace Moonvalk.Nodes
         /// The current position which we will animate and snap the Cursor to each frame.
         /// </summary>
         protected Vector2 _currentPosition;
+        
+        /// <summary>
+        /// A tolerance value used to check floating point comparisons when determining if the mouse is targeted properly.
+        /// </summary>
+        private const float MousePositionCheckTolerance = 0.001f;
         #endregion
 
         #region Godot Events
@@ -64,11 +70,11 @@ namespace Moonvalk.Nodes
         {
             var mouse = GetTree().Root.GetMousePosition();
 
-            if (TargetPosition.x != mouse.x || TargetPosition.y != mouse.y)
-            {
-                TargetPosition = mouse;
-                MovementSpring.To(TargetPosition);
-            }
+            if (!(Math.Abs(TargetPosition.x - mouse.x) > MousePositionCheckTolerance) &&
+                !(Math.Abs(TargetPosition.y - mouse.y) > MousePositionCheckTolerance)) return;
+
+            TargetPosition = mouse;
+            MovementSpring.To(TargetPosition);
         }
         #endregion
     }

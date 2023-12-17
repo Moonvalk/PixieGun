@@ -5,7 +5,9 @@ using Moonvalk.Nodes;
 namespace Moonvalk.Components
 {
     /// <summary>
+    /// A base load manager for Godot scenes.
     /// </summary>
+    /// <typeparam name="DataType">The type of serializable data used to provide scenes.</typeparam>
     /// <typeparam name="SceneType">The type of scene element packed scenes should be casted to.</typeparam>
     public abstract class BaseSceneLoader<DataType, SceneType> : Node
         where SceneType : Node

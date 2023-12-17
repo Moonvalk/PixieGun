@@ -77,7 +77,7 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonWobbleProperty.Color:
-                            return new float[4] { control.Modulate.r, control.Modulate.g, control.Modulate.b, control.Modulate.a };
+                            return new[] { control.Modulate.r, control.Modulate.g, control.Modulate.b, control.Modulate.a };
                     }
 
                     break;
@@ -85,7 +85,7 @@ namespace Moonvalk.Animation
                     switch (property_)
                     {
                         case MoonWobbleProperty.Color:
-                            return new float[4] { node.Modulate.r, node.Modulate.g, node.Modulate.b, node.Modulate.a };
+                            return new[] { node.Modulate.r, node.Modulate.g, node.Modulate.b, node.Modulate.a };
                     }
 
                     break;

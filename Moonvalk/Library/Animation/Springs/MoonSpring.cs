@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Godot;
 using Moonvalk.Accessory;
 using Moonvalk.Utilities.Algorithms;
@@ -91,11 +93,8 @@ namespace Moonvalk.Animation
         /// <returns>Returns true if forces need to be applied</returns>
         protected override bool NeedToApplyForce()
         {
-            for (var index = 0; index < Properties.Length; index++)
-                if (Properties[index]() != TargetProperties[index])
-                    return true;
-
-            return false;
+            return Properties.Where((currentProperty, index) =>
+                Math.Abs(currentProperty() - TargetProperties[index]) > TargetPropertyMetTolerance).Any();
         }
 
         /// <summary>
